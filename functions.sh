@@ -26,34 +26,29 @@ function _activate() {
     source "$1/bin/activate"
 }
 
-function _dirdirname() {
-    echo $(dirname "$(dirname "$1")")
-}
-
 function lsenv() {
-    export -f _dirdirname
-    find . -path '*/bin/python' -exec bash -c '_dirdirname "{}"' \; 2>/dev/null
+    # note: files with newline in name not handled properly
+    find . -path '*/bin/python' -exec dirname '{}' \; 2>/dev/null | xargs -d'\n' -n1 -r dirname
 }
 
 function cdenv() {
-    local OLDIFS envlist env len
+    local OLDIFS envlist env len=0
 
-    OLDIFS="$IFS"
-    IFS=$'\n'
     envlist=$(lsenv)
-    len=$(wc -l <<< "$envlist")
-    if [ "$len" = 1 ]
-    then
+    [ "$envlist" ] && len=$(wc -l <<< "$envlist")
+    if [ "$len" = 1 ]; then
         _activate "$envlist"
+    elif [ "$len" = 0 ]; then
+        echo "No environments. Try going up."
     else
-        select env in $envlist
-        do
-            if [ "$env" ]
-            then
+        OLDIFS="$IFS"
+        IFS=$'\n'
+        select env in $envlist; do
+            if [ "$env" ]; then
                 _activate "$env"
                 break
             fi
         done
+        IFS="$OLDIFS"
     fi
-    IFS="$OLDIFS"
 }
