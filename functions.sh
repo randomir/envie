@@ -1,4 +1,5 @@
 #!/bin/bash
+#
 # VirtualEnv shell helpers: easier create, remove, list/find and activate.
 # Written by Radomir Stevanovic, Feb 2015.
 
@@ -26,20 +27,35 @@ function _activate() {
     source "$1/bin/activate"
 }
 
+# Lists all environments below the <start_dir>.
+# Usage: lsenv [<start_dir> [<avoid_subdir>]]
 function lsenv() {
-    # note: files with newline in name not handled properly
-    find . -path '*/bin/python' -exec dirname '{}' \; 2>/dev/null | xargs -d'\n' -n1 -r dirname
+    local dir="${1:-.}" avoid="${2:-}"
+    find "$dir" -path "$avoid" -prune -o -path '*/bin/python' \
+        -exec dirname '{}' \; 2>/dev/null | xargs -d'\n' -n1 -r dirname
+}
+
+# Finds the closest env by first looking down and then dir-by-dir up the tree.
+function lsupenv() {
+    local list len=0 dir='.' prevdir=''
+    while [ "$len" = 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
+        list="$(lsenv "$dir" "$prevdir")"
+        [ "$list" ] && len=$(wc -l <<< "$list") || len=0
+        prevdir="$dir"
+        dir="$dir/.."
+    done
+    echo "$list"
 }
 
 function cdenv() {
     local OLDIFS envlist env len=0
 
-    envlist=$(lsenv)
+    envlist=$(lsupenv)
     [ "$envlist" ] && len=$(wc -l <<< "$envlist")
     if [ "$len" = 1 ]; then
         _activate "$envlist"
     elif [ "$len" = 0 ]; then
-        echo "No environments. Try going up."
+        echo "No environments found."
     else
         OLDIFS="$IFS"
         IFS=$'\n'
@@ -52,3 +68,5 @@ function cdenv() {
         IFS="$OLDIFS"
     fi
 }
+
+alias wkenv=cdenv
