@@ -77,6 +77,12 @@ stevie@caracal:~/demo$ cdenv
 /home/stevie/demo/project2/env/bin/python
 ```
 
+### Searching/listing environments
+
+To search down the tree for valid Python VirtualEnvs, use `lsenv`.
+Likewise, to search up the tree, level by level, use `lsupenv`.
+`cdenv` uses `lsupenv` when searching to environment to activate.
+
 ## Install
 
 Clone the repo and source the `functions.sh` file from your `.bashrc`.
