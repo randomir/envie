@@ -3,12 +3,24 @@
 # VirtualEnv shell helpers: easier create, remove, list/find and activate.
 # Written by Radomir Stevanovic, Feb 2015.
 
+function fail() {
+    echo "$1"
+    exit 1
+}
+
+# Creates a new environment in <path/to/env>.
+# Usage: mkenv [<path/to/env>]
 function mkenv() {
-    mkdir -p "$1"
-    cd "$1"
-    virtualenv .
+    local path="${1:-env}"
+    if [ -d "$path" ]; then
+        fail "Directory '$path' already exists."
+    fi
+    echo "Creating python environment in: '$path'."
+    mkdir -p "$path"
+    cd "$path"
+    virtualenv --no-site-packages .
     . bin/activate
-    cd -
+    cd - >/dev/null
 }
 
 function rmenv() {
