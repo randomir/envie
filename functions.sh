@@ -6,13 +6,13 @@
 _SHENV_DEFAULT_ENVNAME=env
 
 function fail() {
-    echo "$1" >&2
+    echo "$@" >&2
 }
 
 # Creates a new environment in <path/to/env>.
 # Usage: mkenv [<path/to/env>]
 function mkenv() {
-    local path="${1:-$_SHENV_DEFAULT_ENVNAME}"
+    local path="${1:-$_SHENV_DEFAULT_ENVNAME}" output
     if [ -d "$path" ]; then
         fail "Directory '$path' already exists."
         return 1
@@ -20,7 +20,11 @@ function mkenv() {
     echo "Creating python environment in: '$path'."
     mkdir -p "$path"
     cd "$path"
-    virtualenv --no-site-packages .
+    local py=$(which python)
+    output=$(virtualenv --no-site-packages -p "$py" .)
+    if [ $? -ne 0 ]; then
+        echo -en "$output"
+    fi
     . bin/activate
     cd - >/dev/null
 }
