@@ -3,17 +3,19 @@
 # VirtualEnv shell helpers: easier create, remove, list/find and activate.
 # Written by Radomir Stevanovic, Feb 2015.
 
+_SHENV_DEFAULT_ENVNAME=env
+
 function fail() {
-    echo "$1"
-    exit 1
+    echo "$1" >&2
 }
 
 # Creates a new environment in <path/to/env>.
 # Usage: mkenv [<path/to/env>]
 function mkenv() {
-    local path="${1:-env}"
+    local path="${1:-$_SHENV_DEFAULT_ENVNAME}"
     if [ -d "$path" ]; then
         fail "Directory '$path' already exists."
+        return 1
     fi
     echo "Creating python environment in: '$path'."
     mkdir -p "$path"
