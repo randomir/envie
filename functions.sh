@@ -29,9 +29,14 @@ function mkenv() {
     cd - >/dev/null
 }
 
+# Destroys the active environment.
+# Usage (while env active): rmenv
 function rmenv() {
-    local envpath
-    envpath="$VIRTUAL_ENV"
+    local envpath="$VIRTUAL_ENV"
+    if [ ! "$envpath" ]; then
+        fail "Active environment not detected."
+        return 1
+    fi
     deactivate
     rm -rf "$envpath"
 }
