@@ -4,24 +4,34 @@
 # Written by Radomir Stevanovic, Feb 2015.
 
 _SHENV_DEFAULT_ENVNAME=env
+_SHENV_DEFAULT_PYTHON=python
 
 function fail() {
     echo "$@" >&2
 }
 
-# Creates a new environment in <path/to/env>.
-# Usage: mkenv [<path/to/env>]
+# Creates a new environment in <path/to/env>, based on <python_exec>.
+# Usage: mkenv [<path/to/env>] [<python_exec>]
 function mkenv() {
-    local path="${1:-$_SHENV_DEFAULT_ENVNAME}" output
-    if [ -d "$path" ]; then
-        fail "Directory '$path' already exists."
+    local envpath="${1:-$_SHENV_DEFAULT_ENVNAME}" output
+    if [ -d "$envpath" ]; then
+        fail "Directory '$envpath' already exists."
         return 1
     fi
-    echo "Creating python environment in: '$path'."
-    mkdir -p "$path"
-    cd "$path"
-    local py=$(which python)
-    output=$(virtualenv --no-site-packages -p "$py" .)
+    echo "Creating python environment in '$envpath'."
+
+    local pyexe="${2:-$_SHENV_DEFAULT_PYTHON}"
+    if ! which "$pyexe" &>/dev/null; then
+        fail "Python executable '$pyexe' not found, failing-back to: '$_SHENV_DEFAULT_PYTHON'."
+        pyexe="$_SHENV_DEFAULT_PYTHON"
+    fi
+    local pypath=$(which "$pyexe")
+    local pyver=$("$pypath" -V 2>&1)
+    echo "Using $pyver ($pypath)."
+
+    mkdir -p "$envpath"
+    cd "$envpath"
+    output=$(virtualenv --no-site-packages -p "$pypath" -v . 2>&1)
     if [ $? -ne 0 ]; then
         echo -en "$output"
     fi
