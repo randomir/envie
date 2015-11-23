@@ -4,6 +4,14 @@ The `shenv` is an ultra lightweight set of Bash functions aiming to increase
 your productivity when dealing with everyday VirtualEnv tasks, like: creating,
 destroying, listing and switching environments.
 
+## Summary
+
+- `mkenv [<env>|"env"] [<pyexec>|"python"]` - Create virtualenv in `<env>` based on Python version `<pyexec>`.
+- `rmenv` - Destroy the active environment.
+- `cdenv` - Interactively activate the closest environment (looking down, then up, with `lsupenv`).
+- `lsenv [<start>|"." [<avoid>]]` - List all environments below `<start>` directory, skipping `<avoid>` subdir.
+- `lsupenv` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
+
 ## Examples
 
 ### Create/destroy
