@@ -23,11 +23,8 @@ When done with this environment, just type `rmenv` to destroy the active env.
 ```sh
 stevie@caracal:~/demo$ ls
 stevie@caracal:~/demo$ mkenv env
-Running virtualenv with interpreter /usr/bin/python2
-New python executable in ./bin/python2
-Also creating executable in ./bin/python
-Installing setuptools, pip...done.
-/home/stevie/demo
+Creating python environment in 'env'.
+Using Python 2.7.9 (/usr/bin/python).
 (env)stevie@caracal:~/demo$ ls
 env
 (env)stevie@caracal:~/demo$ pip freeze
