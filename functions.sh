@@ -20,12 +20,11 @@ function mkenv() {
     fi
     echo "Creating python environment in '$envpath'."
 
-    local pyexe="${2:-$_SHENV_DEFAULT_PYTHON}"
-    if ! which "$pyexe" &>/dev/null; then
+    local pyexe="${2:-$_SHENV_DEFAULT_PYTHON}" pypath
+    if ! pypath=$(which "$pyexe"); then
         fail "Python executable '$pyexe' not found, failing-back to: '$_SHENV_DEFAULT_PYTHON'."
-        pyexe="$_SHENV_DEFAULT_PYTHON"
+        pypath=$(which "$_SHENV_DEFAULT_PYTHON")
     fi
-    local pypath=$(which "$pyexe")
     local pyver=$("$pypath" --version 2>&1)
     if [[ ! $pyver =~ Python ]]; then
         fail "Unrecognized Python version/executable: '$pypath'."
