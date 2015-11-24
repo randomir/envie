@@ -70,10 +70,10 @@ function lsenv() {
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
 function lsupenv() {
-    local list len=0 dir='.' prevdir=''
-    while [ "$len" = 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
-        list="$(lsenv "$dir" "$prevdir")"
-        [ "$list" ] && len=$(wc -l <<< "$list") || len=0
+    local list len=0 dir='.' prevdir
+    while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
+        list=$(lsenv "$dir" "$prevdir")
+        [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
         dir="$dir/.."
     done
@@ -84,10 +84,10 @@ function cdenv() {
     local OLDIFS envlist env len=0
 
     envlist=$(lsupenv)
-    [ "$envlist" ] && len=$(wc -l <<< "$envlist")
-    if [ "$len" = 1 ]; then
+    [ "$envlist" ] && len=$(wc -l <<<"$envlist")
+    if [ "$len" -eq 1 ]; then
         _activate "$envlist"
-    elif [ "$len" = 0 ]; then
+    elif [ "$len" -eq 0 ]; then
         echo "No environments found."
     else
         OLDIFS="$IFS"
