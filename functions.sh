@@ -26,7 +26,11 @@ function mkenv() {
         pyexe="$_SHENV_DEFAULT_PYTHON"
     fi
     local pypath=$(which "$pyexe")
-    local pyver=$("$pypath" -V 2>&1)
+    local pyver=$("$pypath" --version 2>&1)
+    if [[ ! $pyver =~ Python ]]; then
+        fail "Unrecognized Python version/executable: '$pypath'."
+        return 1
+    fi
     echo "Using $pyver ($pypath)."
 
     mkdir -p "$envpath"
@@ -70,7 +74,7 @@ function lsenv() {
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
 function lsupenv() {
-    local list len=0 dir='.' prevdir
+    local list len=0 dir=. prevdir
     while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
         list=$(lsenv "$dir" "$prevdir")
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
