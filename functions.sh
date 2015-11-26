@@ -67,11 +67,15 @@ function _activate() {
 
 # Lists all environments below the <start_dir>.
 # Usage: lsenv [<start_dir> [<avoid_subdir>]]
-function lsenv() {
+function _lsenv_find() {
     local dir="${1:-.}" avoid="${2:-}"
     find "$dir" -path "$avoid" -prune -o \
         -name .git -o -name .hg -o -name .svn -prune -o -path '*/bin/python' \
         -exec dirname '{}' \; 2>/dev/null | xargs -d'\n' -n1 -r dirname
+}
+
+function lsenv() {
+    _db_exists && _lsenv_locate "$1" || _lsenv_find "$1" "$2"
 }
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
@@ -117,6 +121,10 @@ function _command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+function _db_exists() {
+    test -e "$_SHENV_DB"
+}
+
 function _shenv_install() {
     if ! _command_exists locate || ! _command_exists updatedb; then
         fail "locate/updatedb not installed. Failing-back to find."
@@ -131,8 +139,9 @@ function _shenv_db_update() {
 }
 
 # Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
-function _shenv_db_lsenv() {
-    local dir=$(readlink -e "${1:-.}") avoid="${2:-}"
-    locate -d "$_SHENV_DB" "$dir"'*/bin/activate_this.py' \
-        | sed -e 's#/bin/activate_this\.py$##' -e 's#^'"$dir"'#.#'
+function _lsenv_locate() {
+    local dir="${1:-.}" avoid="${2:-}"
+    local absdir=$(readlink -e "$dir")
+    locate -d "$_SHENV_DB" "$absdir"'*/bin/activate_this.py' \
+        | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
 }
