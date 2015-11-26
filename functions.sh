@@ -5,6 +5,8 @@
 
 _SHENV_DEFAULT_ENVNAME=env
 _SHENV_DEFAULT_PYTHON=python
+_SHENV_CONFIG_DIR="$HOME/.config/shenv"
+_SHENV_DB="$_SHENV_CONFIG_DIR/locate.db"
 
 function fail() {
     echo "$@" >&2
@@ -107,3 +109,30 @@ function cdenv() {
 }
 
 alias wkenv=cdenv
+
+
+# faster shenv, using locate
+
+function _command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+function _shenv_install() {
+    if ! _command_exists locate || ! _command_exists updatedb; then
+        fail "locate/updatedb not installed. Failing-back to find."
+        return 1
+    fi
+}
+
+function _shenv_db_update() {
+    mkdir -p "$_SHENV_CONFIG_DIR"
+    echo "Updating filesystem index of '$HOME'."
+    updatedb -l 0 -o "$_SHENV_DB" -U "$HOME"
+}
+
+# Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
+function _shenv_db_lsenv() {
+    local dir=$(readlink -e "${1:-.}") avoid="${2:-}"
+    locate -d "$_SHENV_DB" "$dir"'*/bin/activate_this.py' \
+        | sed -e 's#/bin/activate_this\.py$##' -e 's#^'"$dir"'#.#'
+}
