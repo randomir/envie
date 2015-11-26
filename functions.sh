@@ -75,7 +75,7 @@ function _lsenv_find() {
 }
 
 function lsenv() {
-    _db_exists && _lsenv_locate "$1" || _lsenv_find "$1" "$2"
+    _db_exists && _lsenv_locate "$@" || _lsenv_find "$@"
 }
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
@@ -122,7 +122,7 @@ function _command_exists() {
 }
 
 function _db_exists() {
-    test -e "$_SHENV_DB"
+    [ -e "$_SHENV_DB" ]
 }
 
 function _shenv_install() {
@@ -134,7 +134,6 @@ function _shenv_install() {
 
 function _shenv_db_update() {
     mkdir -p "$_SHENV_CONFIG_DIR"
-    echo "Updating filesystem index of '$HOME'."
     updatedb -l 0 -o "$_SHENV_DB" -U "$HOME"
 }
 
