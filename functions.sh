@@ -6,7 +6,8 @@
 _SHENV_DEFAULT_ENVNAME=env
 _SHENV_DEFAULT_PYTHON=python
 _SHENV_CONFIG_DIR="$HOME/.config/shenv"
-_SHENV_DB="$_SHENV_CONFIG_DIR/locate.db"
+_SHENV_DB_PATH="$_SHENV_CONFIG_DIR/locate.db"
+_SHENV_INDEX_ROOT="$HOME"
 
 function fail() {
     echo "$@" >&2
@@ -122,7 +123,7 @@ function _command_exists() {
 }
 
 function _db_exists() {
-    [ -e "$_SHENV_DB" ]
+    [ -e "$_SHENV_DB_PATH" ]
 }
 
 function _shenv_install() {
@@ -130,17 +131,20 @@ function _shenv_install() {
         fail "locate/updatedb not installed. Failing-back to find."
         return 1
     fi
+    echo -n "Indexing environments in '$_SHENV_INDEX_ROOT'..."
+    _shenv_db_update
+    echo "Done."
 }
 
 function _shenv_db_update() {
     mkdir -p "$_SHENV_CONFIG_DIR"
-    updatedb -l 0 -o "$_SHENV_DB" -U "$HOME"
+    updatedb -l 0 -o "$_SHENV_DB_PATH" -U "$_SHENV_INDEX_ROOT"
 }
 
 # Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
 function _lsenv_locate() {
     local dir="${1:-.}" avoid="${2:-}"
     local absdir=$(readlink -e "$dir")
-    locate -d "$_SHENV_DB" "$absdir"'*/bin/activate_this.py' \
+    locate -d "$_SHENV_DB_PATH" "$absdir"'*/bin/activate_this.py' \
         | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
 }
