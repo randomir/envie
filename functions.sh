@@ -71,7 +71,7 @@ function _activate() {
 function _lsenv_find() {
     local dir="${1:-.}" avoid="${2:-}"
     find "$dir" -path "$avoid" -prune -o \
-        -name .git -o -name .hg -o -name .svn -prune -o -path '*/bin/python' \
+        -name .git -o -name .hg -o -name .svn -prune -o -path '*/bin/activate_this.py' \
         -exec dirname '{}' \; 2>/dev/null | xargs -d'\n' -n1 -r dirname
 }
 
