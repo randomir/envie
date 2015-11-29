@@ -90,8 +90,8 @@ function _lsenv_locate() {
 function _lsenv_locate_vs_find_race() {
     set +m
     local p_pid_find=$(mkftemp) p_pid_locate=$(mkftemp) p_pid_timer=$(mkftemp)
-    { __find_and_return & echo $! >"$p_pid_find"; } 2>/dev/null
-    { __locate_and_return & echo $! >"$p_pid_locate"; } 2>/dev/null
+    { __find_and_return "$@" & echo $! >"$p_pid_find"; } 2>/dev/null
+    { __locate_and_return "$@" & echo $! >"$p_pid_locate"; } 2>/dev/null
     { __find_fast_bailout & echo $! >"$p_pid_timer"; } 2>/dev/null
     wait
     rm "$p_pid_find" "$p_pid_locate" "$p_pid_timer"
