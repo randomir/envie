@@ -8,6 +8,7 @@ _SHENV_DEFAULT_PYTHON=python
 _SHENV_CONFIG_DIR="$HOME/.config/shenv"
 _SHENV_DB_PATH="$_SHENV_CONFIG_DIR/locate.db"
 _SHENV_INDEX_ROOT="$HOME"
+_SHENV_FIND_LIMIT=0.1  # in seconds
 
 function fail() {
     echo "$@" >&2
@@ -75,8 +76,48 @@ function _lsenv_find() {
         -exec dirname '{}' \; 2>/dev/null | xargs -d'\n' -n1 -r dirname
 }
 
+# `lsenv` via `locate`
+# Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
+function _lsenv_locate() {
+    local dir="${1:-.}" avoid="${2:-}"
+    local absdir=$(readlink -e "$dir")
+    locate -d "$_SHENV_DB_PATH" "$absdir"'*/bin/activate_this.py' \
+        | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
+}
+
+# Run `lsenv` via both `find` and `locate` in parallel and return
+# as soon as the first method yields the results.
+function _lsenv_locate_vs_find_race() {
+    set +m
+    local p_pid_find=$(mktemp) p_pid_locate=$(mktemp)
+    { __find_and_return & echo $! >"$p_pid_find"; } 2>/dev/null
+    { __locate_and_return & echo $! > "$p_pid_locate"; } 2>/dev/null
+    wait
+    rm "$p_pid_find" "$p_pid_locate"
+    set -m
+}
+function __find_and_return() {
+    local result=$(_lsenv_find "$@")
+    local pid_find pid_locate
+    read pid_find <"$p_pid_find"
+    read pid_locate <"$p_pid_locate"
+    __kill $pid_locate
+    echo "$result"
+}
+function __locate_and_return() {
+    local result=$(_lsenv_locate "$@")
+    local pid_find pid_locate
+    read pid_find <"$p_pid_find"
+    read pid_locate <"$p_pid_locate"
+    __kill $pid_find
+    echo "$result"
+}
+function __kill() {
+    kill -TERM "$1" 2>/dev/null
+}
+
 function lsenv() {
-    _db_exists && _lsenv_locate "$@" || _lsenv_find "$@"
+    _db_exists && _lsenv_locate_vs_find_race "$@" || _lsenv_find "$@"
 }
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
@@ -139,12 +180,4 @@ function _shenv_install() {
 function _shenv_db_update() {
     mkdir -p "$_SHENV_CONFIG_DIR"
     updatedb -l 0 -o "$_SHENV_DB_PATH" -U "$_SHENV_INDEX_ROOT"
-}
-
-# Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
-function _lsenv_locate() {
-    local dir="${1:-.}" avoid="${2:-}"
-    local absdir=$(readlink -e "$dir")
-    locate -d "$_SHENV_DB_PATH" "$absdir"'*/bin/activate_this.py' \
-        | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
 }
