@@ -8,7 +8,7 @@ _SHENV_DEFAULT_PYTHON=python
 _SHENV_CONFIG_DIR="$HOME/.config/shenv"
 _SHENV_DB_PATH="$_SHENV_CONFIG_DIR/locate.db"
 _SHENV_INDEX_ROOT="$HOME"
-_SHENV_FIND_LIMIT=0.1  # in seconds
+_SHENV_FIND_LIMIT=0.2  # in seconds
 
 function fail() {
     echo "$@" >&2
@@ -89,31 +89,41 @@ function _lsenv_locate() {
 # as soon as the first method yields the results.
 function _lsenv_locate_vs_find_race() {
     set +m
-    local p_pid_find=$(mkftemp) p_pid_locate=$(mkftemp)
+    local p_pid_find=$(mkftemp) p_pid_locate=$(mkftemp) p_pid_timer=$(mkftemp)
     { __find_and_return & echo $! >"$p_pid_find"; } 2>/dev/null
-    { __locate_and_return & echo $! > "$p_pid_locate"; } 2>/dev/null
+    { __locate_and_return & echo $! >"$p_pid_locate"; } 2>/dev/null
+    { __find_fast_bailout & echo $! >"$p_pid_timer"; } 2>/dev/null
     wait
-    rm "$p_pid_find" "$p_pid_locate"
+    rm "$p_pid_find" "$p_pid_locate" "$p_pid_timer"
     set -m
 }
 function __find_and_return() {
     local result=$(_lsenv_find "$@")
-    local pid_find pid_locate
-    read pid_find <"$p_pid_find"
+    local pid_locate pid_timer
     read pid_locate <"$p_pid_locate"
-    __kill $pid_locate
+    read pid_timer <"$p_pid_timer"
+    __kill $pid_locate $pid_timer
     [ "$result" ] && echo "$result"
 }
 function __locate_and_return() {
     local result=$(_lsenv_locate "$@")
-    local pid_find pid_locate
+    local pid_find pid_timer
     read pid_find <"$p_pid_find"
-    read pid_locate <"$p_pid_locate"
-    __kill $pid_find
+    read pid_timer <"$p_pid_timer"
+    __kill $pid_find $pid_timer
     [ "$result" ] && echo "$result"
 }
+function __find_fast_bailout() {
+    sleep "$_SHENV_FIND_LIMIT"
+    local pid_find
+    read pid_find <"$p_pid_find"
+    __kill $pid_find
+}
 function __kill() {
-    kill -TERM "$1" 2>/dev/null
+    while [ "$1" ]; do
+        kill -TERM "$1" 2>/dev/null
+        shift
+    done
 }
 
 # Make fastest temporary file: like mktemp, but tries
