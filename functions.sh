@@ -89,7 +89,7 @@ function _lsenv_locate() {
 # as soon as the first method yields the results.
 function _lsenv_locate_vs_find_race() {
     set +m
-    local p_pid_find=$(mktemp) p_pid_locate=$(mktemp)
+    local p_pid_find=$(mkftemp) p_pid_locate=$(mkftemp)
     { __find_and_return & echo $! >"$p_pid_find"; } 2>/dev/null
     { __locate_and_return & echo $! > "$p_pid_locate"; } 2>/dev/null
     wait
@@ -114,6 +114,12 @@ function __locate_and_return() {
 }
 function __kill() {
     kill -TERM "$1" 2>/dev/null
+}
+
+# Make fastest temporary file: like mktemp, but tries
+# to create file in memory (/dev/shm) first.
+function mkftemp() {
+    [ -d /dev/shm ] && mktemp --tmpdir=/dev/shm || mktemp
 }
 
 function lsenv() {
