@@ -102,7 +102,7 @@ function __find_and_return() {
     read pid_find <"$p_pid_find"
     read pid_locate <"$p_pid_locate"
     __kill $pid_locate
-    echo "$result"
+    [ "$result" ] && echo "$result"
 }
 function __locate_and_return() {
     local result=$(_lsenv_locate "$@")
@@ -110,7 +110,7 @@ function __locate_and_return() {
     read pid_find <"$p_pid_find"
     read pid_locate <"$p_pid_locate"
     __kill $pid_find
-    echo "$result"
+    [ "$result" ] && echo "$result"
 }
 function __kill() {
     kill -TERM "$1" 2>/dev/null
