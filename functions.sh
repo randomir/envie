@@ -120,7 +120,7 @@ function __find_fast_bailout() {
     __kill $pid_find
 }
 function __kill() {
-    while [ "$1" ]; do
+    while [ "$#" -gt 0 ]; do
         kill -TERM "$1" 2>/dev/null
         shift
     done
