@@ -96,3 +96,13 @@ Clone the repo and source the `functions.sh` file from your `.bashrc`.
 ~$ git clone https://github.com/randomir/shenv
 ~$ echo . ~/shenv/functions.sh >> ~/.bashrc
 ```
+
+### Enable the faster search
+
+By default, `shenv` uses the `find` command to search for environments. That approach is pretty fast when searching shallow trees. However, if you have a deeper directory trees, it's often faster to use a pre-built directory index (i.e. the `locate` command).
+To enable a combined `locate/find` approach to search, run:
+
+```
+$ _shenv_install
+Indexing environments in '/home/stevie'...Done.
+```
