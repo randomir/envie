@@ -8,7 +8,7 @@ _SHENV_DEFAULT_PYTHON=python
 _SHENV_CONFIG_DIR="$HOME/.config/shenv"
 _SHENV_DB_PATH="$_SHENV_CONFIG_DIR/locate.db"
 _SHENV_INDEX_ROOT="$HOME"
-_SHENV_FIND_LIMIT=0.2  # in seconds
+_SHENV_FIND_LIMIT=0.1  # in seconds
 
 function fail() {
     echo "$@" >&2
@@ -92,7 +92,7 @@ function _lsenv_locate_vs_find_race() {
     local p_pid_find=$(mkftemp) p_pid_locate=$(mkftemp) p_pid_timer=$(mkftemp)
     { __find_and_return "$@" & echo $! >"$p_pid_find"; } 2>/dev/null
     { __locate_and_return "$@" & echo $! >"$p_pid_locate"; } 2>/dev/null
-    { __find_fast_bailout & echo $! >"$p_pid_timer"; } 2>/dev/null
+    #{ __find_fast_bailout & echo $! >"$p_pid_timer"; } 2>/dev/null
     wait
     rm "$p_pid_find" "$p_pid_locate" "$p_pid_timer"
     set -m
