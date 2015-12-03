@@ -82,7 +82,7 @@ stevie@caracal:~/demo$ cdenv
 /home/stevie/demo/project2/env/bin/python
 ```
 
-### Searching/listing environments
+### Search/list environments
 
 To search down the tree for valid Python VirtualEnvs, use `lsenv`.
 Likewise, to search up the tree, level by level, use `lsupenv`.
@@ -106,3 +106,5 @@ To enable a combined `locate/find` approach to search, run:
 $ _shenv_install
 Indexing environments in '/home/stevie'...Done.
 ```
+
+In the combined approach, if `find` doesn't finish within 200ms, search via `find` is aborted and `locate` is allowed to finish (faster).
