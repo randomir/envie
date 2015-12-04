@@ -107,4 +107,4 @@ $ _shenv_install
 Indexing environments in '/home/stevie'...Done.
 ```
 
-In the combined approach, if `find` doesn't finish within 200ms, search via `find` is aborted and `locate` is allowed to finish (faster).
+In the combined approach, if `find` doesn't finish within 100ms, search via `find` is aborted and `locate` is allowed to finish (faster).
