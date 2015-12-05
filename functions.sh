@@ -183,17 +183,17 @@ function _db_exists() {
     [ -e "$_SHENV_DB_PATH" ]
 }
 
-function _shenv_install() {
+function shenv_install() {
     if ! _command_exists locate || ! _command_exists updatedb; then
         fail "locate/updatedb not installed. Failing-back to find."
         return 1
     fi
     echo -n "Indexing environments in '$_SHENV_INDEX_ROOT'..."
-    _shenv_db_update
+    shenv_updatedb
     echo "Done."
 }
 
-function _shenv_db_update() {
+function shenv_updatedb() {
     mkdir -p "$_SHENV_CONFIG_DIR"
     updatedb -l 0 -o "$_SHENV_DB_PATH" -U "$_SHENV_INDEX_ROOT"
 }
