@@ -11,6 +11,8 @@ destroying, listing and switching environments.
 - `cdenv` - Interactively activate the closest environment (looking down, then up, with `lsupenv`).
 - `lsenv [<start>|"." [<avoid>]]` - List all environments below `<start>` directory, skipping `<avoid>` subdir.
 - `lsupenv` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
+- `shenv_install` - Run (once) to enable (faster) searches with `locate`.
+- `shenv_updatedb` - Run to re-index directories searched with `updatedb`.
 
 ## Examples
 
@@ -103,7 +105,7 @@ By default, `shenv` uses the `find` command to search for environments. That app
 To enable a combined `locate/find` approach to search, run:
 
 ```
-$ _shenv_install
+$ shenv_install
 Indexing environments in '/home/stevie'...Done.
 ```
 
