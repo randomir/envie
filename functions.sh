@@ -55,7 +55,12 @@ function rmenv() {
         return 1
     fi
     deactivate
-    rm -rf "$envpath"
+    if _is_virtualenv "$envpath"; then
+        rm -rf "$envpath"
+    else
+        fail "Invalid VirtualEnv path in VIRTUAL_ENV: '$envpath'."
+        return 1
+    fi
 }
 
 function _deactivate() {
@@ -65,6 +70,10 @@ function _deactivate() {
 function _activate() {
     _deactivate
     source "$1/bin/activate"
+}
+
+function _is_virtualenv() {
+    [ -e "$1/bin/activate_this.py" ] && [ -x "$1/bin/python" ]
 }
 
 # Lists all environments below the <start_dir>.
