@@ -130,7 +130,7 @@ function __find_fast_bailout() {
 }
 function __kill() {
     while [ "$#" -gt 0 ]; do
-        rkill -TERM "$1" 1>/dev/null
+        sudo -u"$USER" rkill -TERM "$1" 1>/dev/null
         shift
     done
 }
