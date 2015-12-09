@@ -130,8 +130,18 @@ function __find_fast_bailout() {
 }
 function __kill() {
     while [ "$#" -gt 0 ]; do
-        sudo -u"$USER" rkill -TERM "$1" 1>/dev/null
+        _kill_proc_tree "$1" &>/dev/null
         shift
+    done
+}
+
+# Kills a complete process tree rooted at `pid`.
+# Usage: _kill_proc_tree pid
+function _kill_proc_tree() {
+    local pid ppid="$1"
+    for pid in $(ps hopid --ppid "$ppid"); do
+        _kill_proc_tree "$pid"
+        kill -TERM "$pid"
     done
 }
 
