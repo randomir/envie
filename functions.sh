@@ -139,9 +139,10 @@ function __kill() {
 # Usage: _kill_proc_tree pid
 function _kill_proc_tree() {
     local pid ppid="$1"
-    for pid in $(ps hopid --ppid "$ppid"); do
+    local children=$(ps hopid --ppid "$ppid")
+    kill -TERM "$ppid"
+    for pid in $children; do
         _kill_proc_tree "$pid"
-        kill -TERM "$pid"
     done
 }
 
