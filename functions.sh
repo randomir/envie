@@ -108,18 +108,18 @@ function _lsenv_locate_vs_find_race() {
 }
 function __find_and_return() {
     local result=$(_lsenv_find "$@")
+    [ "$result" ] && echo "$result"
     local pid_locate pid_timer
     read pid_locate <"$p_pid_locate"
     read pid_timer <"$p_pid_timer"
-    [ "$result" ] && echo "$result"
     __kill $pid_locate $pid_timer
 }
 function __locate_and_return() {
     local result=$(_lsenv_locate "$@")
+    [ "$result" ] && echo "$result"
     local pid_find pid_timer
     read pid_find <"$p_pid_find"
     read pid_timer <"$p_pid_timer"
-    [ "$result" ] && echo "$result"
     __kill $pid_find $pid_timer
 }
 function __find_fast_bailout() {
