@@ -135,15 +135,22 @@ function __kill() {
     done
 }
 
+# Prints all descendant of a process `ppid`, level-wise, bottom-up.
+# Usage: _get_proc_descendants ppid
+function _get_proc_descendants() {
+    local pid ppid="$1"
+    local children=$(ps hopid --ppid "$ppid")
+    for pid in $children; do
+        echo "$pid"
+        _get_proc_descendants "$pid"
+    done
+}
+
 # Kills a complete process tree rooted at `pid`.
 # Usage: _kill_proc_tree pid
 function _kill_proc_tree() {
-    local pid ppid="$1"
-    local children=$(ps hopid --ppid "$ppid")
-    kill -TERM "$ppid"
-    for pid in $children; do
-        _kill_proc_tree "$pid"
-    done
+    local pids="$(_get_proc_descendants "$1") $1"
+    kill -TERM $pids
 }
 
 # Make fastest temporary file: like mktemp, but tries
