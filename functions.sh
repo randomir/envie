@@ -111,16 +111,16 @@ function __find_and_return() {
     local pid_locate pid_timer
     read pid_locate <"$p_pid_locate"
     read pid_timer <"$p_pid_timer"
-    __kill $pid_locate $pid_timer
     [ "$result" ] && echo "$result"
+    __kill $pid_locate $pid_timer
 }
 function __locate_and_return() {
     local result=$(_lsenv_locate "$@")
     local pid_find pid_timer
     read pid_find <"$p_pid_find"
     read pid_timer <"$p_pid_timer"
-    __kill $pid_find $pid_timer
     [ "$result" ] && echo "$result"
+    __kill $pid_find $pid_timer
 }
 function __find_fast_bailout() {
     sleep "$_SHENV_FIND_LIMIT"
