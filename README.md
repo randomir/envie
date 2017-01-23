@@ -1,4 +1,4 @@
-﻿# Shell-based helpers for Python VirtualEnv
+﻿# Navigate and manage Python VirtualEnvs
 
 The `shenv` is an ultra lightweight set of Bash functions aiming to increase
 your productivity when dealing with everyday VirtualEnv tasks, like: creating,
