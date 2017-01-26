@@ -1,6 +1,6 @@
 ﻿# Navigate and manage Python VirtualEnvs
 
-The `shenv` is an ultra lightweight set of Bash functions aiming to increase
+The `envie` is an ultra lightweight set of Bash functions aiming to increase
 your productivity when dealing with everyday VirtualEnv tasks, like: creating,
 destroying, listing and switching environments.
 
@@ -11,8 +11,8 @@ destroying, listing and switching environments.
 - `cdenv` - Interactively activate the closest environment (looking down, then up, with `lsupenv`).
 - `lsenv [<start>|"." [<avoid>]]` - List all environments below `<start>` directory, skipping `<avoid>` subdir.
 - `lsupenv` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
-- `shenv_install` - Run (once) to enable (faster) searches with `locate`.
-- `shenv_updatedb` - Run to re-index directories searched with `updatedb`.
+- `envie_install` - Run (once) to enable (faster) searches with `locate`.
+- `envie_updatedb` - Run to re-index directories searched with `updatedb`.
 
 ## Examples
 
@@ -95,17 +95,17 @@ Likewise, to search up the tree, level by level, use `lsupenv`.
 Clone the repo and source the `functions.sh` file from your `.bashrc`.
 
 ```
-~$ git clone https://github.com/randomir/shenv
-~$ echo . ~/shenv/functions.sh >> ~/.bashrc
+~$ git clone https://github.com/randomir/envie
+~$ echo . ~/envie/functions.sh >> ~/.bashrc
 ```
 
 ### Enable the faster search
 
-By default, `shenv` uses the `find` command to search for environments. That approach is pretty fast when searching shallow trees. However, if you have a deeper directory trees, it's often faster to use a pre-built directory index (i.e. the `locate` command).
+By default, `envie` uses the `find` command to search for environments. That approach is pretty fast when searching shallow trees. However, if you have a deeper directory trees, it's often faster to use a pre-built directory index (i.e. the `locate` command).
 To enable a combined `locate/find` approach to search, run:
 
 ```
-$ shenv_install
+$ envie_install
 Indexing environments in '/home/stevie'...Done.
 ```
 

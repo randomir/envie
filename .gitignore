@@ -1,0 +1,8 @@
+env/
+build/
+dist/
+.cache/
+*.egg-info/
+*.pyc
+*.*~
+*.orig

@@ -3,12 +3,12 @@
 # VirtualEnv shell helpers: easier create, remove, list/find and activate.
 # Written by Radomir Stevanovic, Feb 2015.
 
-_SHENV_DEFAULT_ENVNAME=env
-_SHENV_DEFAULT_PYTHON=python
-_SHENV_CONFIG_DIR="$HOME/.config/shenv"
-_SHENV_DB_PATH="$_SHENV_CONFIG_DIR/locate.db"
-_SHENV_INDEX_ROOT="$HOME"
-_SHENV_FIND_LIMIT=0.1  # in seconds
+_ENVIE_DEFAULT_ENVNAME=env
+_ENVIE_DEFAULT_PYTHON=python
+_ENVIE_CONFIG_DIR="$HOME/.config/envie"
+_ENVIE_DB_PATH="$_ENVIE_CONFIG_DIR/locate.db"
+_ENVIE_INDEX_ROOT="$HOME"
+_ENVIE_FIND_LIMIT=0.1  # in seconds
 
 function fail() {
     echo "$@" >&2
@@ -17,17 +17,17 @@ function fail() {
 # Creates a new environment in <path/to/env>, based on <python_exec>.
 # Usage: mkenv [<path/to/env>] [<python_exec>]
 function mkenv() {
-    local envpath="${1:-$_SHENV_DEFAULT_ENVNAME}" output
+    local envpath="${1:-$_ENVIE_DEFAULT_ENVNAME}" output
     if [ -d "$envpath" ]; then
         fail "Directory '$envpath' already exists."
         return 1
     fi
     echo "Creating python environment in '$envpath'."
 
-    local pyexe="${2:-$_SHENV_DEFAULT_PYTHON}" pypath
+    local pyexe="${2:-$_ENVIE_DEFAULT_PYTHON}" pypath
     if ! pypath=$(which "$pyexe"); then
-        fail "Python executable '$pyexe' not found, failing-back to: '$_SHENV_DEFAULT_PYTHON'."
-        pypath=$(which "$_SHENV_DEFAULT_PYTHON")
+        fail "Python executable '$pyexe' not found, failing-back to: '$_ENVIE_DEFAULT_PYTHON'."
+        pypath=$(which "$_ENVIE_DEFAULT_PYTHON")
     fi
     local pyver=$("$pypath" --version 2>&1)
     if [[ ! $pyver =~ Python ]]; then
@@ -90,7 +90,7 @@ function _lsenv_find() {
 function _lsenv_locate() {
     local dir="${1:-.}" avoid="${2:-}"
     local absdir=$(readlink -e "$dir")
-    locate -d "$_SHENV_DB_PATH" "$absdir"'*/bin/activate_this.py' \
+    locate -d "$_ENVIE_DB_PATH" "$absdir"'*/bin/activate_this.py' \
         | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
 }
 
@@ -123,7 +123,7 @@ function __locate_and_return() {
     __kill $pid_find $pid_timer
 }
 function __find_fast_bailout() {
-    sleep "$_SHENV_FIND_LIMIT"
+    sleep "$_ENVIE_FIND_LIMIT"
     local pid_find
     read pid_find <"$p_pid_find"
     __kill $pid_find
@@ -200,27 +200,27 @@ function cdenv() {
 alias wkenv=cdenv
 
 
-# faster shenv, using locate
+# faster envie, using locate
 
 function _command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
 function _db_exists() {
-    [ -e "$_SHENV_DB_PATH" ]
+    [ -e "$_ENVIE_DB_PATH" ]
 }
 
-function shenv_install() {
+function envie_install() {
     if ! _command_exists locate || ! _command_exists updatedb; then
         fail "locate/updatedb not installed. Failing-back to find."
         return 1
     fi
-    echo -n "Indexing environments in '$_SHENV_INDEX_ROOT'..."
-    shenv_updatedb
+    echo -n "Indexing environments in '$_ENVIE_INDEX_ROOT'..."
+    envie_updatedb
     echo "Done."
 }
 
-function shenv_updatedb() {
-    mkdir -p "$_SHENV_CONFIG_DIR"
-    updatedb -l 0 -o "$_SHENV_DB_PATH" -U "$_SHENV_INDEX_ROOT"
+function envie_updatedb() {
+    mkdir -p "$_ENVIE_CONFIG_DIR"
+    updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT"
 }

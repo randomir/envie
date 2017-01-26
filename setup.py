@@ -8,7 +8,8 @@ setup(
     long_description=open('README.md').read(),
     author='Radomir Stevanovic',
     author_email='radomir.stevanovic@gmail.com',
-    url='https://github.com/randomir/shenv',
+    url='https://github.com/randomir/envie',
+    scripts=['envie.sh'],
     license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
