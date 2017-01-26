@@ -92,11 +92,9 @@ Likewise, to search up the tree, level by level, use `lsupenv`.
 
 ## Install
 
-Clone the repo and source the `functions.sh` file from your `.bashrc`.
-
 ```
-~$ git clone https://github.com/randomir/envie
-~$ echo . ~/envie/functions.sh >> ~/.bashrc
+~$ sudo pip install envie
+~$ echo source "$(which envie.sh)" >> ~/.bashrc
 ```
 
 ### Enable the faster search

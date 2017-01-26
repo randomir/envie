@@ -14,7 +14,7 @@ class install(_install):
 
 setup(
     name='envie',
-    version='0.3.2',
+    version='0.3.3',
     description="Bash helpers for navigating and managing Python VirtualEnvs.",
     long_description=open('README.md').read(),
     author='Radomir Stevanovic',
@@ -32,5 +32,5 @@ setup(
     ],
     keywords='virtualenv bash helper closest virtual environment create mkenv destroy rmenv change cdenv',
     scripts=['envie.sh'],
-    cmdclass={'install': install}
+    #cmdclass={'install': install}
 )
