@@ -10,6 +10,7 @@ _ENVIE_CONFIG_DIR="$HOME/.config/envie"
 _ENVIE_DB_PATH="$_ENVIE_CONFIG_DIR/locate.db"
 _ENVIE_INDEX_ROOT="$HOME"
 _ENVIE_FIND_LIMIT=0.1  # in seconds
+_ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 
 function fail() {
     echo "$@" >&2
@@ -222,17 +223,38 @@ function envie_initdb() {
 }
 
 function envie_updatedb() {
-    mkdir -p "$_ENVIE_CONFIG_DIR"
     updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT"
 }
 
 # Add to .bashrc
 function envie_install() {
+    mkdir -p "$_ENVIE_CONFIG_DIR"
+    
     local bashrc=~/.bashrc
-    [ ! -w "$bashrc" ] && echo "$bashrc not writeable." && return 1
-    [ -z "$_ENVIE_SOURCE" ] && echo "Envie source script not found." && return 2
+    [ ! -w "$bashrc" ] && fail "$bashrc not writeable." && return 1
+
+    [ -z "$_ENVIE_SOURCE" ] && fail "Envie source script not found." && return 2
+
+    if grep "$_ENVIE_UUID" "$bashrc" &>/dev/null; then
+        fail "Envie already installed in $bashrc."
+        return
+    fi
+
     cat <<<"
-# Load 'envie' (Python VirtualEnv helpers)
-[ -f \"$_ENVIE_SOURCE\" ] && source \"$_ENVIE_SOURCE\"" >> "$bashrc"
+# Load 'envie' (Python VirtualEnv helpers)  #$_ENVIE_UUID
+[ -f \"$_ENVIE_SOURCE\" ] && source \"$_ENVIE_SOURCE\"  #$_ENVIE_UUID" >> "$bashrc"
     echo "Envie added to $bashrc."
+}
+
+function envie_uninstall() {
+    local bashrc=~/.bashrc
+    [ ! -w "$bashrc" ] && fail "$bashrc not writeable." && return 1
+
+    if ! cp -a "$bashrc" "$_ENVIE_CONFIG_DIR/.bashrc.backup"; then
+        fail "Failed to backup $bashrc before modifying."
+        return 1
+    fi
+    if sed -e "/$_ENVIE_UUID/d" "$bashrc" -i; then
+        echo "Envie removed from $bashrc."
+    fi
 }
