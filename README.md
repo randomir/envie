@@ -103,7 +103,7 @@ By default, `envie` uses the `find` command to search for environments. That app
 To enable a combined `locate/find` approach to search, run:
 
 ```
-$ envie_install
+$ envie_initdb
 Indexing environments in '/home/stevie'...Done.
 ```
 

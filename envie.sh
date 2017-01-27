@@ -3,6 +3,7 @@
 # VirtualEnv shell helpers: easier create, remove, list/find and activate.
 # Written by Radomir Stevanovic, Feb 2015.
 
+_ENVIE_SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
 _ENVIE_DEFAULT_ENVNAME=env
 _ENVIE_DEFAULT_PYTHON=python
 _ENVIE_CONFIG_DIR="$HOME/.config/envie"
@@ -210,7 +211,7 @@ function _db_exists() {
     [ -e "$_ENVIE_DB_PATH" ]
 }
 
-function envie_install() {
+function envie_initdb() {
     if ! _command_exists locate || ! _command_exists updatedb; then
         fail "locate/updatedb not installed. Failing-back to find."
         return 1
@@ -223,4 +224,15 @@ function envie_install() {
 function envie_updatedb() {
     mkdir -p "$_ENVIE_CONFIG_DIR"
     updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT"
+}
+
+# Add to .bashrc
+function envie_install() {
+    local bashrc=~/.bashrc
+    [ ! -w "$bashrc" ] && echo "$bashrc not writeable." && return 1
+    [ -z "$_ENVIE_SOURCE" ] && echo "Envie source script not found." && return 2
+    cat <<<"
+# Load 'envie' (Python VirtualEnv helpers)
+[ -f \"$_ENVIE_SOURCE\" ] && source \"$_ENVIE_SOURCE\"" >> "$bashrc"
+    echo "Envie added to $bashrc."
 }
