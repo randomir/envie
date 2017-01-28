@@ -151,8 +151,9 @@ function _get_proc_descendants() {
 # Kills a complete process tree rooted at `pid`.
 # Usage: _kill_proc_tree pid
 function _kill_proc_tree() {
-    local pids="$(_get_proc_descendants "$1") $1"
-    kill -TERM $pids
+    local pids pids_list="$(_get_proc_descendants "$1") $1"
+    IFS=' ' pids=($pids_list)
+    command kill -TERM "${pids[@]}"
 }
 
 # Make fastest temporary file: like mktemp, but tries
