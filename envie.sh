@@ -212,22 +212,22 @@ function _db_exists() {
     [ -e "$_ENVIE_DB_PATH" ]
 }
 
-function envie_initdb() {
+function __envie_initdb() {
     if ! _command_exists locate || ! _command_exists updatedb; then
         fail "locate/updatedb not installed. Failing-back to find."
         return 1
     fi
     echo -n "Indexing environments in '$_ENVIE_INDEX_ROOT'..."
-    envie_updatedb
+    __envie_updatedb
     echo "Done."
 }
 
-function envie_updatedb() {
+function __envie_updatedb() {
     updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT"
 }
 
 # Add to .bashrc
-function envie_install() {
+function __envie_register() {
     mkdir -p "$_ENVIE_CONFIG_DIR"
     
     local bashrc=~/.bashrc
@@ -236,17 +236,19 @@ function envie_install() {
     [ -z "$_ENVIE_SOURCE" ] && fail "Envie source script not found." && return 2
 
     if grep "$_ENVIE_UUID" "$bashrc" &>/dev/null; then
-        fail "Envie already installed in $bashrc."
+        fail "Envie already registered in $bashrc."
         return
     fi
 
-    cat <<<"
-# Load 'envie' (Python VirtualEnv helpers)  #$_ENVIE_UUID
-[ -f \"$_ENVIE_SOURCE\" ] && source \"$_ENVIE_SOURCE\"  #$_ENVIE_UUID" >> "$bashrc"
+    cat >>"$bashrc" <<-END
+		# Load 'envie' (Python VirtualEnv helpers)  #$_ENVIE_UUID
+		[ -f "$_ENVIE_SOURCE" ] && source "$_ENVIE_SOURCE"  #$_ENVIE_UUID
+	END
     echo "Envie added to $bashrc."
 }
 
-function envie_uninstall() {
+# Remove from .bashrc
+function __envie_unregister() {
     local bashrc=~/.bashrc
     [ ! -w "$bashrc" ] && fail "$bashrc not writeable." && return 1
 
@@ -258,3 +260,42 @@ function envie_uninstall() {
         echo "Envie removed from $bashrc."
     fi
 }
+
+
+# main -- handle direct call: ``envie <cmd> <args>``
+function __envie_main() {
+    local cmd;
+
+    if [ $# -gt 0 ]; then
+        cmd="$1"
+        shift
+    fi
+
+    case "$cmd" in
+        reg|register)
+            __envie_register;;
+        unreg|unregister)
+            __envie_unregister;;
+        init|initdb)
+            __envie_initdb;;
+        update|updatedb)
+            __envie_updatedb;;
+        *)
+            __envie_usage;;
+    esac
+}
+
+function __envie_usage() {
+	cat <<-END
+		Usage:
+		    envie {register | unregister | init | update}
+
+		Commands:
+		    register      add envie to .bashrc
+		    unregister    remove envie from .bashrc
+		    init          index virtualenvs below $HOME
+		    update        update index
+	END
+}
+
+[ $# -gt 0 ] && __envie_main "$@"
