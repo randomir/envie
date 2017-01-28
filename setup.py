@@ -7,9 +7,9 @@ import subprocess
 class install(_install):
     def run(self):
         _install.run(self)
-        err = subprocess.call("source `which envie.sh` && envie_install", shell=True)
+        err = subprocess.call("source `which envie` && envie_install", shell=True)
         if not err:
-            print("envie.sh added to ~/.bashrc")
+            print("envie added to ~/.bashrc")
             print("Open new shell, or run: 'source ~/.bashrc'.")
         else:
             print("Error adding 'envie' to ~/.bashrc")
@@ -33,6 +33,6 @@ setup(
         'Topic :: System :: Shells'
     ],
     keywords='virtualenv bash helper closest virtual environment create mkenv destroy rmenv change cdenv',
-    scripts=['envie.sh'],
+    scripts=['envie'],
     cmdclass={'install': install}
 )
