@@ -8,7 +8,7 @@ setup(
     name='envie',
     version='0.3.3',
     description="Bash helpers for navigating and managing Python VirtualEnvs.",
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Radomir Stevanovic',
     author_email='radomir.stevanovic@gmail.com',
     url='https://github.com/randomir/envie',
