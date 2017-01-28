@@ -11,8 +11,9 @@ destroying, listing and switching environments.
 - `cdenv` - Interactively activate the closest environment (looking down, then up, with `lsupenv`).
 - `lsenv [<start>|"." [<avoid>]]` - List all environments below `<start>` directory, skipping `<avoid>` subdir.
 - `lsupenv` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
-- `envie_install` - Run (once) to enable (faster) searches with `locate`.
-- `envie_updatedb` - Run to re-index directories searched with `updatedb`.
+- `envie init` - Run (once) to enable (faster) searches with `locate`.
+- `envie update` - Run to re-index directories searched with `updatedb`.
+- `envie register | unregister` - Add/remove source statement to/from `.bashrc`.
 
 ## Examples
 
@@ -94,7 +95,7 @@ Likewise, to search up the tree, level by level, use `lsupenv`.
 
 ```
 ~$ sudo pip install envie
-~$ echo source "$(which envie.sh)" >> ~/.bashrc
+~$ envie register
 ```
 
 ### Enable the faster search
@@ -103,7 +104,7 @@ By default, `envie` uses the `find` command to search for environments. That app
 To enable a combined `locate/find` approach to search, run:
 
 ```
-$ envie_initdb
+$ envie init
 Indexing environments in '/home/stevie'...Done.
 ```
 
