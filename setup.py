@@ -4,16 +4,6 @@ from setuptools import setup
 from setuptools.command.install import install as _install
 import subprocess
 
-class install(_install):
-    def run(self):
-        _install.run(self)
-        err = subprocess.call("source `which envie` && envie_install", shell=True)
-        if not err:
-            print("envie added to ~/.bashrc")
-            print("Open new shell, or run: 'source ~/.bashrc'.")
-        else:
-            print("Error adding 'envie' to ~/.bashrc")
-
 setup(
     name='envie',
     version='0.3.3',
@@ -33,6 +23,5 @@ setup(
         'Topic :: System :: Shells'
     ],
     keywords='virtualenv bash helper closest virtual environment create mkenv destroy rmenv change cdenv',
-    scripts=['envie'],
-    cmdclass={'install': install}
+    scripts=['envie']
 )
