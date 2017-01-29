@@ -280,7 +280,7 @@ function __envie_main() {
             __envie_initdb;;
         update|updatedb)
             __envie_updatedb;;
-        *)
+        help|*)
             __envie_usage;;
     esac
 }
@@ -295,7 +295,19 @@ function __envie_usage() {
 		    unregister    remove envie from .bashrc
 		    init          index virtualenvs below $HOME
 		    update        update index
+		    help          this help
 	END
 }
+
+
+# bash/readline completions
+function __envie_complete() {
+    local word="${COMP_WORDS[COMP_CWORD]}"
+    local cmds="register unregister init update help"
+    COMPREPLY=( $(compgen -W "$cmds" -- $word) )
+}
+
+complete -F __envie_complete envie
+
 
 [ $# -gt 0 ] && __envie_main "$@"
