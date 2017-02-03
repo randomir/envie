@@ -9,10 +9,10 @@ _ENVIE_DEFAULT_PYTHON=python
 _ENVIE_CONFIG_DIR="$HOME/.config/envie"
 _ENVIE_DB_PATH="$_ENVIE_CONFIG_DIR/locate.db"
 _ENVIE_INDEX_ROOT="$HOME"
-_ENVIE_FIND_LIMIT=0.1  # in seconds
+_ENVIE_FIND_LIMIT=0.4  # in seconds
 _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 
-function fail() {
+function _fail() {
     echo "$@" >&2
 }
 
@@ -21,19 +21,19 @@ function fail() {
 function mkenv() {
     local envpath="${1:-$_ENVIE_DEFAULT_ENVNAME}" output
     if [ -d "$envpath" ]; then
-        fail "Directory '$envpath' already exists."
+        _fail "Directory '$envpath' already exists."
         return 1
     fi
     echo "Creating python environment in '$envpath'."
 
     local pyexe="${2:-$_ENVIE_DEFAULT_PYTHON}" pypath
     if ! pypath=$(which "$pyexe"); then
-        fail "Python executable '$pyexe' not found, failing-back to: '$_ENVIE_DEFAULT_PYTHON'."
+        _fail "Python executable '$pyexe' not found, failing-back to: '$_ENVIE_DEFAULT_PYTHON'."
         pypath=$(which "$_ENVIE_DEFAULT_PYTHON")
     fi
     local pyver=$("$pypath" --version 2>&1)
     if [[ ! $pyver =~ Python ]]; then
-        fail "Unrecognized Python version/executable: '$pypath'."
+        _fail "Unrecognized Python version/executable: '$pypath'."
         return 1
     fi
     echo "Using $pyver ($pypath)."
@@ -42,9 +42,10 @@ function mkenv() {
     cd "$envpath"
     output=$(virtualenv --no-site-packages -p "$pypath" -v . 2>&1)
     if [ $? -ne 0 ]; then
-        echo -en "$output"
+        _fail "$output"
+    else
+        _activate .
     fi
-    . bin/activate
     cd - >/dev/null
 }
 
@@ -53,14 +54,14 @@ function mkenv() {
 function rmenv() {
     local envpath="$VIRTUAL_ENV"
     if [ ! "$envpath" ]; then
-        fail "Active environment not detected."
+        _fail "Active virtual environment not detected."
         return 1
     fi
     deactivate
     if _is_virtualenv "$envpath"; then
         rm -rf "$envpath"
     else
-        fail "Invalid VirtualEnv path in VIRTUAL_ENV: '$envpath'."
+        _fail "Invalid VirtualEnv path in VIRTUAL_ENV: '$envpath'."
         return 1
     fi
 }
@@ -92,7 +93,8 @@ function _lsenv_find() {
 function _lsenv_locate() {
     local dir="${1:-.}" avoid="${2:-}"
     local absdir=$(readlink -e "$dir")
-    locate -d "$_ENVIE_DB_PATH" "$absdir"'*/bin/activate_this.py' \
+    [ "$absdir" = / ] && dir=/
+    locate -d "$_ENVIE_DB_PATH" --existing "$absdir"'*/bin/activate_this.py' \
         | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
 }
 
@@ -112,6 +114,8 @@ function _lsenv_locate_vs_find_race() {
         cat "$p_ret_find"
     elif [ -e "$p_ret_locate" ]; then
         cat "$p_ret_locate"
+        _fail "NOTE: results are based on a db from $(_envie_db_age) ago, and may not include all current virtualenvs."
+        _fail "Use 'lsenv -f' to force manual search, or run 'envie update' to update database."
     fi
     rm -f "$p_pid_find" "$p_pid_locate" "$p_pid_timer" "$p_ret_find" "$p_ret_locate"
     set -m
@@ -162,7 +166,15 @@ function mkftemp() {
 }
 
 function lsenv() {
-    _db_exists && _lsenv_locate_vs_find_race "$@" || _lsenv_find "$@"
+    if [[ $1 =~ -f ]]; then
+        shift
+        _lsenv_find "$@"
+    elif [[ $1 =~ -l ]]; then
+        shift
+        _lsenv_locate "$@"
+    else
+        _envie_db_exists && _lsenv_locate_vs_find_race "$@" || _lsenv_find "$@"
+    fi
 }
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
@@ -208,13 +220,26 @@ function _command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-function _db_exists() {
+function _envie_db_exists() {
     [ -e "$_ENVIE_DB_PATH" ]
+}
+
+function _envie_db_age() {
+    local age=$(( $(date +%s) - $(date -r "$_ENVIE_DB_PATH" +%s) ))
+    if [[ "$age" -lt 60 ]]; then
+        echo "$age second(s)"
+    elif [[ "$age" -lt 3600 ]]; then
+        printf "~%.2g minute(s)\n" $(bc -l <<<"$age / 60")
+    elif [[ "$age" -lt 86400 ]]; then
+        printf "~%.2g hour(s)\n" $(bc -l <<<"$age / 3600")
+    else
+        printf "~%.2g day(s)\n" $(bc -l <<<"$age / 86400")
+    fi
 }
 
 function __envie_initdb() {
     if ! _command_exists locate || ! _command_exists updatedb; then
-        fail "locate/updatedb not installed. Failing-back to find."
+        _fail "locate/updatedb not installed. Failing-back to find."
         return 1
     fi
     echo -n "Indexing environments in '$_ENVIE_INDEX_ROOT'..."
@@ -231,12 +256,12 @@ function __envie_register() {
     mkdir -p "$_ENVIE_CONFIG_DIR"
     
     local bashrc=~/.bashrc
-    [ ! -w "$bashrc" ] && fail "$bashrc not writeable." && return 1
+    [ ! -w "$bashrc" ] && _fail "$bashrc not writeable." && return 1
 
-    [ -z "$_ENVIE_SOURCE" ] && fail "Envie source script not found." && return 2
+    [ -z "$_ENVIE_SOURCE" ] && _fail "Envie source script not found." && return 2
 
     if grep "$_ENVIE_UUID" "$bashrc" &>/dev/null; then
-        fail "Envie already registered in $bashrc."
+        _fail "Envie already registered in $bashrc."
         return
     fi
 
@@ -250,10 +275,10 @@ function __envie_register() {
 # Remove from .bashrc
 function __envie_unregister() {
     local bashrc=~/.bashrc
-    [ ! -w "$bashrc" ] && fail "$bashrc not writeable." && return 1
+    [ ! -w "$bashrc" ] && _fail "$bashrc not writeable." && return 1
 
     if ! cp -a "$bashrc" "$_ENVIE_CONFIG_DIR/.bashrc.backup"; then
-        fail "Failed to backup $bashrc before modifying."
+        _fail "Failed to backup $bashrc before modifying."
         return 1
     fi
     if sed -e "/$_ENVIE_UUID/d" "$bashrc" -i; then
@@ -280,7 +305,7 @@ function __envie_main() {
             __envie_initdb;;
         update|updatedb)
             __envie_updatedb;;
-        help|*)
+        help|--help|*)
             __envie_usage;;
     esac
 }
