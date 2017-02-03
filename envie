@@ -12,6 +12,7 @@ _ENVIE_INDEX_ROOT="$HOME"
 _ENVIE_FIND_LIMIT=0.4  # in seconds
 _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 
+
 function _fail() {
     echo "$@" >&2
 }
@@ -166,10 +167,10 @@ function mkftemp() {
 }
 
 function lsenv() {
-    if [[ $1 =~ -f ]]; then
+    if [[ "$1" == "-f" ]]; then
         shift
         _lsenv_find "$@"
-    elif [[ $1 =~ -l ]]; then
+    elif [[ "$1" == "-l" ]]; then
         shift
         _lsenv_locate "$@"
     else
@@ -179,9 +180,19 @@ function lsenv() {
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
 function lsupenv() {
-    local list len=0 dir=. prevdir
+    local list len=0 dir=. prevdir quiet=0
+
+    if [[ "$1" == "-q" ]]; then
+        quiet=1
+        shift
+    fi
+
     while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
-        list=$(lsenv "$dir" "$prevdir")
+        if ((quiet)); then
+            list=$(lsenv "$dir" "$prevdir" 2>/dev/null)
+        else
+            list=$(lsenv "$dir" "$prevdir")
+        fi
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
         dir="$dir/.."
@@ -190,15 +201,22 @@ function lsupenv() {
 }
 
 function cdenv() {
-    local OLDIFS envlist env len=0
+    local OLDIFS envlist env len=0 quiet=0
 
-    envlist=$(lsupenv)
+    if [[ "$1" == "-q" ]]; then
+        quiet=1
+        shift
+    fi
+
+    envlist=$(lsupenv -q)
     [ "$envlist" ] && len=$(wc -l <<<"$envlist")
     if [ "$len" -eq 1 ]; then
         _activate "$envlist"
     elif [ "$len" -eq 0 ]; then
-        echo "No environments found."
+        (( ! quiet )) && _fail "No environments found."
+        return 1
     else
+        (( quiet )) && return 1
         OLDIFS="$IFS"
         IFS=$'\n'
         select env in $envlist; do
@@ -210,8 +228,6 @@ function cdenv() {
         IFS="$OLDIFS"
     fi
 }
-
-alias wkenv=cdenv
 
 
 # faster envie, using locate
@@ -226,11 +242,11 @@ function _envie_db_exists() {
 
 function _envie_db_age() {
     local age=$(( $(date +%s) - $(date -r "$_ENVIE_DB_PATH" +%s) ))
-    if [[ "$age" -lt 60 ]]; then
+    if ((age < 60)); then
         echo "$age second(s)"
-    elif [[ "$age" -lt 3600 ]]; then
+    elif ((age < 3600)); then
         printf "~%.2g minute(s)\n" $(bc -l <<<"$age / 60")
-    elif [[ "$age" -lt 86400 ]]; then
+    elif ((age < 86400)); then
         printf "~%.2g hour(s)\n" $(bc -l <<<"$age / 3600")
     else
         printf "~%.2g day(s)\n" $(bc -l <<<"$age / 86400")
@@ -287,13 +303,18 @@ function __envie_unregister() {
 }
 
 
-# main -- handle direct call: ``envie <cmd> <args>``
+# main -- handle direct call: ``envie <cmd> <args> | <script>``
+# AND act as an cdenv alias
 function __envie_main() {
-    local cmd;
+    local cmd script;
 
     if [ $# -gt 0 ]; then
-        cmd="$1"
-        shift
+        if [ -f "$1" ]; then
+            cmd=run
+        else
+            cmd="$1"
+            shift
+        fi
     fi
 
     case "$cmd" in
@@ -305,6 +326,17 @@ function __envie_main() {
             __envie_initdb;;
         update|updatedb)
             __envie_updatedb;;
+        run|execute)
+            # run Python SCRIPT in current shell
+            script="$1"
+            shift
+            if [ ! -f "$script" ]; then
+                __envie_usage
+                return 1
+            fi
+            cdenv -q
+            exec python "$script" "$@"
+            ;;
         help|--help|*)
             __envie_usage;;
     esac
@@ -313,13 +345,14 @@ function __envie_main() {
 function __envie_usage() {
 	cat <<-END
 		Usage:
-		    envie {register | unregister | init | update}
+		    envie {register | unregister | init | update | run [SCRIPT] | SCRIPT}
 
 		Commands:
 		    register      add envie to .bashrc
 		    unregister    remove envie from .bashrc
 		    init          index virtualenvs below $HOME
 		    update        update index
+		    run           run SCRIPT in the closest environment
 		    help          this help
 	END
 }
@@ -328,7 +361,7 @@ function __envie_usage() {
 # bash/readline completions
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
-    local cmds="register unregister init update help"
+    local cmds="run register unregister init update help"
     COMPREPLY=( $(compgen -W "$cmds" -- $word) )
 }
 
