@@ -12,8 +12,9 @@ Summary
 - ``mkenv [<env>|"env"] [<pyexec>|"python"]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
 - ``rmenv`` - Destroy the active environment.
 - ``cdenv`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``).
-- ``lsenv [<start>|"." [<avoid>]]`` - List all environments below ``<start>`` directory, skipping ``<avoid>`` subdir.
+- ``lsenv [-f|-l] [<start>|"." [<avoid>]]`` - List all environments below ``<start>`` directory, skipping ``<avoid>`` subdir.
 - ``lsupenv`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
+- ``envie <script>``, ``envie run <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie init`` - Run (once) to enable (faster) searches with ``locate``.
 - ``envie update`` - Run to re-index directories searched with ``updatedb``.
 - ``envie register | unregister`` - Add/remove source statement to/from your ``.bashrc``.
@@ -96,7 +97,8 @@ Search/list environments
 
 To search down the tree for valid Python VirtualEnvs, use ``lsenv``.
 Likewise, to search up the tree, level by level, use ``lsupenv``.
-``cdenv`` uses ``lsupenv`` when searching to environment to activate.
+``cdenv`` uses ``lsupenv`` when searching for environment to activate.
+
 
 Install
 -------
@@ -123,5 +125,11 @@ search, run::
     $ envie init
     Indexing environments in '/home/stevie'...Done.
 
-In the combined approach, if `find` doesn't finish within 100ms, search via
+In the combined approach, if `find` doesn't finish within 400ms, search via
 ``find`` is aborted and ``locate`` is allowed to finish (faster).
+
+To re-index environments, run::
+
+    $ envie update
+
+To force ``find`` or ``locate``, use ``-f`` and ``-l`` flags of ``lsenv``.
