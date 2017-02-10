@@ -11,7 +11,7 @@ Summary
 
 - ``mkenv [<env>|"env"] [<pyexec>|"python"]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
 - ``rmenv`` - Destroy the active environment.
-- ``cdenv`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``).
+- ``chenv`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``).
 - ``lsenv [-f|-l] [<start>|"." [<avoid>]]`` - List all environments below ``<start>`` directory, skipping ``<avoid>`` subdir.
 - ``lsupenv`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
 - ``envie <script>``, ``envie run <script>`` - Run python ``script`` in the closest virtual environment.
@@ -49,7 +49,7 @@ When done with this environment, just type ``rmenv`` to destroy the active env.
 Change/activate environment
 ...........................
 
-Use ``cdenv`` to activate the closest environment, tree-wise. We first look 
+Use ``chenv`` to activate the closest environment, tree-wise. We first look 
 down the tree, then up the tree. If a single Python environment is found,
 it's automatically activated. In case the multiple environments are found,
 a choice is presented to user.
@@ -58,7 +58,7 @@ a choice is presented to user.
 
     stevie@caracal:~/demo$ ls -F
     env/ project/ file1 file2 ...
-    stevie@caracal:~/demo$ cdenv
+    stevie@caracal:~/demo$ chenv
     (env)stevie@caracal:~/demo$
 
 Assume the following tree exists::
@@ -75,16 +75,16 @@ Assume the following tree exists::
 
 Now, consider you work in ``~/demo/project1/src/deep/path/to/module``, but keep the environment
 in the ``env`` parallel to ``src``. Instead of manually switching to ``env`` and activating it with 
-something like ``source ../../../../../env/bin/activate``, just type ``cdenv`` (``cde<TAB>`` should
+something like ``source ../../../../../env/bin/activate``, just type ``chenv`` (``cde<TAB>`` should
 actually do it, if you use tab completion)::
 
-    stevie@caracal:~/demo/project1/src/deep/path/to/module$ cdenv
+    stevie@caracal:~/demo/project1/src/deep/path/to/module$ chenv
     (env)stevie@caracal:~/demo/project1/src/deep/path/to/module$ which python
     /home/stevie/demo/project1/env/bin/python
 
 On the other hand, if there are multiple environments to choose from, you'll get a prompt::
 
-    stevie@caracal:~/demo$ cdenv
+    stevie@caracal:~/demo$ chenv
     1) ./project1/env
     2) ./project2/env
     #? 2
@@ -97,7 +97,7 @@ Search/list environments
 
 To search down the tree for valid Python VirtualEnvs, use ``lsenv``.
 Likewise, to search up the tree, level by level, use ``lsupenv``.
-``cdenv`` uses ``lsupenv`` when searching for environment to activate.
+``chenv`` uses ``lsupenv`` when searching for environment to activate.
 
 
 Install
