@@ -131,7 +131,7 @@ function __locate_and_return() {
 }
 function __find_fast_bailout() {
     sleep "$_ENVIE_FIND_LIMIT"
-    __kill "$(<"$p_pid_find")"
+    __kill $(<"$p_pid_find")
     rm -f "$p_ret_find"
 }
 function __kill() {
@@ -155,10 +155,10 @@ function _get_proc_descendants() {
 # Kills a complete process tree rooted at `pid`.
 # Usage: _kill_proc_tree pid
 function _kill_proc_tree() {
-    local pids pids_list="$(_get_proc_descendants "$1") $1"
-    IFS=' ' pids=($pids_list)
-    command kill -TERM "${pids[@]}"
+    local pids=("$1" $(_get_proc_descendants "$1"))
+    kill -TERM "${pids[@]}"
 }
+
 
 # Make fastest temporary file: like mktemp, but tries
 # to create file in memory (/dev/shm) first.
