@@ -14,6 +14,7 @@ Summary
 - ``chenv`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``).
 - ``lsenv [-f|-l] [<start>|"." [<avoid>]]`` - List all environments below ``<start>`` directory, skipping ``<avoid>`` subdir.
 - ``lsupenv`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
+- ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
 - ``envie <script>``, ``envie run <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie init`` - Run (once) to enable (faster) searches with ``locate``.
 - ``envie update`` - Run to re-index directories searched with ``updatedb``.

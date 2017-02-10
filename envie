@@ -116,7 +116,7 @@ function _lsenv_locate_vs_find_race() {
     elif [ -e "$p_ret_locate" ]; then
         cat "$p_ret_locate"
         _fail "NOTE: results are based on a db from $(_envie_db_age) ago, and may not include all current virtualenvs."
-        _fail "Use 'lsenv -f' to force manual search, or run 'envie update' to update database."
+        _fail "Use 'lsenv -f' to force manual search, or run 'envie update' to update the database."
     fi
     rm -f "$p_pid_find" "$p_pid_locate" "$p_pid_timer" "$p_ret_find" "$p_ret_locate"
     set -m
@@ -224,6 +224,16 @@ function chenv() {
                 break
             fi
         done
+    fi
+}
+
+# cd to active env root, or fail if no env active
+function cdenv() {
+    if [ "$VIRTUAL_ENV" ]; then
+        cd "$VIRTUAL_ENV"
+    else
+        _fail "Virtual environment not active. Use 'chenv' to activate."
+        return 1
     fi
 }
 
