@@ -334,12 +334,29 @@ function __envie_main() {
             __envie_initdb;;
         update|updatedb)
             __envie_updatedb;;
-        run|execute)
-            # run Python SCRIPT in current shell
+        exec|run)
+            # execute CMD
             script="$1"
             shift
+            if [[ $(type -t "$script") =~ alias|function|builtin|file ]]; then
+                chenv -q
+                exec "$script" "$@"
+            else
+                _errmsg "'$script' is not a valid command. See 'envie --help'."
+                return 1
+            fi
+            ;;
+        python)
+            # run Python SCRIPT in current shell,
+            # or just run Python in interactive mode if SCRIPT missing
+            script="$1"
+            shift
+            if [ ! "$script" ]; then
+                chenv -q
+                exec python
+            fi
             if [ ! -f "$script" ]; then
-                __envie_usage
+                _errmsg "'$script' is not a file. See 'envie --help'."
                 return 1
             fi
             chenv -q
@@ -351,17 +368,24 @@ function __envie_main() {
 }
 
 function __envie_usage() {
-	cat <<-END
+    cat <<-END
 		Usage:
-		    envie {register | unregister | init | update | run [SCRIPT] | SCRIPT}
-
+		    envie {python SCRIPT | exec CMD | register | unregister | init | update}
+		    envie CMD
+		
 		Commands:
+		    python SCRIPT run Python SCRIPT in the closest environment
+		    exec CMD      execute CMD in the closest environment. CMD can be a
+		                  script file, command, builtin, alias, or a function.
+		
 		    register      add envie to .bashrc
 		    unregister    remove envie from .bashrc
 		    init          index virtualenvs below $HOME
 		    update        update index
-		    run           run SCRIPT in the closest environment
 		    help          this help
+		
+		Second form is a shorthand for executing commands (scripts, functions, etc)
+		in the closest virtual environment, without the need for manual env activation.
 	END
 }
 
@@ -369,8 +393,20 @@ function __envie_usage() {
 # bash/readline completions
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
-    local cmds="run register unregister init update help"
-    COMPREPLY=( $(compgen -W "$cmds" -- $word) )
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
+    local cmds="python exec register unregister init update help"
+
+    case "$prev" in
+        exec)
+            COMPREPLY=($(compgen -A alias -A builtin -A command -A file -A function -- $word))
+            ;;
+        python)
+            COMPREPLY=($(compgen -A file -- $word))
+            ;;
+        *)
+            COMPREPLY=($(compgen -W "$cmds" -- $word))
+            ;;
+    esac
 }
 
 complete -F __envie_complete envie
