@@ -1,9 +1,26 @@
 Navigate and manage Python VirtualEnvs
 ======================================
 
-``envie`` is an ultra lightweight set of Bash functions aiming to increase
-your productivity when dealing with everyday VirtualEnv tasks, like: creating,
-destroying, listing and switching environments.
+At its core, ``envie`` is a set of Bash functions aiming to increase your
+productivity when dealing with mundane VirtualEnv tasks, like: creating,
+destroying, listing, switching and activating environments.
+
+But ``envie`` really shines when it comes to auto-discovery and auto-activation
+of VirtualEnvs relevant to your project (or executable). Just say::
+
+    ~/work/project-x$ envie manage.py migrate
+
+    ~/work/project-y$ envie python tests.py
+
+or use it in a hash bang::
+
+    #!/usr/bin/env envie
+    import os
+    print(os.getenv("VIRTUAL_ENV"))
+
+and in each of these cases the Python script will be executed in the closest
+virtual environment (for the definition of the closest environment see below,
+section `Change/activate environment`).
 
 
 Summary
@@ -15,7 +32,8 @@ Summary
 - ``lsenv [-f|-l] [<start>|"." [<avoid>]]`` - List all environments below ``<start>`` directory, skipping ``<avoid>`` subdir.
 - ``lsupenv`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
-- ``envie <script>``, ``envie run <script>`` - Run python ``script`` in the closest virtual environment.
+- ``envie <script>``, ``envie python <script>`` - Run python ``script`` in the closest virtual environment.
+- ``envie exec <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
 - ``envie init`` - Run (once) to enable (faster) searches with ``locate``.
 - ``envie update`` - Run to re-index directories searched with ``updatedb``.
 - ``envie register | unregister`` - Add/remove source statement to/from your ``.bashrc``.
