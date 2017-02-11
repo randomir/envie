@@ -12,6 +12,8 @@ of VirtualEnvs relevant to your project (or executable). Just say::
 
     ~/work/project-y$ envie python tests.py
 
+    ~$ envie python playground/plucky/tests/tests.py
+
 or use it in a hash bang::
 
     #!/usr/bin/env envie

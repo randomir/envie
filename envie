@@ -339,6 +339,11 @@ function __envie_main() {
             script="$1"
             shift
             if [[ $(type -t "$script") =~ alias|function|builtin|file ]]; then
+                # move closer to script for env detection
+                if [ -f "$script" ]; then
+                    script=$(readlink -f "$script")
+                    cd "$(dirname "$script")"
+                fi
                 chenv -q
                 exec "$script" "$@"
             else
@@ -359,6 +364,9 @@ function __envie_main() {
                 _errmsg "'$script' is not a file. See 'envie --help'."
                 return 1
             fi
+            # move closer to script for env detection
+            script=$(readlink -f "$script")
+            cd "$(dirname "$script")"
             chenv -q
             exec python "$script" "$@"
             ;;
