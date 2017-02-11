@@ -318,7 +318,7 @@ function __envie_main() {
 
     if [ $# -gt 0 ]; then
         if [ -f "$1" ]; then
-            cmd=run
+            cmd=python
         else
             cmd="$1"
             shift
@@ -371,7 +371,7 @@ function __envie_usage() {
     cat <<-END
 		Usage:
 		    envie {python SCRIPT | exec CMD | register | unregister | init | update}
-		    envie CMD
+		    envie SCRIPT
 		
 		Commands:
 		    python SCRIPT run Python SCRIPT in the closest environment
@@ -384,8 +384,16 @@ function __envie_usage() {
 		    update        update index
 		    help          this help
 		
-		Second form is a shorthand for executing commands (scripts, functions, etc)
-		in the closest virtual environment, without the need for manual env activation.
+		The second form is a shorthand for executing python scripts in the closest 
+		virtual environment, without the need for manual env activation. It's convenient
+		for hash bangs:
+		    #!/usr/bin/env envie
+		    # Python script here will be executed in the closest virtual env
+		
+		Examples:
+		    envie python              # run interactive Python shell in the closest env
+		    envie manage.py shell     # run Django shell in the project env (auto activate)
+		    envie exec /path/to/executable    # execute an executable in the closest env
 	END
 }
 
@@ -404,7 +412,7 @@ function __envie_complete() {
             COMPREPLY=($(compgen -A file -- $word))
             ;;
         *)
-            COMPREPLY=($(compgen -W "$cmds" -- $word))
+            COMPREPLY=($(compgen -W "$cmds" -A file -- $word))
             ;;
     esac
 }
