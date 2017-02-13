@@ -1,21 +1,25 @@
 #!/bin/bash
 #
 # VirtualEnv shell helpers: easier create, remove, list/find and activate.
-# Written by Radomir Stevanovic, Feb 2015.
+# Written by Radomir Stevanovic, Feb 2015 -- Feb 2017.
+# Source/docs: ``https://github.com/randomir/envie``.
+# Install via pip/PyPI: ``pip install envie``.
 
 
-# defaults
+# the defaults
 _ENVIE_SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
 _ENVIE_DEFAULT_ENVNAME=env
 _ENVIE_DEFAULT_PYTHON=python
 _ENVIE_CONFIG_DIR="$HOME/.config/envie"
+_ENVIE_CONFIG_FILE="$_ENVIE_CONFIG_DIR/envierc"
+_ENVIE_USE_DB="0"
 _ENVIE_DB_PATH="$_ENVIE_CONFIG_DIR/locate.db"
 _ENVIE_INDEX_ROOT="$HOME"
+_ENVIE_AUTOINDEX="0"
 _ENVIE_FIND_LIMIT=0.4  # in seconds
 _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 
 # overwrite with values from config file
-_ENVIE_CONFIG_FILE="$_ENVIE_CONFIG_DIR/envierc"
 [ -r "$_ENVIE_CONFIG_FILE" ] && source "$_ENVIE_CONFIG_FILE"
 
 function _envie_dump_config() {
@@ -23,8 +27,10 @@ function _envie_dump_config() {
 		_ENVIE_DEFAULT_ENVNAME="$_ENVIE_DEFAULT_ENVNAME"
 		_ENVIE_DEFAULT_PYTHON="$_ENVIE_DEFAULT_PYTHON"
 		_ENVIE_CONFIG_DIR="$_ENVIE_CONFIG_DIR"
+		_ENVIE_USE_DB="$_ENVIE_USE_DB"
 		_ENVIE_DB_PATH="$_ENVIE_DB_PATH"
 		_ENVIE_INDEX_ROOT="$_ENVIE_INDEX_ROOT"
+		_ENVIE_AUTOINDEX="$_ENVIE_AUTOINDEX"
 		_ENVIE_FIND_LIMIT="$_ENVIE_FIND_LIMIT"
 		_ENVIE_UUID="$_ENVIE_UUID"
 	END
@@ -278,11 +284,15 @@ function _envie_db_age() {
     fi
 }
 
-function __envie_initdb() {
+function _envie_locate_exists() {
     if ! _command_exists locate || ! _command_exists updatedb; then
         _errmsg "locate/updatedb not installed. Failing-back to find."
         return 1
     fi
+}
+
+function __envie_initdb() {
+    _envie_locate_exists || return 1
     echo -n "Indexing environments in '$_ENVIE_INDEX_ROOT'..."
     __envie_updatedb
     echo "Done."
@@ -327,6 +337,51 @@ function __envie_unregister() {
     fi
 }
 
+function __envie_configure() {
+    local ans
+
+    read -p "Use locate/updatedb for faster search [Y/n]? " ans
+    case "$ans" in
+        N|n) _ENVIE_USE_DB=0;;
+        *)
+            if _envie_locate_exists; then
+                _ENVIE_USE_DB=1
+            else
+                _ENVIE_USE_DB=0
+            fi;;
+    esac
+
+    if (( _ENVIE_USE_DB )); then
+        read -p "To index all relevant environments, please enter the common ancestor dir [$_ENVIE_INDEX_ROOT]: " ans
+        if [ -d "$ans" ]; then
+            _ENVIE_INDEX_ROOT=$(readlink -f "$ans")
+        else
+            echo "Invalid dir $ans. Skipping."
+        fi
+
+        read -p "Update index periodically [Y/n]? " ans
+        case "$ans" in
+            N|n) _ENVIE_AUTOINDEX=0;;
+            *) _ENVIE_AUTOINDEX=1;;
+        esac
+    else
+        _ENVIE_AUTOINDEX=0
+    fi
+
+    # save config
+    mkdir -p "$_ENVIE_CONFIG_DIR"
+    _envie_dump_config >"$_ENVIE_CONFIG_FILE" && echo "Config file written."
+
+    # add to cron
+    _envie_update_crontab
+
+    # db (re-)index
+    (( _ENVIE_USE_DB )) && __envie_initdb
+}
+
+function _envie_update_crontab() {
+    :
+}
 
 # main -- handle direct call: ``envie <cmd> <args> | <script>``
 # AND act as an chenv alias
@@ -351,6 +406,8 @@ function __envie_main() {
             __envie_initdb;;
         update|updatedb)
             __envie_updatedb;;
+        config|configure)
+            __envie_configure;;
         exec|run)
             # execute CMD
             script="$1"
@@ -395,7 +452,7 @@ function __envie_main() {
 function __envie_usage() {
     cat <<-END
 		Usage:
-		    envie {python SCRIPT | exec CMD | register | unregister | init | update}
+		    envie {python SCRIPT | exec CMD | config | register | unregister | init | update}
 		    envie SCRIPT
 		
 		Commands:
@@ -403,6 +460,7 @@ function __envie_usage() {
 		    exec CMD      execute CMD in the closest environment. CMD can be a
 		                  script file, command, builtin, alias, or a function.
 		
+		    config        interactively configure envie
 		    register      add envie to .bashrc
 		    unregister    remove envie from .bashrc
 		    init          index virtualenvs below $HOME
@@ -427,7 +485,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python exec register unregister init update help"
+    local cmds="python exec config register unregister init update help"
 
     case "$prev" in
         exec)
