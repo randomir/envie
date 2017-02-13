@@ -353,10 +353,12 @@ function __envie_configure() {
 
     if (( _ENVIE_USE_DB )); then
         read -p "To index all relevant environments, please enter the common ancestor dir [$_ENVIE_INDEX_ROOT]: " ans
-        if [ -d "$ans" ]; then
-            _ENVIE_INDEX_ROOT=$(readlink -f "$ans")
-        else
-            echo "Invalid dir $ans. Skipping."
+        if [ "$ans" ]; then
+            if [ -d "$ans" ]; then
+                _ENVIE_INDEX_ROOT=$(readlink -f "$ans")
+            else
+                echo "Invalid dir $ans. Skipping."
+            fi
         fi
 
         read -p "Update index periodically [Y/n]? " ans
@@ -373,14 +375,23 @@ function __envie_configure() {
     _envie_dump_config >"$_ENVIE_CONFIG_FILE" && echo "Config file written."
 
     # add to cron
-    _envie_update_crontab
+    _envie_update_crontab && echo "Crontab updated."
 
     # db (re-)index
     (( _ENVIE_USE_DB )) && __envie_initdb
 }
 
 function _envie_update_crontab() {
-    :
+    if (( _ENVIE_USE_DB && _ENVIE_AUTOINDEX )); then
+        # add
+        (
+            crontab -l | grep -v "$_ENVIE_UUID"
+            echo "*/15 * * * * /usr/bin/env envie update  #$_ENVIE_UUID"
+        ) 2>/dev/null | crontab -
+    else
+        # remove
+        crontab -l | grep -v "$_ENVIE_UUID" | crontab -
+    fi
 }
 
 # main -- handle direct call: ``envie <cmd> <args> | <script>``
