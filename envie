@@ -16,7 +16,9 @@ _ENVIE_USE_DB="0"
 _ENVIE_DB_PATH="$_ENVIE_CONFIG_DIR/locate.db"
 _ENVIE_INDEX_ROOT="$HOME"
 _ENVIE_AUTOINDEX="0"
-_ENVIE_FIND_LIMIT=0.4  # in seconds
+_ENVIE_LS_INDEX="0"
+_ENVIE_FIND_LIMIT=0.4  # abort find search if takes longer, in seconds
+_ENVIE_LOCATE_LIMIT=4  # warn if index older than, in seconds
 _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 
 # overwrite with values from config file
@@ -31,7 +33,9 @@ function _envie_dump_config() {
 		_ENVIE_DB_PATH="$_ENVIE_DB_PATH"
 		_ENVIE_INDEX_ROOT="$_ENVIE_INDEX_ROOT"
 		_ENVIE_AUTOINDEX="$_ENVIE_AUTOINDEX"
+		_ENVIE_LS_INDEX="$_ENVIE_LS_INDEX"
 		_ENVIE_FIND_LIMIT="$_ENVIE_FIND_LIMIT"
+		_ENVIE_LOCATE_LIMIT="$_ENVIE_LOCATE_LIMIT"
 		_ENVIE_UUID="$_ENVIE_UUID"
 	END
 }
@@ -138,8 +142,11 @@ function _lsenv_locate_vs_find_race() {
         cat "$p_ret_find"
     elif [ -e "$p_ret_locate" ]; then
         cat "$p_ret_locate"
-        _errmsg "NOTE: results are based on a db from $(_envie_db_age) ago, and may not include all current virtualenvs."
-        _errmsg "Use 'lsenv -f' to force manual search, or run 'envie update' to update the database."
+        local db_age=$(_envie_db_age)
+        if (( db_age > _ENVIE_LOCATE_LIMIT )); then
+            _errmsg "NOTE: results are based on a db from $(__humanized_age "$db_age") ago, and may not include all current virtualenvs."
+            _errmsg "Use 'lsenv -f' to force manual search, or run 'envie update' to update the database."
+        fi
     fi
     rm -f "$p_pid_find" "$p_pid_locate" "$p_pid_timer" "$p_ret_find" "$p_ret_locate"
     set -m
@@ -272,7 +279,11 @@ function _envie_db_exists() {
 }
 
 function _envie_db_age() {
-    local age=$(( $(date +%s) - $(date -r "$_ENVIE_DB_PATH" +%s) ))
+    echo $(( $(date +%s) - $(date -r "$_ENVIE_DB_PATH" +%s) ))
+}
+
+function __humanized_age() {
+    local age="$1"
     if ((age < 60)); then
         echo "$age second(s)"
     elif ((age < 3600)); then
@@ -283,6 +294,7 @@ function _envie_db_age() {
         printf "~%.2g day(s)\n" $(bc -l <<<"$age / 86400")
     fi
 }
+
 
 function _envie_locate_exists() {
     if ! _command_exists locate || ! _command_exists updatedb; then
