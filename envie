@@ -204,8 +204,10 @@ function lsenv() {
     elif [[ "$1" == "-l" ]]; then
         shift
         _lsenv_locate "$@"
+    elif (( ! _ENVIE_USE_DB )); then
+        _lsenv_find "$@"
     else
-        _envie_db_exists && _lsenv_locate_vs_find_race "$@" || _lsenv_find "$@"
+        _lsenv_locate_vs_find_race "$@"
     fi
 }
 
