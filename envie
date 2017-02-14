@@ -299,7 +299,14 @@ function __envie_initdb() {
 }
 
 function __envie_updatedb() {
-    updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT"
+    updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT" \
+        --prune-bind-mounts 0 \
+        --prunenames ".git .bzr .hg .svn" \
+        --prunepaths "/var/spool /media /home/.ecryptfs /var/lib/schroot" \
+        --prunefs "NFS nfs nfs4 rpc_pipefs afs binfmt_misc proc smbfs autofs \
+                   iso9660 ncpfs coda devpts ftpfs devfs mfs shfs sysfs cifs \
+                   lustre tmpfs usbfs udf fuse.glusterfs fuse.sshfs curlftpfs \
+                   ecryptfs fusesmb devtmpfs"
 }
 
 # Add to .bashrc
