@@ -386,7 +386,7 @@ function _envie_update_crontab() {
         # add
         (
             crontab -l | grep -v "$_ENVIE_UUID"
-            echo "*/15 * * * * /usr/bin/env envie update  #$_ENVIE_UUID"
+            echo "*/15 * * * * $_ENVIE_SOURCE update  #$_ENVIE_UUID"
         ) 2>/dev/null | crontab -
     else
         # remove
