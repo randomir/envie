@@ -45,9 +45,74 @@ function _envie_dump_config() {
 	END
 }
 
+
+#
+# few generic helper functions
+#
+
 function _errmsg() {
     echo "$@" >&2
 }
+
+function _deactivate() {
+    [ "$VIRTUAL_ENV" ] && deactivate
+}
+
+function _activate() {
+    _deactivate
+    source "$1/bin/activate"
+}
+
+function _is_virtualenv() {
+    [ -e "$1/bin/activate_this.py" ] && [ -x "$1/bin/python" ]
+}
+
+# Prints all descendant of a process `ppid`, level-wise, bottom-up.
+# Usage: _get_proc_descendants ppid
+function _get_proc_descendants() {
+    local pid ppid="$1"
+    local children=$(ps hopid --ppid "$ppid")
+    for pid in $children; do
+        echo "$pid"
+        _get_proc_descendants "$pid"
+    done
+}
+
+# Kills all process trees rooted at each of the `pid`s given,
+# along with all of their ancestors.
+# Usage: _killtree [pid1 pid2 ...]
+function _killtree() {
+    while [ "$#" -gt 0 ]; do
+        local pids=("$1" $(_get_proc_descendants "$1"))
+        kill -TERM "${pids[@]}" &>/dev/null
+        shift
+    done
+}
+
+# Makes fastest temporary file: like ``mktemp``, but tries
+# to create file in memory (/dev/shm) first.
+function _mkftemp() {
+    [ -d /dev/shm ] && mktemp --tmpdir=/dev/shm || mktemp
+}
+
+function _command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+function _humanized_age() {
+    local age="$1"
+    if ((age < 60)); then
+        echo "$age second(s)"
+    elif ((age < 3600)); then
+        printf "~%.2g minute(s)\n" $(bc -l <<<"$age / 60")
+    elif ((age < 86400)); then
+        printf "~%.2g hour(s)\n" $(bc -l <<<"$age / 3600")
+    else
+        printf "~%.2g day(s)\n" $(bc -l <<<"$age / 86400")
+    fi
+}
+
+
 
 # Creates a new environment in <path/to/env>, based on <python_exec>.
 # Usage: mkenv [-p <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
@@ -149,18 +214,6 @@ function rmenv() {
     fi
 }
 
-function _deactivate() {
-    [ "$VIRTUAL_ENV" ] && deactivate
-}
-
-function _activate() {
-    _deactivate
-    source "$1/bin/activate"
-}
-
-function _is_virtualenv() {
-    [ -e "$1/bin/activate_this.py" ] && [ -x "$1/bin/python" ]
-}
 
 # Lists all environments below the <start_dir>.
 # Usage: lsenv [<start_dir> [<avoid_subdir>]]
@@ -202,7 +255,7 @@ function _lsenv_locate_vs_find_race() {
         cat "$p_ret_locate"
         local db_age=$(_envie_db_age)
         if (( db_age > _ENVIE_LOCATE_LIMIT )); then
-            _errmsg "NOTE: results are based on a db from $(__humanized_age "$db_age") ago, and may not include all current virtualenvs."
+            _errmsg "NOTE: results are based on a db from $(_humanized_age "$db_age") ago, and may not include all current virtualenvs."
             _errmsg "Use 'lsenv -f' to force manual search, or run 'envie update' to update the database."
         fi
     fi
@@ -211,7 +264,7 @@ function _lsenv_locate_vs_find_race() {
 }
 function __find_and_return() {
     _lsenv_find "$@" >"$p_ret_find"
-    __kill $(<"$p_pid_locate") $(<"$p_pid_timer")
+    _killtree $(<"$p_pid_locate") $(<"$p_pid_timer")
     rm -f "$p_ret_locate"
 }
 function __locate_and_return() {
@@ -219,40 +272,10 @@ function __locate_and_return() {
 }
 function __find_fast_bailout() {
     sleep "$_ENVIE_FIND_LIMIT"
-    __kill $(<"$p_pid_find")
+    _killtree $(<"$p_pid_find")
     rm -f "$p_ret_find"
 }
-function __kill() {
-    while [ "$#" -gt 0 ]; do
-        _kill_proc_tree "$1" &>/dev/null
-        shift
-    done
-}
 
-# Prints all descendant of a process `ppid`, level-wise, bottom-up.
-# Usage: _get_proc_descendants ppid
-function _get_proc_descendants() {
-    local pid ppid="$1"
-    local children=$(ps hopid --ppid "$ppid")
-    for pid in $children; do
-        echo "$pid"
-        _get_proc_descendants "$pid"
-    done
-}
-
-# Kills a complete process tree rooted at `pid`.
-# Usage: _kill_proc_tree pid
-function _kill_proc_tree() {
-    local pids=("$1" $(_get_proc_descendants "$1"))
-    kill -TERM "${pids[@]}"
-}
-
-
-# Make fastest temporary file: like mktemp, but tries
-# to create file in memory (/dev/shm) first.
-function _mkftemp() {
-    [ -d /dev/shm ] && mktemp --tmpdir=/dev/shm || mktemp
-}
 
 function lsenv() {
     if [[ "$1" == "-f" ]]; then
@@ -290,6 +313,7 @@ function lsupenv() {
     echo "$list"
 }
 
+
 function chenv() {
     local IFS envlist env len=0 quiet=0
 
@@ -317,6 +341,7 @@ function chenv() {
     fi
 }
 
+
 # cd to active env root, or fail if no env active
 function cdenv() {
     if [ "$VIRTUAL_ENV" ]; then
@@ -330,31 +355,10 @@ function cdenv() {
 
 # faster envie, using locate
 
-function _command_exists() {
-    command -v "$1" >/dev/null 2>&1
-}
-
-function _envie_db_exists() {
-    [ -e "$_ENVIE_DB_PATH" ]
-}
-
 function _envie_db_age() {
+    [ ! -e "$_ENVIE_DB_PATH" ] && return 1
     echo $(( $(date +%s) - $(date -r "$_ENVIE_DB_PATH" +%s) ))
 }
-
-function __humanized_age() {
-    local age="$1"
-    if ((age < 60)); then
-        echo "$age second(s)"
-    elif ((age < 3600)); then
-        printf "~%.2g minute(s)\n" $(bc -l <<<"$age / 60")
-    elif ((age < 86400)); then
-        printf "~%.2g hour(s)\n" $(bc -l <<<"$age / 3600")
-    else
-        printf "~%.2g day(s)\n" $(bc -l <<<"$age / 86400")
-    fi
-}
-
 
 function _envie_locate_exists() {
     if ! _command_exists locate || ! _command_exists updatedb; then
@@ -362,6 +366,7 @@ function _envie_locate_exists() {
         return 1
     fi
 }
+
 
 function __envie_initdb() {
     _envie_locate_exists || return 1
