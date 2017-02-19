@@ -123,7 +123,11 @@ function mkenv() {
     while getopts ":hp:v23" opt; do
         case $opt in
             h)
-                echo "usage: mkenv [-2|-3|-p PYTHON] [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "Create Python (2/3) virtual environment in DEST_DIR based on PYTHON."
+                echo "Usage:"
+                echo "    mkenv [-2|-3|-p PYTHON] [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv2 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv3 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 return 2;;
             p)
                 pyname="$OPTARG";;
@@ -277,6 +281,11 @@ function __find_fast_bailout() {
 }
 
 
+# Lists all virtual environments below `start_dir` using `find` or `locate`, if 
+# specified explicitly (via opts or env var). If search method undefined, use
+# `find vs locate race` where find is allowed to run for 400ms, and then aborted
+# favor of locate.
+# Usage: lsenv [-f|-l] [<start_dir> [<avoid_subdir>]]
 function lsenv() {
     if [[ "$1" == "-f" ]]; then
         shift
@@ -290,6 +299,7 @@ function lsenv() {
         _lsenv_locate_vs_find_race "$@"
     fi
 }
+
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
 function lsupenv() {
@@ -314,6 +324,8 @@ function lsupenv() {
 }
 
 
+# Changes virtual environment (activates the closest env if unique, or asks to
+# select among the closest envs)
 function chenv() {
     local IFS envlist env len=0 quiet=0
 
@@ -342,7 +354,7 @@ function chenv() {
 }
 
 
-# cd to active env root, or fail if no env active
+# `cd` to active env base dir, or fail if no env active
 function cdenv() {
     if [ "$VIRTUAL_ENV" ]; then
         cd "$VIRTUAL_ENV"
@@ -461,11 +473,17 @@ function __envie_configure() {
         _ENVIE_LS_INDEX=0
     fi
 
+    read -p "Add to ~/.bashrc [Y/n]? " ans
+    case "$ans" in
+        N|n) ;;
+        *) __envie_register;;
+    esac
+
     # save config
     mkdir -p "$_ENVIE_CONFIG_DIR"
-    _envie_dump_config >"$_ENVIE_CONFIG_FILE" && echo "Config file written."
+    _envie_dump_config >"$_ENVIE_CONFIG_FILE" && echo "Config file written to $_ENVIE_CONFIG_FILE."
 
-    # add to cron
+    # add/remove from crontab
     _envie_update_crontab && echo "Crontab updated."
 
     # db (re-)index
@@ -563,10 +581,10 @@ function __envie_usage() {
 		                  script file, command, builtin, alias, or a function.
 		
 		    config        interactively configure envie
-		    register      add envie to .bashrc
-		    unregister    remove envie from .bashrc
 		    init          index virtualenvs below $_ENVIE_INDEX_ROOT
 		    update        update index
+		    register      add envie to .bashrc
+		    unregister    remove envie from .bashrc
 		    help          this help
 		
 		The second form is a shorthand for executing python scripts in the closest 
