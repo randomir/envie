@@ -564,6 +564,14 @@ function __envie_main() {
             chenv -q
             exec python "$script" "$@"
             ;;
+        create)
+            mkenv "$@";;
+        remove)
+            rmenv "$@";;
+        list)
+            lsenv "$@";;
+        go)
+            chenv "$@";;
         help|--help|*)
             __envie_usage;;
     esac
@@ -587,6 +595,11 @@ function __envie_usage() {
 		    unregister    remove envie from .bashrc
 		    help          this help
 		
+		    create [ENV]  alias for mkenv
+		    remove        alias for rmenv
+		    list [DIR]    alias for lsenv
+		    go            alias for chenv
+		
 		The second form is a shorthand for executing python scripts in the closest 
 		virtual environment, without the need for manual env activation. It's convenient
 		for hash bangs:
@@ -605,7 +618,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python exec config register unregister init update help"
+    local cmds="python exec config register unregister init update help create remove list go"
 
     case "$prev" in
         exec)
