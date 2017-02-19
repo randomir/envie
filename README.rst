@@ -28,7 +28,7 @@ section `Change/activate environment`).
 Summary
 -------
 
-- ``mkenv [<env>|"env"] [<pyexec>|"python"]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
+- ``mkenv [-p <pyexec>] [-2 | -3] [<env>] -- [virtualenv opts]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
 - ``rmenv`` - Destroy the active environment.
 - ``chenv`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``).
 - ``lsenv [-f|-l] [<start>|"." [<avoid>]]`` - List all environments below ``<start>`` directory, skipping ``<avoid>`` subdir.
