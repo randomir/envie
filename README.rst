@@ -41,6 +41,26 @@ Summary
 - ``envie register | unregister`` - Add/remove source statement to/from your ``.bashrc``.
 
 
+Install
+-------
+
+For convenience, ``envie`` is packaged and distributed as a Python package. To
+install, simply type::
+
+    $ sudo pip install envie
+    $ envie config
+
+    # start clean
+    $ . ~/.bashrc   # or, open new shell
+
+The second line above will run a short configuration/setup procedure. If in doubt,
+go with the defaults.
+
+By default, ``envie`` sourcing statement is added to your ``.bashrc`` file, ``locate`` 
+index is set as a preferred source (it's set to be rebuilt every 15m, or on demand),
+with all relevant environments' ancestor dir set to your ``$HOME`` directory.
+
+
 Examples
 --------
 
@@ -119,19 +139,6 @@ Search/list environments
 To search down the tree for valid Python VirtualEnvs, use ``lsenv``.
 Likewise, to search up the tree, level by level, use ``lsupenv``.
 ``chenv`` uses ``lsupenv`` when searching for environment to activate.
-
-
-Install
--------
-
-For convenience, ``envie`` is packaged and distributed as a Python package. To
-install, simply type::
-
-    $ sudo pip install envie
-    $ envie register
-
-The second line above will add a sourcing statement for ``envie`` to your
-``.bashrc`` file.
 
 
 Enable faster search
