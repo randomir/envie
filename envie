@@ -635,5 +635,9 @@ function __envie_complete() {
 
 complete -F __envie_complete envie
 
+# mask executable envie with function to be able to for eg. activate envs
+function envie() {
+    __envie_main "$@"
+}
 
 [ $# -gt 0 ] && __envie_main "$@"
