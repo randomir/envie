@@ -128,7 +128,7 @@ function mkenv() {
                 echo "    mkenv [-2|-3|-p PYTHON] [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "    mkenv2 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "    mkenv3 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                return 2;;
+                return;;
             p)
                 pyname="$OPTARG";;
             v)
@@ -139,10 +139,10 @@ function mkenv() {
                 pyname=python3;;
             \?)
                 _errmsg "Invalid mkenv option: -$OPTARG. See 'mkenv -h' for help on usage."
-                return 1;;
+                return 255;;
             :)
                 _errmsg "Option -$OPTARG requires an argument. See 'mkenv -h' for help on usage."
-                return 1;;
+                return 255;;
         esac
     done
     shift $((OPTIND-1))
@@ -327,29 +327,53 @@ function lsupenv() {
 # Changes virtual environment (activates the closest env if unique, or asks to
 # select among the closest envs)
 function chenv() {
-    local IFS envlist env len=0 activate_single_or_bust=0
+    local opt OPTIND verbose=0 quiet=0 force_single=0
+    while getopts ":1vhq" opt; do
+        case $opt in
+            h)
+                echo "Activate closest Python virtual environment, interactively."
+                echo "Usage:"
+                echo "    chenv [-1] [-v] [-q]"
+                echo "Options:"
+                echo "    -1    activate only if a single closest env found"
+                echo "    -v    be verbose: show info messages (path to activated env)"
+                echo "    -q    be quiet: suppress error messages"
+                return;;
+            v)
+                verbose=1;;
+            q)
+                quiet=1;;
+            1)
+                force_single=1;;
+            \?)
+                _errmsg "Invalid chenv option: -$OPTARG. See 'chenv -h' for help on usage."
+                return 255;;
+            :)
+                _errmsg "Option -$OPTARG requires an argument. See 'chenv -h' for help on usage."
+                return 255;;
+        esac
+    done
+    shift $((OPTIND-1))
 
-    if [[ "$1" == "-1" ]]; then
-        activate_single_or_bust=1
-        shift
-    fi
-
+    local IFS envlist env len=0
     envlist=$(lsupenv -q)
     [ "$envlist" ] && len=$(wc -l <<<"$envlist")
     if [ "$len" -eq 1 ]; then
         _activate "$envlist"
+        (( verbose )) && echo "Activated virtual environment at '$envlist'."
     elif [ "$len" -eq 0 ]; then
-        _errmsg "No environments found."
+        (( ! quiet )) && _errmsg "No environments found."
         return 1
     else
-        if (( activate_single_or_bust )); then
-            _errmsg "Multiple environments found, aborting."
+        if (( force_single )); then
+            (( ! quiet )) && _errmsg "Multiple environments found, aborting."
             return 2
         fi
         IFS=$'\n'
         select env in $envlist; do
             if [ "$env" ]; then
                 _activate "$env"
+                (( verbose )) && echo "Activated virtual environment at '$env'."
                 break
             fi
         done
