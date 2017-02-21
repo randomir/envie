@@ -327,10 +327,10 @@ function lsupenv() {
 # Changes virtual environment (activates the closest env if unique, or asks to
 # select among the closest envs)
 function chenv() {
-    local IFS envlist env len=0 quiet=0
+    local IFS envlist env len=0 activate_single_or_bust=0
 
-    if [[ "$1" == "-q" ]]; then
-        quiet=1
+    if [[ "$1" == "-1" ]]; then
+        activate_single_or_bust=1
         shift
     fi
 
@@ -339,10 +339,13 @@ function chenv() {
     if [ "$len" -eq 1 ]; then
         _activate "$envlist"
     elif [ "$len" -eq 0 ]; then
-        (( ! quiet )) && _errmsg "No environments found."
+        _errmsg "No environments found."
         return 1
     else
-        (( quiet )) && return 1
+        if (( activate_single_or_bust )); then
+            _errmsg "Multiple environments found, aborting."
+            return 2
+        fi
         IFS=$'\n'
         select env in $envlist; do
             if [ "$env" ]; then
@@ -547,8 +550,7 @@ function __envie_main() {
                         script=$(readlink -f "$script")
                         cd "$(dirname "$script")"
                     fi
-                    chenv -q
-                    _envie_exec "$script" "$@"
+                    chenv -1 && _envie_exec "$script" "$@"
                 )
             else
                 _errmsg "'$script' is not a valid command. See 'envie --help'."
@@ -562,8 +564,7 @@ function __envie_main() {
             shift
             # handle: `envie python`
             if [ ! "$script" ]; then
-                chenv -q
-                _envie_exec python
+                chenv -1 && _envie_exec python
                 return "$?"
             fi
             # handle: `envie python non-existing-file`
@@ -576,8 +577,7 @@ function __envie_main() {
                 # move closer to script for proper env detection
                 script=$(readlink -f "$script")
                 cd "$(dirname "$script")"
-                chenv -q
-                _envie_exec python "$script" "$@"
+                chenv -1 && _envie_exec python "$script" "$@"
             )
             ;;
         create)
