@@ -11,9 +11,10 @@ _ENVIE_SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
 _ENVIE_DEFAULT_ENVNAME=env
 _ENVIE_DEFAULT_PYTHON=python
 _ENVIE_CONFIG_DIR="$HOME/.config/envie"
-_ENVIE_CONFIG_FILE="$_ENVIE_CONFIG_DIR/envierc"
+_ENVIE_CONFIG_PATH="$_ENVIE_CONFIG_DIR/envierc"
 _ENVIE_USE_DB="0"
 _ENVIE_DB_PATH="$_ENVIE_CONFIG_DIR/locate.db"
+_ENVIE_CACHE_PATH="$_ENVIE_CONFIG_DIR/virtualenvs.list"
 _ENVIE_INDEX_ROOT="$HOME"
 _ENVIE_CRON_INDEX="0"        # having periodical updatedb?
 _ENVIE_CRON_PERIOD_MIN="15"  # update period in minutes
@@ -24,7 +25,7 @@ _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 _ENVIE_SOURCED="0"
 
 # overwrite with values from config file
-[ -r "$_ENVIE_CONFIG_FILE" ] && . "$_ENVIE_CONFIG_FILE"
+[ -r "$_ENVIE_CONFIG_PATH" ] && . "$_ENVIE_CONFIG_PATH"
 
 # TODO: basic config options validity check (data types, ranges, etc.)
 
@@ -489,18 +490,21 @@ function _envie_locate_exists() {
 
 
 function __envie_index() {
-    local opt OPTIND verbose=0 quiet=0
-    while getopts ":vhq" opt; do
+    local opt OPTIND verbose=0 quiet=0 rebuild_cache=0
+    while getopts ":cvhq" opt; do
         case $opt in
             h)
                 echo "(Re-)index virtual environments under '$_ENVIE_INDEX_ROOT'."
                 echo "To change index root, run 'envie config'."
                 echo "Usage:"
-                echo "    envie index [-v] [-q]"
+                echo "    envie index [-c] [-v] [-q]"
                 echo "Options:"
+                echo "    -c    rebuild virtualenvs cache"
                 echo "    -v    be verbose: show info messages"
                 echo "    -q    be quiet: suppress error messages"
                 return;;
+            c)
+                rebuild_cache=1;;
             v)
                 verbose=1;;
             q)
@@ -529,6 +533,12 @@ function __envie_index() {
                    ecryptfs fusesmb devtmpfs"
 
     (( verbose )) && echo "Done."
+
+    if (( rebuild_cache )); then
+        (( verbose )) && echo -n "Generating cache of all environments..."
+        _lsenv_locate "$_ENVIE_INDEX_ROOT" >"$_ENVIE_CACHE_PATH"
+        (( verbose )) && echo "Done."
+    fi
 }
 
 # Add to .bashrc
@@ -649,7 +659,7 @@ function __envie_configure() {
 
     # save config
     mkdir -p "$_ENVIE_CONFIG_DIR"
-    _envie_dump_config >"$_ENVIE_CONFIG_FILE" && echo "Config file written to $_ENVIE_CONFIG_FILE."
+    _envie_dump_config >"$_ENVIE_CONFIG_PATH" && echo "Config file written to $_ENVIE_CONFIG_PATH."
 
     # add/remove to/from crontab
     _envie_update_crontab && echo "Crontab updated."
