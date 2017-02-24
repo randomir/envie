@@ -625,13 +625,13 @@ function __envie_main() {
 function __envie_usage() {
     cat <<-END
 		Usage:
-		    envie {python SCRIPT | exec CMD | config | register | unregister | init | update}
+		    envie {python [SCRIPT] | run CMD | config | register | unregister | init | update}
 		    envie SCRIPT
 		    envie
 
 		Commands (for the first form):
 		    python SCRIPT run Python SCRIPT in the closest environment
-		    exec CMD      execute CMD in the closest environment. CMD can be a
+		    run CMD       execute CMD in the closest environment. CMD can be a
 		                  script file, command, builtin, alias, or a function.
 
 		    config        interactively configure envie

@@ -35,8 +35,8 @@ Summary
 - ``lsupenv`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
 - ``envie`` - Activate the closest virtual environment (if unambiguous).
-- ``envie <script>``, ``envie python <script>`` - Run python ``script`` in the closest virtual environment.
-- ``envie exec <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
+- ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
+- ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
 - ``envie init`` - Run (once) to enable (faster) searches with ``locate``.
 - ``envie update`` - Run to re-index directories searched with ``updatedb``.
 - ``envie register | unregister`` - Add/remove source statement to/from your ``.bashrc``.
