@@ -575,7 +575,7 @@ function __envie_main() {
                         script=$(readlink -f "$script")
                         cd "$(dirname "$script")"
                     fi
-                    chenv -1 && _envie_exec "$script" "$@"
+                    chenv -1v && exec "$script" "$@"
                 )
             else
                 _errmsg "'$script' is not a valid command. See 'envie --help'."
@@ -589,7 +589,9 @@ function __envie_main() {
             shift
             # handle: `envie python`
             if [ ! "$script" ]; then
-                chenv -1 && _envie_exec python
+                (
+                    chenv -1v && exec python
+                )
                 return "$?"
             fi
             # handle: `envie python non-existing-file`
@@ -602,7 +604,7 @@ function __envie_main() {
                 # move closer to script for proper env detection
                 script=$(readlink -f "$script")
                 cd "$(dirname "$script")"
-                chenv -1 && _envie_exec python "$script" "$@"
+                chenv -1v && exec python "$script" "$@"
             )
             ;;
         create)
