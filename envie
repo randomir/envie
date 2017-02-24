@@ -326,6 +326,7 @@ function lsupenv() {
 
 # Changes virtual environment (activates the closest env if unique, or asks to
 # select among the closest envs)
+# Usage: chenv [-1] [-v] [-q] [-h]
 function chenv() {
     local opt OPTIND verbose=0 quiet=0 force_single=0
     while getopts ":1vhq" opt; do
@@ -612,6 +613,8 @@ function __envie_main() {
             lsenv "$@";;
         go)
             chenv "$@";;
+        "")
+            chenv -1v;;
         help|--help|*)
             __envie_usage;;
     esac
@@ -622,30 +625,34 @@ function __envie_usage() {
 		Usage:
 		    envie {python SCRIPT | exec CMD | config | register | unregister | init | update}
 		    envie SCRIPT
-		
-		Commands:
+		    envie
+
+		Commands (for the first form):
 		    python SCRIPT run Python SCRIPT in the closest environment
 		    exec CMD      execute CMD in the closest environment. CMD can be a
 		                  script file, command, builtin, alias, or a function.
-		
+
 		    config        interactively configure envie
 		    init          index virtualenvs below $_ENVIE_INDEX_ROOT
 		    update        update index
 		    register      add envie to .bashrc
 		    unregister    remove envie from .bashrc
 		    help          this help
-		
+
 		    create [ENV]  alias for mkenv
 		    remove        alias for rmenv
 		    list [DIR]    alias for lsenv
 		    go            alias for chenv
-		
+
 		The second form is a shorthand for executing python scripts in the closest 
-		virtual environment, without the need for manual env activation. It's convenient
+		virtual environment, without the need for a manual env activation. It's convenient
 		for hash bangs:
 		    #!/usr/bin/env envie
 		    # Python script here will be executed in the closest virtual env
-		
+
+		The third form is basically an alias for 'chenv -1 -v'. It activates the
+		closest environment (relative to cwd), but only if it's unambiguous.
+
 		Examples:
 		    envie python              # run interactive Python shell in the closest env
 		    envie manage.py shell     # run Django shell in the project env (auto activate)
