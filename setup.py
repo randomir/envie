@@ -6,7 +6,7 @@ import subprocess
 
 setup(
     name='envie',
-    version='0.4.8',
+    version='0.4.9',
     description="Bash helpers for navigating and managing Python VirtualEnvs.",
     long_description=open('README.rst').read(),
     author='Radomir Stevanovic',
