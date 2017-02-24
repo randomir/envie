@@ -438,6 +438,7 @@ function __envie_index() {
     _envie_locate_exists || return 1
     (( verbose )) && echo -n "Indexing environments in '$_ENVIE_INDEX_ROOT'..."
 
+    mkdir -p "$_ENVIE_CONFIG_DIR"
     updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT" \
         --prune-bind-mounts 0 \
         --prunenames ".git .bzr .hg .svn" \
@@ -452,8 +453,6 @@ function __envie_index() {
 
 # Add to .bashrc
 function __envie_register() {
-    mkdir -p "$_ENVIE_CONFIG_DIR"
-    
     local bashrc=~/.bashrc
     [ ! -w "$bashrc" ] && _errmsg "$bashrc not writeable." && return 1
 
@@ -476,8 +475,9 @@ function __envie_unregister() {
     local bashrc=~/.bashrc
     [ ! -w "$bashrc" ] && _errmsg "$bashrc not writeable." && return 1
 
+    mkdir -p "$_ENVIE_CONFIG_DIR"
     if ! cp -a "$bashrc" "$_ENVIE_CONFIG_DIR/.bashrc.backup"; then
-        _errmsg "Failed to backup $bashrc before modifying."
+        _errmsg "Failed to backup $bashrc before modifying. Please remove manually."
         return 1
     fi
     if sed -e "/$_ENVIE_UUID/d" "$bashrc" -i; then
@@ -486,7 +486,13 @@ function __envie_unregister() {
 }
 
 function __envie_configure() {
-    local ans quiet=0
+    local ans quiet=0 add_to_bashrc=0
+
+    read -p "Add to ~/.bashrc (strongly recommended) [Y/n]? " ans
+    case "$ans" in
+        N|n) ;;
+        *) add_to_bashrc=1;;
+    esac
 
     read -p "Use locate/updatedb for faster search [Y/n]? " ans
     case "$ans" in
@@ -525,17 +531,14 @@ function __envie_configure() {
         _ENVIE_LS_INDEX=0
     fi
 
-    read -p "Add to ~/.bashrc [Y/n]? " ans
-    case "$ans" in
-        N|n) ;;
-        *) __envie_register;;
-    esac
+    # add/remove source statement to/from .bashrc
+    (( add_to_bashrc )) && __envie_register
 
     # save config
     mkdir -p "$_ENVIE_CONFIG_DIR"
     _envie_dump_config >"$_ENVIE_CONFIG_FILE" && echo "Config file written to $_ENVIE_CONFIG_FILE."
 
-    # add/remove from crontab
+    # add/remove to/from crontab
     _envie_update_crontab && echo "Crontab updated."
 
     # db (re-)index
@@ -578,10 +581,6 @@ function __envie_main() {
     fi
 
     case "$cmd" in
-        reg|register)
-            __envie_register;;
-        unreg|unregister)
-            __envie_unregister;;
         index)
             __envie_index "$@";;
         config|configure)
@@ -647,7 +646,7 @@ function __envie_main() {
 function __envie_usage() {
     cat <<-END
 		Usage:
-		    envie {python [SCRIPT] | run CMD | config | register | unregister | index}
+		    envie {python [SCRIPT] | run CMD | config | index}
 		    envie SCRIPT
 		    envie
 
@@ -658,8 +657,6 @@ function __envie_usage() {
 
 		    config        interactively configure envie
 		    index         (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
-		    register      add envie to .bashrc
-		    unregister    remove envie from .bashrc
 		    help          this help
 
 		    create [ENV]  alias for mkenv
@@ -688,7 +685,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python run config index register unregister help create remove list go"
+    local cmds="python run config index help create remove list go"
 
     case "$prev" in
         exec)

@@ -38,7 +38,7 @@ Summary
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
 - ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
-- ``envie register | unregister`` - Add/remove source statement to/from your ``.bashrc``.
+- ``envie config`` - Interactively configure envie.
 
 
 Install
