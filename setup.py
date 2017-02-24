@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
 from setuptools import setup
-from setuptools.command.install import install as _install
-import subprocess
 
 setup(
     name='envie',
@@ -13,6 +10,7 @@ setup(
     author_email='radomir.stevanovic@gmail.com',
     url='https://github.com/randomir/envie',
     license='MIT',
+    py_modules=['envie'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

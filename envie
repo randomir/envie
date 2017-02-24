@@ -417,7 +417,7 @@ function chenv() {
                 echo "Usage:"
                 echo "    chenv [-1] [-v] [-q]"
                 echo "Options:"
-                echo "    -1    activate only if a single closest env found"
+                echo "    -1    activate only if a single closest env found, abort otherwise"
                 echo "    -v    be verbose: show info messages (path to activated env)"
                 echo "    -q    be quiet: suppress error messages"
                 return;;
