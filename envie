@@ -332,7 +332,7 @@ function chenv() {
     while getopts ":1vhq" opt; do
         case $opt in
             h)
-                echo "Activate closest Python virtual environment, interactively."
+                echo "Activate the closest Python virtual environment, interactively."
                 echo "Usage:"
                 echo "    chenv [-1] [-v] [-q]"
                 echo "Options:"
@@ -667,6 +667,8 @@ function __envie_main() {
             rmenv "$@";;
         list)
             lsenv "$@";;
+        find)
+            lsupenv "$@";;
         go)
             chenv "$@";;
         "")
@@ -683,19 +685,19 @@ function __envie_usage() {
 		    envie SCRIPT
 		    envie
 
-		Commands (for the first form):
+		Commands:
 		    python SCRIPT run Python SCRIPT in the closest environment
 		    run CMD       execute CMD in the closest environment. CMD can be a
 		                  script file, command, builtin, alias, or a function.
-
-		    config        interactively configure Envie
 		    index         (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
+		    config        interactively configure Envie
 		    help          this help
 
-		    create [ENV]  alias for mkenv
-		    remove        alias for rmenv
-		    list [DIR]    alias for lsenv
-		    go            alias for chenv
+		    create [ENV]  create virtual env (alias for mkenv)
+		    remove        remove directory of active virtual env (alias for rmenv)
+		    list [DIR]    list virtual envs under current dir (alias for lsenv)
+		    find          like 'list', but also look above, until env found (alias for lsupenv)
+		    go            interactively activate the closest environment (alias for chenv)
 
 		The second form is a shorthand for executing python scripts in the closest 
 		virtual environment, without the need for a manual env activation. It's convenient
@@ -718,7 +720,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python run config index help create remove list go"
+    local cmds="python run config index help create remove list find go"
 
     case "$prev" in
         exec)

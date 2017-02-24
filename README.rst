@@ -51,7 +51,7 @@ install, simply type::
     $ envie config
 
     # start clean
-    $ . ~/.bashrc   # or, open new shell
+    $ . ~/.bashrc   # or, open a new shell
 
 The second line above will run a short configuration/setup procedure. If in doubt,
 go with the defaults.
