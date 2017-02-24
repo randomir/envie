@@ -791,7 +791,7 @@ function __envie_usage() {
 		Examples:
 		    envie python              # run interactive Python shell in the closest env
 		    envie manage.py shell     # run Django shell in the project env (auto activate)
-		    envie exec /path/to/executable    # execute an executable in the closest env
+		    envie run /path/to/executable    # execute an executable in the closest env
 	END
 }
 
@@ -803,7 +803,7 @@ function __envie_complete() {
     local cmds="python run config index help create remove list find go"
 
     case "$prev" in
-        exec)
+        run)
             COMPREPLY=($(compgen -A alias -A builtin -A command -A file -A function -- $word))
             ;;
         python)
