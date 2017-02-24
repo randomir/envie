@@ -31,8 +31,8 @@ Summary
 - ``mkenv [-p <pyexec>] [-2|-3] [<env>] -- [virtualenv opts]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
 - ``rmenv`` - Destroy the active environment.
 - ``chenv [-1] [-q] [-v]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``).
-- ``lsenv [-f|-l] [<start>|"." [<avoid>]]`` - List all environments below ``<start>`` directory, skipping ``<avoid>`` subdir.
-- ``lsupenv`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with cwd.
+- ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
+- ``lsupenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
 - ``envie`` - Activate the closest virtual environment (if unambiguous).
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.

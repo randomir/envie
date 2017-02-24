@@ -258,9 +258,9 @@ function _lsenv_locate_vs_find_race() {
     elif [ -e "$p_ret_locate" ]; then
         cat "$p_ret_locate"
         local db_age=$(_envie_db_age)
-        if (( db_age > _ENVIE_LOCATE_LIMIT_SEC )); then
+        if (( ! quiet && db_age > _ENVIE_LOCATE_LIMIT_SEC )); then
             _errmsg "NOTE: results are based on a db from $(_humanized_age "$db_age") ago, and may not include all current virtualenvs."
-            _errmsg "Use 'lsenv -f' to force manual search, or run 'envie update' to update the database."
+            _errmsg "Use 'lsenv -f' to force manual search, or run 'envie index' to update the database."
         fi
     fi
     rm -f "$p_pid_find" "$p_pid_locate" "$p_pid_timer" "$p_ret_find" "$p_ret_locate"
@@ -342,23 +342,63 @@ function lsenv() {
 
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
+# Usage: lsupenv [-f|-l] [<start_dir>]
 function lsupenv() {
-    local list len=0 dir=. prevdir quiet=0
+    local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
+    while getopts ":flvqh-:" opt; do
+        case $opt in
+            h)
+                echo "Find and list all virtualenvs under START_DIR."
+                echo "Usage:"
+                echo "    lsupenv [-f|-l] [DIR]"
+                echo "Options:"
+                echo "    -f, --find    use only 'find' for search"
+                echo "    -l, --locate  use only 'locate' for search"
+                echo "                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)"
+                echo "    -v            be verbose: show info messages"
+                echo "    -q            be quiet: suppress error messages"
+                return;;
+            f)
+                force_find=1;;
+            l)
+                force_locate=1;;
+            v)
+                verbose=1;;
+            q)
+                quiet=1;;
+            \?)
+                _errmsg "Invalid lsupenv option: -$OPTARG. See 'lsupenv -h' for help on usage."
+                return 255;;
+            :)
+                _errmsg "Option -$OPTARG requires an argument. See 'lsupenv -h' for help on usage."
+                return 255;;
+            -)
+                case "$OPTARG" in
+                    find)
+                        force_find=1;;
+                    locate)
+                        force_locate=1;;
+                    *)
+                        _errmsg "Invalid lsupenv option: --$OPTARG. See 'lsupenv -h' for help on usage."
+                        return 255;;
+                esac;;
+        esac
+    done
+    shift $((OPTIND-1))
 
-    if [[ "$1" == "-q" ]]; then
-        quiet=1
-        shift
-    fi
+    local lsargs=()
+    (( force_find )) && lsargs+=(-f)
+    (( force_locate )) && lsargs+=(-l)
+    (( verbose )) && lsargs+=(-v)
+    (( quiet )) && lsargs+=(-q)
 
+    local list len=0 dir=${1:-.} prevdir
     while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
-        if ((quiet)); then
-            list=$(lsenv "$dir" "$prevdir" 2>/dev/null)
-        else
-            list=$(lsenv "$dir" "$prevdir")
-        fi
+        list=$(lsenv "${lsargs[@]}" "$dir" "$prevdir")
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
         dir="$dir/.."
+        dir="${dir#./}"
     done
     echo "$list"
 }
@@ -736,7 +776,7 @@ function __envie_usage() {
 		    create [ENV]  create virtual env (alias for mkenv)
 		    remove        remove directory of active virtual env (alias for rmenv)
 		    list [DIR]    list virtual envs under current dir (alias for lsenv)
-		    find          like 'list', but also look above, until env found (alias for lsupenv)
+		    find [DIR]    like 'list', but also look above, until env found (alias for lsupenv)
 		    go            interactively activate the closest environment (alias for chenv)
 
 		The second form is a shorthand for executing python scripts in the closest 
