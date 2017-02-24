@@ -235,7 +235,7 @@ function _lsenv_locate() {
     local absdir=$(readlink -e "$dir")
     [ "$absdir" = / ] && dir=/
     if (( _ENVIE_LS_INDEX && $(_envie_db_age) > _ENVIE_LOCATE_LIMIT_SEC )); then
-        __envie_updatedb
+        __envie_index
     fi
     locate -d "$_ENVIE_DB_PATH" --existing "$absdir"'*/bin/activate_this.py' \
         | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
@@ -402,20 +402,42 @@ function _envie_db_age() {
 
 function _envie_locate_exists() {
     if ! _command_exists locate || ! _command_exists updatedb; then
-        _errmsg "locate/updatedb not installed. Failing-back to find."
+        (( ! quiet )) && _errmsg "locate/updatedb not installed. Failing-back to find."
         return 1
     fi
 }
 
 
-function __envie_initdb() {
-    _envie_locate_exists || return 1
-    echo -n "Indexing environments in '$_ENVIE_INDEX_ROOT'..."
-    __envie_updatedb
-    echo "Done."
-}
+function __envie_index() {
+    local opt OPTIND verbose=0 quiet=0
+    while getopts ":vhq" opt; do
+        case $opt in
+            h)
+                echo "(Re-)index virtual environments under '$_ENVIE_INDEX_ROOT'."
+                echo "To change index root, run 'envie config'."
+                echo "Usage:"
+                echo "    envie index [-v] [-q]"
+                echo "Options:"
+                echo "    -v    be verbose: show info messages"
+                echo "    -q    be quiet: suppress error messages"
+                return;;
+            v)
+                verbose=1;;
+            q)
+                quiet=1;;
+            \?)
+                _errmsg "Invalid indexing option: -$OPTARG. See 'envie index -h' for help on usage."
+                return 255;;
+            :)
+                _errmsg "Option -$OPTARG requires an argument. See 'envie index -h' for help on usage."
+                return 255;;
+        esac
+    done
+    shift $((OPTIND-1))
 
-function __envie_updatedb() {
+    _envie_locate_exists || return 1
+    (( verbose )) && echo -n "Indexing environments in '$_ENVIE_INDEX_ROOT'..."
+
     updatedb -l 0 -o "$_ENVIE_DB_PATH" -U "$_ENVIE_INDEX_ROOT" \
         --prune-bind-mounts 0 \
         --prunenames ".git .bzr .hg .svn" \
@@ -424,6 +446,8 @@ function __envie_updatedb() {
                    iso9660 ncpfs coda devpts ftpfs devfs mfs shfs sysfs cifs \
                    lustre tmpfs usbfs udf fuse.glusterfs fuse.sshfs curlftpfs \
                    ecryptfs fusesmb devtmpfs"
+
+    (( verbose )) && echo "Done."
 }
 
 # Add to .bashrc
@@ -462,7 +486,7 @@ function __envie_unregister() {
 }
 
 function __envie_configure() {
-    local ans
+    local ans quiet=0
 
     read -p "Use locate/updatedb for faster search [Y/n]? " ans
     case "$ans" in
@@ -515,7 +539,7 @@ function __envie_configure() {
     _envie_update_crontab && echo "Crontab updated."
 
     # db (re-)index
-    (( _ENVIE_USE_DB )) && __envie_initdb
+    (( _ENVIE_USE_DB )) && __envie_index -v
 }
 
 function _envie_update_crontab() {
@@ -558,10 +582,8 @@ function __envie_main() {
             __envie_register;;
         unreg|unregister)
             __envie_unregister;;
-        init|initdb)
-            __envie_initdb;;
-        update|updatedb)
-            __envie_updatedb;;
+        index)
+            __envie_index "$@";;
         config|configure)
             __envie_configure;;
         exec|run)
@@ -625,7 +647,7 @@ function __envie_main() {
 function __envie_usage() {
     cat <<-END
 		Usage:
-		    envie {python [SCRIPT] | run CMD | config | register | unregister | init | update}
+		    envie {python [SCRIPT] | run CMD | config | register | unregister | index}
 		    envie SCRIPT
 		    envie
 
@@ -635,8 +657,7 @@ function __envie_usage() {
 		                  script file, command, builtin, alias, or a function.
 
 		    config        interactively configure envie
-		    init          index virtualenvs below $_ENVIE_INDEX_ROOT
-		    update        update index
+		    index         (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
 		    register      add envie to .bashrc
 		    unregister    remove envie from .bashrc
 		    help          this help
@@ -667,7 +688,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python exec config register unregister init update help create remove list go"
+    local cmds="python run config index register unregister help create remove list go"
 
     case "$prev" in
         exec)

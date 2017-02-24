@@ -37,8 +37,7 @@ Summary
 - ``envie`` - Activate the closest virtual environment (if unambiguous).
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
-- ``envie init`` - Run (once) to enable (faster) searches with ``locate``.
-- ``envie update`` - Run to re-index directories searched with ``updatedb``.
+- ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
 - ``envie register | unregister`` - Add/remove source statement to/from your ``.bashrc``.
 
 
