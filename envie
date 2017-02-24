@@ -488,6 +488,39 @@ function __envie_unregister() {
 function __envie_configure() {
     local ans quiet=0 add_to_bashrc=0
 
+    local opt OPTIND
+    while getopts ":h-:" opt; do
+        case $opt in
+            -)
+                case "$OPTARG" in
+                    register)
+                        __envie_register
+                        return;;
+                    unregister)
+                        __envie_unregister
+                        return;;
+                    *)
+                        _errmsg "Invalid config option: --$OPTARG. See 'envie config -h' for help on usage."
+                        return 255;;
+                esac;;
+            h)
+                echo "Interactively configure Envie."
+                echo "Usage:"
+                echo "    envie config [--register|--unregister]"
+                echo "Options:"
+                echo "    --register    just add Envie sourcing statement to .bashrc"
+                echo "    --unregister  just remove Envie sourcing statement from .bashrc"
+                return;;
+            \?)
+                _errmsg "Invalid config option: -$OPTARG. See 'envie config -h' for help on usage."
+                return 255;;
+            :)
+                _errmsg "Option -$OPTARG requires an argument. See 'envie config -h' for help on usage."
+                return 255;;
+        esac
+    done
+    shift $((OPTIND-1))
+
     read -p "Add to ~/.bashrc (strongly recommended) [Y/n]? " ans
     case "$ans" in
         N|n) ;;
@@ -583,9 +616,9 @@ function __envie_main() {
     case "$cmd" in
         index)
             __envie_index "$@";;
-        config|configure)
-            __envie_configure;;
-        exec|run)
+        config)
+            __envie_configure "$@";;
+        run)
             # execute CMD
             script="$1"
             shift
@@ -646,7 +679,7 @@ function __envie_main() {
 function __envie_usage() {
     cat <<-END
 		Usage:
-		    envie {python [SCRIPT] | run CMD | config | index}
+		    envie {python [SCRIPT] | run CMD | index | config}
 		    envie SCRIPT
 		    envie
 
@@ -655,7 +688,7 @@ function __envie_usage() {
 		    run CMD       execute CMD in the closest environment. CMD can be a
 		                  script file, command, builtin, alias, or a function.
 
-		    config        interactively configure envie
+		    config        interactively configure Envie
 		    index         (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
 		    help          this help
 
