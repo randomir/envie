@@ -287,11 +287,51 @@ function __find_fast_bailout() {
 # favor of locate.
 # Usage: lsenv [-f|-l] [<start_dir> [<avoid_subdir>]]
 function lsenv() {
-    if [[ "$1" == "-f" ]]; then
-        shift
+    local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
+    while getopts ":flvqh-:" opt; do
+        case $opt in
+            h)
+                echo "Find and list all virtualenvs under START_DIR."
+                echo "Usage:"
+                echo "    lsenv [-f|-l] [DIR [AVOID_SUBDIR]]"
+                echo "Options:"
+                echo "    -f, --find    use only 'find' for search"
+                echo "    -l, --locate  use only 'locate' for search"
+                echo "                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)"
+                echo "    -v            be verbose: show info messages"
+                echo "    -q            be quiet: suppress error messages"
+                return;;
+            f)
+                force_find=1;;
+            l)
+                force_locate=1;;
+            v)
+                verbose=1;;
+            q)
+                quiet=1;;
+            \?)
+                _errmsg "Invalid lsenv option: -$OPTARG. See 'lsenv -h' for help on usage."
+                return 255;;
+            :)
+                _errmsg "Option -$OPTARG requires an argument. See 'lsenv -h' for help on usage."
+                return 255;;
+            -)
+                case "$OPTARG" in
+                    find)
+                        force_find=1;;
+                    locate)
+                        force_locate=1;;
+                    *)
+                        _errmsg "Invalid lsenv option: --$OPTARG. See 'lsenv -h' for help on usage."
+                        return 255;;
+                esac;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    if (( force_find )); then
         _lsenv_find "$@"
-    elif [[ "$1" == "-l" ]]; then
-        shift
+    elif (( force_locate )); then
         _lsenv_locate "$@"
     elif (( ! _ENVIE_USE_DB )); then
         _lsenv_find "$@"
