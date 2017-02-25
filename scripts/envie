@@ -128,6 +128,11 @@ function mkenv() {
                 echo "    mkenv [-2|-3|-p PYTHON] [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "    mkenv2 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "    mkenv3 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "Options:"
+                echo "    -2, -3      use Python 2, or Python 3"
+                echo "    -p PYTHON   use Python accessible with PYTHON name,"
+                echo "                like 'python3.5', or '/usr/local/bin/mypython'."
+                echo "    -v          be verbose: show info messages"
                 return;;
             p)
                 pyname="$OPTARG";;
