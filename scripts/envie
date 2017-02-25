@@ -56,7 +56,7 @@ function _errmsg() {
 }
 
 function _deactivate() {
-    [ "$VIRTUAL_ENV" ] && deactivate
+    [ "$VIRTUAL_ENV" ] && [ $(type -t deactivate) == function ] && deactivate
 }
 
 function _activate() {
@@ -205,14 +205,19 @@ function mkenv3() {
 # Destroys the active environment.
 # Usage (while env active): rmenv
 function rmenv() {
-    local envpath="$VIRTUAL_ENV"
+    local envpath="$VIRTUAL_ENV" ans
     if [ ! "$envpath" ]; then
         _errmsg "Active virtual environment not detected."
         return 1
     fi
-    deactivate
     if _is_virtualenv "$envpath"; then
-        rm -rf "$envpath"
+        read -p "Delete '$envpath' [y/N]? " ans
+        case "$ans" in
+            Y|y)
+                _deactivate
+                rm -rf "$envpath";;
+            *) return 2;;
+        esac
     else
         _errmsg "Invalid VirtualEnv path in VIRTUAL_ENV: '$envpath'."
         return 1
