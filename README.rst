@@ -20,7 +20,7 @@ or use it in a hash bang::
     import os
     print(os.getenv("VIRTUAL_ENV"))     # test we're running in project env
 
-or, just import it at the beginning of your Python program:
+or, just import it at the beginning of your Python program::
 
     #!/usr/bin/python
     import envie.require
