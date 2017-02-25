@@ -8,9 +8,9 @@ destroying, listing, switching and activating environments.
 But ``envie`` really shines when it comes to auto-discovery and auto-activation
 of VirtualEnvs relevant to your project (or executable). Just say::
 
-    ~/work/project-x$ envie manage.py migrate
+    ~/work/projectx$ envie manage.py migrate
 
-    ~/work/project-y$ envie python tests.py
+    ~/work/projecty$ envie python tests.py
 
     ~$ envie python playground/plucky/tests/tests.py
 
@@ -18,10 +18,15 @@ or use it in a hash bang::
 
     #!/usr/bin/env envie
     import os
-    print(os.getenv("VIRTUAL_ENV"))
+    print(os.getenv("VIRTUAL_ENV"))     # test we're running in project env
+
+or, just import it at the beginning of your Python program:
+
+    #!/usr/bin/python
+    import envie.require
 
 and in each of these cases the Python script will be executed in the closest
-virtual environment (for the definition of the closest environment see below,
+virtual environment (for the definition of the *closest environment* see below,
 section `Change/activate environment`).
 
 
