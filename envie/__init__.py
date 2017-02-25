@@ -1,4 +1,5 @@
 from __future__ import print_function
+import sys
 import os.path
 import subprocess
 
@@ -7,12 +8,31 @@ class EnvieError(Exception):
     """Envie-specific errors."""
 
 
-def activate(start_dir=None):
-    """Looks for and then activates the closest virtual environment, but only 
-    if a single closest env is found."""
+def _guess_caller_path():
+    """Since we are a module, we can't use ``__file__`` to determine a starting
+    directory for the closest environment search. But we can try with the
+    ``sys.argv[0]``, if the value has not been manipulated before a call to
+    envie. It should contain a path to the script executed, or ``-c``, or be 
+    empty when called with ``python -c '...'``/``'...prog...' | python``.
+    """
 
+    if len(sys.argv) < 1:
+        return '.'
+    argv = sys.argv[0]
+    if argv == '-c' or argv == '':
+        return '.'
+    return os.path.dirname(os.path.abspath(argv))
+
+
+def activate():
+    """Looks for and then activates the closest virtual environment,
+    but only if a single closest env is found.
+    """
+
+    cwd = _guess_caller_path()
     try:
-        output = subprocess.check_output("envie find -f -q", shell=True).strip('\n')
+        output = subprocess.check_output(
+            'envie find -f -q "%s"' % cwd, shell=True).strip('\n')
 
         envs = output.split('\n')
         if len(envs) < 1:
