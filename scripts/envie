@@ -138,10 +138,10 @@ function mkenv() {
             3)
                 pyname=python3;;
             \?)
-                _errmsg "Invalid mkenv option: -$OPTARG. See 'mkenv -h' for help on usage."
+                _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             :)
-                _errmsg "Option -$OPTARG requires an argument. See 'mkenv -h' for help on usage."
+                _errmsg "Option -$OPTARG requires an argument. See '$FUNCNAME -h' for help on usage."
                 return 255;;
         esac
     done
@@ -210,17 +210,17 @@ function rmenv() {
             h)
                 echo "Remove (delete) the base directory of the active virtual environment."
                 echo "Usage:"
-                echo "    rmenv [-f]"
+                echo "    $FUNCNAME [-f]"
                 echo "Options:"
                 echo "    -f    force; don't ask for permission"
                 return;;
             f)
                 force=1;;
             \?)
-                _errmsg "Invalid rmenv option: -$OPTARG. See 'rmenv -h' for help on usage."
+                _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             :)
-                _errmsg "Option -$OPTARG requires an argument. See 'rmenv -h' for help on usage."
+                _errmsg "Option -$OPTARG requires an argument. See '$FUNCNAME -h' for help on usage."
                 return 255;;
         esac
     done
@@ -324,7 +324,7 @@ function lsenv() {
             h)
                 echo "Find and list all virtualenvs under START_DIR."
                 echo "Usage:"
-                echo "    lsenv [-f|-l] [DIR [AVOID_SUBDIR]]"
+                echo "    $FUNCNAME [-f|-l] [DIR [AVOID_SUBDIR]]"
                 echo "Options:"
                 echo "    -f, --find    use only 'find' for search"
                 echo "    -l, --locate  use only 'locate' for search"
@@ -341,10 +341,10 @@ function lsenv() {
             q)
                 quiet=1;;
             \?)
-                _errmsg "Invalid lsenv option: -$OPTARG. See 'lsenv -h' for help on usage."
+                _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             :)
-                _errmsg "Option -$OPTARG requires an argument. See 'lsenv -h' for help on usage."
+                _errmsg "Option -$OPTARG requires an argument. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             -)
                 case "$OPTARG" in
@@ -353,7 +353,7 @@ function lsenv() {
                     locate)
                         force_locate=1;;
                     *)
-                        _errmsg "Invalid lsenv option: --$OPTARG. See 'lsenv -h' for help on usage."
+                        _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
                         return 255;;
                 esac;;
         esac
@@ -381,7 +381,7 @@ function lsupenv() {
             h)
                 echo "Find and list all virtualenvs under START_DIR."
                 echo "Usage:"
-                echo "    lsupenv [-f|-l] [DIR]"
+                echo "    $FUNCNAME [-f|-l] [DIR]"
                 echo "Options:"
                 echo "    -f, --find    use only 'find' for search"
                 echo "    -l, --locate  use only 'locate' for search"
@@ -398,10 +398,10 @@ function lsupenv() {
             q)
                 quiet=1;;
             \?)
-                _errmsg "Invalid lsupenv option: -$OPTARG. See 'lsupenv -h' for help on usage."
+                _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             :)
-                _errmsg "Option -$OPTARG requires an argument. See 'lsupenv -h' for help on usage."
+                _errmsg "Option -$OPTARG requires an argument. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             -)
                 case "$OPTARG" in
@@ -410,7 +410,7 @@ function lsupenv() {
                     locate)
                         force_locate=1;;
                     *)
-                        _errmsg "Invalid lsupenv option: --$OPTARG. See 'lsupenv -h' for help on usage."
+                        _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
                         return 255;;
                 esac;;
         esac
@@ -445,7 +445,7 @@ function chenv() {
             h)
                 echo "Activate the closest Python virtual environment, interactively."
                 echo "Usage:"
-                echo "    chenv [-1] [-v] [-q]"
+                echo "    $FUNCNAME [-1] [-v] [-q]"
                 echo "Options:"
                 echo "    -1    activate only if a single closest env found, abort otherwise"
                 echo "    -v    be verbose: show info messages (path to activated env)"
@@ -458,10 +458,10 @@ function chenv() {
             1)
                 force_single=1;;
             \?)
-                _errmsg "Invalid chenv option: -$OPTARG. See 'chenv -h' for help on usage."
+                _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             :)
-                _errmsg "Option -$OPTARG requires an argument. See 'chenv -h' for help on usage."
+                _errmsg "Option -$OPTARG requires an argument. See '$FUNCNAME -h' for help on usage."
                 return 255;;
         esac
     done
@@ -605,7 +605,7 @@ function __envie_unregister() {
     fi
 }
 
-function __envie_configure() {
+function __envie_config() {
     local ans quiet=0 add_to_bashrc=0
 
     local opt OPTIND
@@ -737,7 +737,7 @@ function __envie_main() {
         index)
             __envie_index "$@";;
         config)
-            __envie_configure "$@";;
+            __envie_config "$@";;
         run)
             # execute CMD
             script="$1"
