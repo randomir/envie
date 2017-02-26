@@ -39,7 +39,7 @@ def matching(path_tokens, words):
     """
     path_score = 0
     for word in words:
-        sims = map(lambda p: similarity(word, p), path_tokens)
+        sims = list(map(lambda p: similarity(word, p), path_tokens))
         score = max(sims)
         if score > 0:
             del path_tokens[sims.index(score)]
@@ -55,7 +55,7 @@ def guesstimate(cwd, phrase):
     """
     try:
         output = subprocess.check_output(
-            'envie find -q "%s"' % cwd, shell=True).strip('\n')
+            'envie find -q "%s"' % cwd, shell=True).decode('ascii').strip('\n')
         envs = output.split('\n')
     except subprocess.CalledProcessError as exc:
         sys.exit(1)

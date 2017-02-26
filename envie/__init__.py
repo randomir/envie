@@ -32,7 +32,7 @@ def activate():
     cwd = _guess_caller_path()
     try:
         output = subprocess.check_output(
-            'envie find -f -q "%s"' % cwd, shell=True).strip('\n')
+            'envie find -f -q "%s"' % cwd, shell=True).decode('ascii').strip('\n')
 
         envs = output.split('\n')
         if len(envs) < 1:
