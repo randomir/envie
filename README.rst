@@ -33,18 +33,18 @@ section `Change/activate environment`).
 Summary
 -------
 
-- ``mkenv [-p <pyexec>] [-2|-3] [<env>] -- [virtualenv opts]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
-- ``rmenv`` - Destroy the active environment.
-- ``chenv [-1] [-q] [-v]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``).
-- ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
-- ``lsupenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
+- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [<envdir>] -- [virtualenv opts]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
+- ``envie remove`` / ``rmenv`` - Destroy the active environment.
+- ``envie go`` / ``chenv [-1] [-q] [-v] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``.
+- ``envie list`` / ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
+- ``envie find`` / ``lsupenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
-- ``envie`` - Activate the closest virtual environment (if unambiguous).
+- ``envie [<keywords>]`` - Activate the closest virtual environment (relative to cwd, filtered by KEYWORDS), but only if it's unambiguous; shortcut for ``envie go -1 -v <keywords>``.
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
-- ``envie go [<keywords>]`` - Activate the closest environment, optionally filtered by list of ``<keywords>``.
 - ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
 - ``envie config`` - Interactively configure envie.
+- ``envie help`` - Print usage help. For details on a specific command use the '-h' switch (like ``envie go -h``).
 
 
 Install
@@ -122,7 +122,7 @@ Assume the following tree exists::
 
 Now, consider you work in ``~/demo/project1/src/deep/path/to/module``, but keep the environment
 in the ``env`` parallel to ``src``. Instead of manually switching to ``env`` and activating it with 
-something like ``source ../../../../../env/bin/activate``, just type ``chenv`` (``cde<TAB>`` should
+something like ``source ../../../../../env/bin/activate``, just type ``chenv`` (``che<TAB>`` should
 actually do it, if you use tab completion)::
 
     stevie@caracal:~/demo/project1/src/deep/path/to/module$ chenv
@@ -147,23 +147,28 @@ Likewise, to search up the tree, level by level, use ``lsupenv``.
 ``chenv`` uses ``lsupenv`` when searching for environment to activate.
 
 
+
 Enable faster search
-....................
+--------------------
 
 By default, ``envie`` uses the ``find`` command to search for environments. That
 approach is pretty fast when searching shallow trees. However, if you have a
 deeper directory trees, it's often faster to use a pre-built directory index
 (i.e. the ``locate`` command). To enable a combined ``locate/find`` approach to
-search, run::
+search, run ``envie config``::
 
-    $ envie init
-    Indexing environments in '/home/stevie'...Done.
+    $ envie config
+    Add to ~/.bashrc (strongly recommended) [Y/n]?
+    Use locate/updatedb for faster search [Y/n]?
+    Common ancestor dir of all environments to be indexed [/]:
+    Update index periodically (every 15min) [Y/n]?
+    Refresh stale index before each search [Y/n]?
+    Envie already registered in /home/stevie/.bashrc.
+    Config file written to /home/stevie/.config/envie/envierc.
+    Crontab updated.
+    Indexing environments in '/'...Done.
 
-In the combined approach, if `find` doesn't finish within 400ms, search via
-``find`` is aborted and ``locate`` is allowed to finish (faster).
-
-To re-index environments, run::
-
-    $ envie update
-
-To force ``find`` or ``locate``, use ``-f`` and ``-l`` flags of ``lsenv``.
+From now on, the combined approach is used by default (if not overriden with
+``-f`` or ``-l`` switches). In the combined approach, if `find` doesn't finish
+within 400ms, search via ``find`` is aborted and ``locate`` is allowed to finish
+(faster).
