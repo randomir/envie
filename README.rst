@@ -42,6 +42,7 @@ Summary
 - ``envie`` - Activate the closest virtual environment (if unambiguous).
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
+- ``envie go [<keywords>]`` - Activate the closest environment, optionally filtered by list of ``<keywords>``.
 - ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
 - ``envie config`` - Interactively configure envie.
 

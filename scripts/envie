@@ -813,24 +813,29 @@ function __envie_main() {
 
 function __envie_usage() {
     cat <<-END
+		Your virtual environments wrangler. Holds no assumptions on virtual env dir
+		location in relation to code, but works best if they're near.
+
 		Usage:
-		    envie {python [SCRIPT] | run CMD | index | config}
+		    envie {create [ENV] | remove | list [DIR] | find [DIR] | go [KEYWORDS] |
+		           python [SCRIPT] | run CMD | index | config}
 		    envie SCRIPT
 		    envie
 
 		Commands:
-		    python SCRIPT run Python SCRIPT in the closest environment
-		    run CMD       execute CMD in the closest environment. CMD can be a
-		                  script file, command, builtin, alias, or a function.
-		    index         (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
-		    config        interactively configure Envie
-		    help          this help
+		    python SCRIPT  run Python SCRIPT in the closest environment
+		    run CMD        execute CMD in the closest environment. CMD can be a
+		                   script file, command, builtin, alias, or a function.
+		    index          (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
+		    config         interactively configure Envie
+		    help           this help
 
-		    create [ENV]  create virtual env (alias for mkenv)
-		    remove        remove directory of active virtual env (alias for rmenv)
-		    list [DIR]    list virtual envs under current dir (alias for lsenv)
-		    find [DIR]    like 'list', but also look above, until env found (alias for lsupenv)
-		    go            interactively activate the closest environment (alias for chenv)
+		    create [ENV]   create virtual env (alias for mkenv)
+		    remove         remove directory of active virtual env (alias for rmenv)
+		    list [DIR]     list virtual envs under current dir (alias for lsenv)
+		    find [DIR]     like 'list', but also look above, until env found (alias for lsupenv)
+		    go [KEYWORDS]  interactively activate the closest environment (alias for chenv)
+		                   (adaptively select the most relevant virtual env for list of KEYWORDS)
 
 		The second form is a shorthand for executing python scripts in the closest 
 		virtual environment, without the need for a manual env activation. It's convenient
@@ -842,9 +847,10 @@ function __envie_usage() {
 		closest environment (relative to cwd), but only if it's unambiguous.
 
 		Examples:
-		    envie python              # run interactive Python shell in the closest env
-		    envie manage.py shell     # run Django shell in the project env (auto activate)
-		    envie run /path/to/executable    # execute an executable in the closest env
+		    envie python               # run interactive Python shell in the closest env
+		    envie manage.py shell      # run Django shell in the project env (auto activate)
+		    envie run /path/to/exec    # execute an executable in the closest env
+		    envie go my cool project   # activate the env with words my,cool,project in dir
 	END
 }
 
