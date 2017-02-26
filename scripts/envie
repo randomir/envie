@@ -449,8 +449,9 @@ function chenv() {
         case $opt in
             h)
                 echo "Activate the closest Python virtual environment, interactively."
+                echo "A list of the closest environments is filtered by KEYWORDS."
                 echo "Usage:"
-                echo "    $FUNCNAME [-1] [-v] [-q]"
+                echo "    $FUNCNAME [-1] [-v] [-q] [KEYWORDS]"
                 echo "Options:"
                 echo "    -1    activate only if a single closest env found, abort otherwise"
                 echo "    -v    be verbose: show info messages (path to activated env)"
@@ -473,7 +474,14 @@ function chenv() {
     shift $((OPTIND-1))
 
     local IFS envlist env len=0
-    envlist=$(lsupenv -q)
+
+    if [ "$#" -gt 0 ]; then
+        # additional filtering by KEYWORDS required
+        envlist=$(guessing_envie.py . "$@")
+    else
+        envlist=$(lsupenv -q)
+    fi
+
     [ "$envlist" ] && len=$(wc -l <<<"$envlist")
     if [ "$len" -eq 1 ]; then
         _activate "$envlist"
