@@ -21,5 +21,5 @@ setup(
         'Topic :: System :: Shells'
     ],
     keywords='virtualenv bash helper closest virtual environment create mkenv destroy rmenv change cdenv',
-    scripts=['scripts/envie']
+    scripts=['scripts/envie', 'envie/guessing_envie.py']
 )
