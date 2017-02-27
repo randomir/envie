@@ -10,7 +10,8 @@ setup(
     author_email='radomir.stevanovic@gmail.com',
     url='https://github.com/randomir/envie',
     license='MIT',
-    py_modules=['envie'],
+    packages=['envie'],
+    package_dir={'envie': 'envie'},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
