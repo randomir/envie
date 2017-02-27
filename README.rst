@@ -6,21 +6,25 @@ productivity when dealing with mundane VirtualEnv tasks, like: creating,
 destroying, listing, switching and activating environments.
 
 But ``envie`` really shines when it comes to auto-discovery and auto-activation
-of VirtualEnvs relevant to your project (or executable). Just say::
+of VirtualEnvs relevant to your project (or executable). Just say:
 
-    ~/work/projectx$ envie manage.py migrate
+.. code-block:: bash
 
-    ~/work/projecty$ envie python tests.py
+    ~/work/projectA$ envie python tests.py
+    
+    ~/work/projectB$ envie manage.py migrate
 
-    ~$ envie python playground/plucky/tests/tests.py
+    ~$ envie run python -c 'import os; print(os.getenv("VIRTUAL_ENV"))'
 
-or use it in a hash bang::
+or use it in a hash bang:
+
+.. code-block:: python
 
     #!/usr/bin/env envie
-    import os
-    print(os.getenv("VIRTUAL_ENV"))     # test we're running in project env
 
-or, just import it at the beginning of your Python program::
+or, just import it at the beginning of your Python program:
+
+.. code-block:: python
 
     #!/usr/bin/python
     import envie.require
@@ -28,6 +32,16 @@ or, just import it at the beginning of your Python program::
 and in each of these cases the Python script will be executed in the closest
 virtual environment (for the definition of the *closest environment* see below,
 section `Change/activate environment`).
+
+To just activate the closest virtual env, just type ``envie``::
+
+    ~/work/my-project-awesome$ envie
+
+or even::
+
+    $ envie project awesome
+
+(keywords filter all virtual envs in vicinity and activate the best match - if unique)
 
 
 Summary
