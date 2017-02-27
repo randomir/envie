@@ -24,6 +24,16 @@ def _guess_caller_path():
     return os.path.dirname(os.path.abspath(argv))
 
 
+# execfile equivalent for python3
+try:
+    _execfile = execfile
+except NameError as exc:
+    def _execfile(path):
+        with open(path) as f:
+            code = compile(f.read(), path, 'exec')
+            exec(code, dict(__file__=path))
+
+
 def activate():
     """Looks for and then activates the closest virtual environment,
     but only if a single closest env is found.
@@ -50,4 +60,5 @@ def activate():
         raise EnvieError(
             "Invalid virtual environment found (%s is missing)" % activate_this)
 
-    execfile(activate_this, dict(__file__=activate_this))
+    _execfile(activate_this)
+
