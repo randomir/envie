@@ -51,7 +51,7 @@ or even:
 Summary
 -------
 
-- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [<envdir>] -- [virtualenv opts]`` - Create virtualenv 
+- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [-t] [<envdir>] -- [virtualenv opts]`` - Create virtualenv 
 in ``<env>`` based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file.
 - ``envie remove`` / ``rmenv`` - Destroy the active environment.
 - ``envie go`` / ``chenv [-1] [-q] [-v] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), 

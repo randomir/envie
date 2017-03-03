@@ -119,20 +119,21 @@ function _humanized_age() {
 # Usage: mkenv [-p <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
 function mkenv() {
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
-    local opt OPTIND pyname verbose pip_requirements
-    while getopts ":hp:v23r:" opt; do
+    local opt OPTIND pyname verbose pip_requirements throwaway
+    while getopts ":hp:v23r:t" opt; do
         case $opt in
             h)
                 echo "Create Python (2/3) virtual environment in DEST_DIR based on PYTHON."
                 echo "Usage:"
-                echo "    mkenv [-2|-3|-p PYTHON] [-v] [-r PIP_REQ] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv2 [-v] [-r PIP_REQ] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv3 [-v] [-r PIP_REQ] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv [-2|-3|-p PYTHON] [-v] [-r PIP_REQ] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv2 [-v] [-r PIP_REQ] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv3 [-v] [-r PIP_REQ] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "Options:"
                 echo "    -2, -3      use Python 2, or Python 3"
                 echo "    -p PYTHON   use Python accessible with PYTHON name,"
                 echo "                like 'python3.5', or '/usr/local/bin/mypython'."
                 echo "    -r PIP_REQ  install pip requirements in the created virtualenv"
+                echo "    -t          create throw-away env in /tmp"
                 echo "    -v          be verbose: show info messages"
                 return;;
             p)
@@ -145,6 +146,8 @@ function mkenv() {
                 pyname=python3;;
             r)
                 pip_requirements="$OPTARG";;
+            t)
+                throwaway=1;;
             \?)
                 _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
@@ -172,6 +175,9 @@ function mkenv() {
     if [ -d "$envpath" ]; then
         _errmsg "Directory '$envpath' already exists."
         return 1
+    fi
+    if (( throwaway )); then
+        envpath=$(mktemp -d)
     fi
     echo "Creating Python virtual environment in '$envpath'."
 
@@ -803,6 +809,8 @@ function __envie_main() {
             ;;
         create)
             mkenv "$@";;
+        tmp|temp)
+            mkenv -t "$@";;
         remove)
             rmenv "$@";;
         list)
@@ -845,6 +853,8 @@ function __envie_usage() {
 		    find [DIR]     like 'list', but also look above, until env found (alias for lsupenv)
 		    go [KEYWORDS]  interactively activate the closest environment (alias for chenv)
 		                   (adaptively select the most relevant virtual env for list of KEYWORDS)
+
+		    tmp            create a throw-away env in /tmp
 
 		The second form is a shorthand for executing python scripts in the closest 
 		virtual environment, without the need for a manual env activation. It's convenient
