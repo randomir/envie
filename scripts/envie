@@ -119,8 +119,8 @@ function _humanized_age() {
 # Usage: mkenv [-p <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
 function mkenv() {
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
-    local opt OPTIND pyname verbose pip_requirements throwaway
-    while getopts ":hp:v23r:t" opt; do
+    local opt OPTIND pyname verbose quiet pip_requirements throwaway
+    while getopts ":hp:vq23r:t" opt; do
         case $opt in
             h)
                 echo "Create Python (2/3) virtual environment in DEST_DIR based on PYTHON."
@@ -134,12 +134,15 @@ function mkenv() {
                 echo "                like 'python3.5', or '/usr/local/bin/mypython'."
                 echo "    -r PIP_REQ  install pip requirements in the created virtualenv"
                 echo "    -t          create throw-away env in /tmp"
-                echo "    -v          be verbose: show info messages"
+                echo "    -v          be verbose: show debug messages"
+                echo "    -q          be quiet: suppress info messages"
                 return;;
             p)
                 pyname="$OPTARG";;
             v)
                 verbose=-v;;
+            q)
+                quiet=1;;
             2)
                 pyname=python2;;
             3)
@@ -180,7 +183,7 @@ function mkenv() {
             return 1
         fi
     fi
-    echo "Creating Python virtual environment in '$envpath'."
+    (( ! quiet )) && echo "Creating Python virtual environment in '$envpath'."
 
     local pypath
     _deactivate
@@ -193,7 +196,7 @@ function mkenv() {
         _errmsg "Unrecognized Python version of executable: '$pypath'."
         return 1
     fi
-    echo "Using $pyver ($pypath)."
+    (( ! quiet )) && echo "Using $pyver ($pypath)."
 
     mkdir -p "$envpath"
     cd "$envpath"
@@ -201,12 +204,22 @@ function mkenv() {
     output=$(virtualenv --no-site-packages -p "$pypath" $verbose "$@" . 2>&1)
     if [ $? -ne 0 ]; then
         _errmsg "$output"
+        return 2
     else
         [ "$verbose" ] && echo "$output"
         _activate .
         if [ "$pip_requirements" ]; then
-            echo "Installing Pip requirements from '$pip_requirements'."
-            pip install $verbose -r "$pip_requirements"
+            (( ! quiet )) && echo "Installing Pip requirements from '$pip_requirements'."
+            local pipopts=()
+            if (( quiet )); then
+                pipopts+=(-q)
+            elif [ "$verbose" ]; then
+                pipopts+=(-v)
+            fi
+            pip install "${pipopts[@]}" -r "$pip_requirements"
+            if [ $? -ne 0 ]; then
+                return 2
+            fi
         fi
     fi
     cd - >/dev/null
