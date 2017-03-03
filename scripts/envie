@@ -198,6 +198,10 @@ function mkenv() {
     fi
     (( ! quiet )) && echo "Using $pyver ($pypath)."
 
+    if [ -f "$pip_requirements" ]; then
+        pip_requirements=$(readlink -f "$pip_requirements")
+    fi
+
     mkdir -p "$envpath"
     cd "$envpath"
     local output
