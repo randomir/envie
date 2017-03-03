@@ -834,7 +834,7 @@ function __envie_main() {
             lsupenv "$@";;
         go)
             chenv "$@";;
-        help|--help)
+        help|--help|-h)
             __envie_usage;;
         "")
             chenv -1v "$@";;
