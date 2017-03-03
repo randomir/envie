@@ -183,6 +183,7 @@ function mkenv() {
     echo "Creating Python virtual environment in '$envpath'."
 
     local pypath
+    _deactivate
     if ! pypath=$(which "$pyname"); then
         _errmsg "Python executable '$pyname' not found."
         return 1
