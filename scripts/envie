@@ -880,7 +880,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python run config index help create remove list find go"
+    local cmds="python run config index help create remove list find go tmp"
 
     case "$prev" in
         run)
