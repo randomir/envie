@@ -33,11 +33,15 @@ and in each of these cases the Python script will be executed in the closest
 virtual environment (for the definition of the *closest environment* see below,
 section `Change/activate environment`).
 
-To just activate the closest virtual env, just type ``envie``::
+To just activate the closest virtual env, just type ``envie``:
+
+.. code-block:: bash
 
     ~/work/my-project-awesome$ envie
 
-or even::
+or even:
+
+.. code-block:: bash
 
     $ envie project awesome
 
@@ -47,9 +51,11 @@ or even::
 Summary
 -------
 
-- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [<envdir>] -- [virtualenv opts]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``.
+- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [<envdir>] -- [virtualenv opts]`` - Create virtualenv 
+in ``<env>`` based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file.
 - ``envie remove`` / ``rmenv`` - Destroy the active environment.
-- ``envie go`` / ``chenv [-1] [-q] [-v] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``.
+- ``envie go`` / ``chenv [-1] [-q] [-v] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), 
+optionally filtered by a list of ``<keywords>``.
 - ``envie list`` / ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
 - ``envie find`` / ``lsupenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
@@ -105,6 +111,11 @@ When done with this environment, just type ``rmenv`` to destroy the active env.
     (env)stevie@caracal:~/demo$ rmenv
     stevie@caracal:~/demo$ ls
     stevie@caracal:~/demo$
+
+Create Python 3 environment in ``env`` and install pip packages from
+``requirements.txt``::
+
+    $ mkenv3 -r requirements.txt
 
 
 Change/activate environment

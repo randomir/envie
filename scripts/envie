@@ -119,19 +119,20 @@ function _humanized_age() {
 # Usage: mkenv [-p <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
 function mkenv() {
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
-    local opt OPTIND pyname verbose
-    while getopts ":hp:v23" opt; do
+    local opt OPTIND pyname verbose pip_requirements
+    while getopts ":hp:v23r:" opt; do
         case $opt in
             h)
                 echo "Create Python (2/3) virtual environment in DEST_DIR based on PYTHON."
                 echo "Usage:"
-                echo "    mkenv [-2|-3|-p PYTHON] [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv2 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv3 [-v] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv [-2|-3|-p PYTHON] [-v] [-r PIP_REQ] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv2 [-v] [-r PIP_REQ] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv3 [-v] [-r PIP_REQ] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "Options:"
                 echo "    -2, -3      use Python 2, or Python 3"
                 echo "    -p PYTHON   use Python accessible with PYTHON name,"
                 echo "                like 'python3.5', or '/usr/local/bin/mypython'."
+                echo "    -r PIP_REQ  install pip requirements in the created virtualenv"
                 echo "    -v          be verbose: show info messages"
                 return;;
             p)
@@ -142,6 +143,8 @@ function mkenv() {
                 pyname=python2;;
             3)
                 pyname=python3;;
+            r)
+                pip_requirements="$OPTARG";;
             \?)
                 _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
@@ -193,6 +196,10 @@ function mkenv() {
     else
         [ "$verbose" ] && echo "$output"
         _activate .
+        if [ "$pip_requirements" ]; then
+            echo "Installing Pip requirements from '$pip_requirements'."
+            pip install $verbose -r "$pip_requirements"
+        fi
     fi
     cd - >/dev/null
 }
