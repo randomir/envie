@@ -159,25 +159,26 @@ function mkenv() {
     shift $((OPTIND-1))
 
     local envpath
-    if [[ "$1" && "$1" != -* ]]; then
-        # mkenv -2 pythonenv
-        # mkenv -2 pythonenv -- xxx
-        # mkenv -2 -- pythonenv -v
-        envpath="$1"
-        shift
-        [ "$1" == -- ] && shift
-    else
-        # mkenv
-        # mkenv -2 -v
-        # mkenv -2 -- --no-pip --no-wheel
-        :
-    fi
-    if [ -d "$envpath" ]; then
-        _errmsg "Directory '$envpath' already exists."
-        return 1
-    fi
     if (( throwaway )); then
         envpath=$(mktemp -d)
+    else
+        if [[ "$1" && "$1" != -* ]]; then
+            # mkenv -2 pythonenv
+            # mkenv -2 pythonenv -- xxx
+            # mkenv -2 -- pythonenv -v
+            envpath="$1"
+            shift
+            [ "$1" == -- ] && shift
+        else
+            # mkenv
+            # mkenv -2 -v
+            # mkenv -2 -- --no-pip --no-wheel
+            :
+        fi
+        if [ -d "$envpath" ]; then
+            _errmsg "Directory '$envpath' already exists."
+            return 1
+        fi
     fi
     echo "Creating Python virtual environment in '$envpath'."
 
