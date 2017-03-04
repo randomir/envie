@@ -119,7 +119,7 @@ function _humanized_age() {
 # Usage: mkenv [-p <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
 function mkenv() {
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
-    local opt OPTIND pyname verbose quiet pip_requirements=() throwaway autodetect
+    local opt OPTIND pyname verbosity=0 quietness=0 pip_requirements=() throwaway autodetect
     while getopts ":hp:vq23r:ta" opt; do
         case $opt in
             h)
@@ -135,15 +135,17 @@ function mkenv() {
                 echo "    -r PIP_REQ  install pip requirements in the created virtualenv"
                 echo "    -a          autodetect and install pip requirements"
                 echo "    -t          create throw-away env in /tmp"
-                echo "    -v          be verbose: show debug messages"
-                echo "    -q          be quiet: suppress info messages"
+                echo "    -v[v]       be verbose: show virtualenv&pip info/debug messages"
+                echo "    -q[q]       be quiet: suppress info/error messages"
                 return;;
             p)
                 pyname="$OPTARG";;
             v)
-                verbose=-v;;
+                # 1=virtualenv/pip stdout, 2=virtualenv/pip debug output
+                (( verbosity++ ));;
             q)
-                quiet=1;;
+                # 0=info+error, 1=error, 2=nothing
+                (( quietness++ ));;
             2)
                 pyname=python2;;
             3)
@@ -182,24 +184,24 @@ function mkenv() {
             :
         fi
         if [ -d "$envpath" ]; then
-            _errmsg "Directory '$envpath' already exists."
+            (( quietness < 2 )) && _errmsg "Directory '$envpath' already exists."
             return 1
         fi
     fi
-    (( ! quiet )) && echo "Creating Python virtual environment in '$envpath'."
+    (( quietness < 1 )) && echo "Creating Python virtual environment in '$envpath'."
 
     local pypath
     _deactivate
     if ! pypath=$(which "$pyname"); then
-        _errmsg "Python executable '$pyname' not found."
-        return 1
+        (( quietness < 2 )) && _errmsg "Python executable '$pyname' not found."
+        return 2
     fi
     local pyver=$("$pypath" --version 2>&1)
     if [[ ! $pyver =~ Python ]]; then
-        _errmsg "Unrecognized Python version of executable: '$pypath'."
-        return 1
+        (( quietness < 2 )) && _errmsg "Unrecognized Python version of executable: '$pypath'."
+        return 3
     fi
-    (( ! quiet )) && echo "Using $pyver ($pypath)."
+    (( quietness < 1 )) && echo "Using $pyver ($pypath)."
 
     local pip_valid_reqs=() pip_auto_reqs=() pip_opts=()
     if (( ${#pip_requirements[@]} )); then
@@ -210,45 +212,63 @@ function mkenv() {
                 pip_valid_reqs+=("$req")
                 pip_opts+=(-r "$req")
             else
-                _errmsg "Pip requirement file not found: '$req'."
+                (( quietness < 2 )) && _errmsg "Pip requirement file not found: '$req'."
             fi
         done
     fi
 
     if (( autodetect )); then
-        (( ! quiet )) && echo "Searching for all requirements.txt files..."
+        (( quietness < 1 )) && echo "Searching for all requirements.txt files..."
         local req
         while read req; do
             req=$(readlink -f "$req")
             pip_auto_reqs+=("$req")
             pip_opts+=(-r "$req")
         done < <(find . -name .git -o -name .hg -o -name .svn -prune -o -name 'requirements.txt' -print 2>/dev/null)
-        (( ! quiet )) && echo "Found ${#pip_auto_reqs[@]} requirement file(s): ${pip_auto_reqs[*]}"
+        (( quietness < 1 )) && echo "Found ${#pip_auto_reqs[@]} requirement file(s): ${pip_auto_reqs[*]}"
         pip_valid_reqs+=("${pip_auto_reqs[@]}")
     fi
 
     mkdir -p "$envpath"
     cd "$envpath"
-    local output
-    output=$(virtualenv --no-site-packages -p "$pypath" $verbose "$@" . 2>&1)
-    if (( $? )); then
-        _errmsg "$output"
-        return 2
-    else
-        [ "$verbose" ] && echo "$output"
-        _activate .
-        if (( ${#pip_valid_reqs[@]} )); then
-            (( ! quiet )) && echo "Installing Pip requirements from: ${pip_valid_reqs[@]}"
+    local output virtualenv_opts=(--no-site-packages -p "$pypath")
 
-            if (( quiet )); then
-                pip_opts+=(-q)
-            elif [ "$verbose" ]; then
-                pip_opts+=(-v)
-            fi
-            pip install "${pip_opts[@]}"
-            (( $? )) && return 2
+    (( quietness > 0 )) && virtualenv_opts+=(-q)
+    (( verbosity > 1 )) && virtualenv_opts+=(-v)
+
+    if (( verbosity > 0 )); then
+        virtualenv "${virtualenv_opts[@]}" "$@" .
+        (( $? )) && return 4
+    else
+        output=$(virtualenv "${virtualenv_opts[@]}" "$@" . 2>&1)
+        if (( $? )); then
+            (( quietness < 2 )) && _errmsg "$output"
+            return 4
         fi
     fi
+
+    (( quietness < 1 )) && echo "Virtual environment ready."
+    _activate .
+
+    if (( ${#pip_valid_reqs[@]} )); then
+        (( quietness < 1 )) && echo "Installing Pip requirements from: ${pip_valid_reqs[@]}"
+
+        (( quietness > 0 )) && pip_opts+=(-q)
+        (( verbosity > 1 )) && pip_opts+=(-v)
+
+        if (( verbosity > 0 )); then
+            pip install "${pip_opts[@]}"
+            (( $? )) && return 5
+        else
+            output=$(pip install "${pip_opts[@]}" 2>&1)
+            if (( $? )); then
+                (( quietness < 2 )) && _errmsg "$output"
+                return 5
+            fi
+        fi
+        (( quietness < 1 )) && echo "Pip requirements installed."
+    fi
+
     cd - >/dev/null
 }
 
