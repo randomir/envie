@@ -119,20 +119,21 @@ function _humanized_age() {
 # Usage: mkenv [-p <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
 function mkenv() {
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
-    local opt OPTIND pyname verbose quiet pip_requirements=() pip_opts=() throwaway
-    while getopts ":hp:vq23r:t" opt; do
+    local opt OPTIND pyname verbose quiet pip_requirements=() throwaway autodetect
+    while getopts ":hp:vq23r:ta" opt; do
         case $opt in
             h)
                 echo "Create Python (2/3) virtual environment in DEST_DIR based on PYTHON."
                 echo "Usage:"
-                echo "    mkenv [-2|-3|-p PYTHON] [-v] [-r PIP_REQ] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv2 [-v] [-r PIP_REQ] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv3 [-v] [-r PIP_REQ] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv [-2|-3|-p PYTHON] [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv2 [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv3 [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "Options:"
                 echo "    -2, -3      use Python 2, or Python 3"
                 echo "    -p PYTHON   use Python accessible with PYTHON name,"
                 echo "                like 'python3.5', or '/usr/local/bin/mypython'."
                 echo "    -r PIP_REQ  install pip requirements in the created virtualenv"
+                echo "    -a          autodetect and install pip requirements"
                 echo "    -t          create throw-away env in /tmp"
                 echo "    -v          be verbose: show debug messages"
                 echo "    -q          be quiet: suppress info messages"
@@ -149,6 +150,8 @@ function mkenv() {
                 pyname=python3;;
             r)
                 pip_requirements+=("$OPTARG");;
+            a)
+                autodetect=1;;
             t)
                 throwaway=1;;
             \?)
@@ -198,8 +201,9 @@ function mkenv() {
     fi
     (( ! quiet )) && echo "Using $pyver ($pypath)."
 
+    local pip_valid_reqs=() pip_auto_reqs=() pip_opts=()
     if (( ${#pip_requirements[@]} )); then
-        local req pip_valid_reqs=()
+        local req
         for req in "${pip_requirements[@]}"; do
             if [ -f "$req" ]; then
                 req=$(readlink -f "$req")
@@ -209,6 +213,18 @@ function mkenv() {
                 _errmsg "Pip requirement file not found: '$req'."
             fi
         done
+    fi
+
+    if (( autodetect )); then
+        (( ! quiet )) && echo "Searching for all requirements.txt files..."
+        local req
+        while read req; do
+            req=$(readlink -f "$req")
+            pip_auto_reqs+=("$req")
+            pip_opts+=(-r "$req")
+        done < <(find . -name .git -o -name .hg -o -name .svn -prune -o -name 'requirements.txt' -print 2>/dev/null)
+        (( ! quiet )) && echo "Found ${#pip_auto_reqs[@]} requirement file(s): ${pip_auto_reqs[*]}"
+        pip_valid_reqs+=("${pip_auto_reqs[@]}")
     fi
 
     mkdir -p "$envpath"
