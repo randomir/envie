@@ -851,8 +851,10 @@ function __envie_main() {
             ;;
         create)
             mkenv "$@";;
-        tmp|temp)
+        tmp|temporary)
             mkenv -t "$@";;
+        install)
+            mkenv -a "$@";;
         remove)
             rmenv "$@";;
         list)
@@ -890,13 +892,14 @@ function __envie_usage() {
 		    help           this help
 
 		    create [ENV]   create a new virtual environment (alias for mkenv)
+		    tmp, temporary create a throw-away env in /tmp (alias for mkenv -t)
+		    install        create env and install all detected requirements.txt (mkenv -a)
 		    remove         destroy the active environment (alias for rmenv)
+
 		    list [DIR]     list virtual envs under DIR (alias for lsenv)
 		    find [DIR]     like 'list', but also look above, until env found (alias for lsupenv)
 		    go [KEYWORDS]  interactively activate the closest environment (alias for chenv)
 		                   (adaptively select the most relevant virtual env for list of KEYWORDS)
-
-		    tmp            create a throw-away env in /tmp
 
 		The second form is a shorthand for executing python scripts in the closest 
 		virtual environment, without the need for a manual env activation. It's convenient
@@ -914,6 +917,9 @@ function __envie_usage() {
 		    envie manage.py shell      # run Django shell in the project env (auto activate)
 		    envie run /path/to/exec    # execute an executable in the closest env
 		    envie go my cool project   # activate the env with words my,cool,project in its path
+
+		    mkenv -ta && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
+		    envie tmp -a && ./setup.py test && envie remove -f   # more verbose version of the above
 	END
 }
 
@@ -922,7 +928,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python run config index help create remove list find go tmp"
+    local cmds="python run config index help create remove list find go tmp temporary install"
 
     case "$prev" in
         run)
