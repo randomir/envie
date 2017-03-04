@@ -119,7 +119,7 @@ function _humanized_age() {
 # Usage: mkenv [-p <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
 function mkenv() {
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
-    local opt OPTIND pyname verbose quiet pip_requirements throwaway
+    local opt OPTIND pyname verbose quiet pip_requirements=() pip_opts=() throwaway
     while getopts ":hp:vq23r:t" opt; do
         case $opt in
             h)
@@ -148,7 +148,7 @@ function mkenv() {
             3)
                 pyname=python3;;
             r)
-                pip_requirements="$OPTARG";;
+                pip_requirements+=("$OPTARG");;
             t)
                 throwaway=1;;
             \?)
@@ -198,32 +198,39 @@ function mkenv() {
     fi
     (( ! quiet )) && echo "Using $pyver ($pypath)."
 
-    if [ -f "$pip_requirements" ]; then
-        pip_requirements=$(readlink -f "$pip_requirements")
+    if (( ${#pip_requirements[@]} )); then
+        local req pip_valid_reqs=()
+        for req in "${pip_requirements[@]}"; do
+            if [ -f "$req" ]; then
+                req=$(readlink -f "$req")
+                pip_valid_reqs+=("$req")
+                pip_opts+=(-r "$req")
+            else
+                _errmsg "Pip requirement file not found: '$req'."
+            fi
+        done
     fi
 
     mkdir -p "$envpath"
     cd "$envpath"
     local output
     output=$(virtualenv --no-site-packages -p "$pypath" $verbose "$@" . 2>&1)
-    if [ $? -ne 0 ]; then
+    if (( $? )); then
         _errmsg "$output"
         return 2
     else
         [ "$verbose" ] && echo "$output"
         _activate .
-        if [ "$pip_requirements" ]; then
-            (( ! quiet )) && echo "Installing Pip requirements from '$pip_requirements'."
-            local pipopts=()
+        if (( ${#pip_valid_reqs[@]} )); then
+            (( ! quiet )) && echo "Installing Pip requirements from: ${pip_valid_reqs[@]}"
+
             if (( quiet )); then
-                pipopts+=(-q)
+                pip_opts+=(-q)
             elif [ "$verbose" ]; then
-                pipopts+=(-v)
+                pip_opts+=(-v)
             fi
-            pip install "${pipopts[@]}" -r "$pip_requirements"
-            if [ $? -ne 0 ]; then
-                return 2
-            fi
+            pip install "${pip_opts[@]}"
+            (( $? )) && return 2
         fi
     fi
     cd - >/dev/null
