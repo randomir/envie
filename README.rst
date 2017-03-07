@@ -118,7 +118,7 @@ Create Python 3 environment in ``env`` and install pip packages from
 Create a throw-away environment with pre-installed ``dev-requirements.txt`` and
 local project in editable mode from ``/home/stevie/work/mypackage/``::
 
-    $ mkenv -t -r dev-requirements.txt -i "-e/home/stevie/work/mypackage/"
+    $ mkenv -t -r dev-requirements.txt -i "-e /home/stevie/work/mypackage/"
 
 
 Change/activate environment

@@ -218,7 +218,11 @@ function mkenv() {
         fi
     done
     for req in "${pip_packages[@]}"; do
-        if [ "$req" ]; then
+        if [[ "$req" =~ -e[[:space:]]*(.*) ]]; then
+            # handle (multiple) spaces between -e and url/path
+            pip_valid_reqs+=("$req")
+            pip_opts+=(-e "${BASH_REMATCH[1]}")
+        elif [ "$req" ]; then
             pip_valid_reqs+=("$req")
             pip_opts+=("$req")
         fi
