@@ -51,7 +51,7 @@ or even:
 Summary
 -------
 
-- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [-a] [-t] [<envdir>] -- [virtualenv opts]`` - Create virtualenv in ``<env>`` based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file.
+- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [-i <pip_pkg>] [-a] [<envdir> | -t] -- [virtualenv opts]`` - Create virtualenv in ``<envdir>`` (or in temporary dir, ``-t``) based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file and ``<pip_pkg>>`` package specifier.
 - ``envie remove`` / ``rmenv`` - Destroy the active environment.
 - ``envie go`` / ``chenv [-1] [-q] [-v] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``.
 - ``envie list`` / ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
@@ -114,6 +114,11 @@ Create Python 3 environment in ``env`` and install pip packages from
 ``requirements.txt``::
 
     $ mkenv3 -r requirements.txt
+
+Create a throw-away environment with pre-installed ``dev-requirements.txt`` and
+local project in editable mode from ``/home/stevie/work/mypackage/``::
+
+    $ mkenv -t -r dev-requirements.txt -i "-e/home/stevie/work/mypackage/"
 
 
 Change/activate environment
