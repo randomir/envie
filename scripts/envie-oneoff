@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Create a new throw-away virtual environment, install requirements specified, and
+# destroy the environment when the script finishes.
+#
+# Usage from the command line:
+#
+#   envie-oneoff SCRIPT
+#
+# Usage in hashbang, inspired by PEP 263:
+#
+#   #!/usr/bin/env envie-oneoff
+#   # -*- requirements: auto -*-
+#
+# If requirements specified as "auto", the closest "requirements.txt" is searched for.
+# Alternatively, you can specify a different, or a specific pip requirements, like:
+#
+#   # -*- requirements: test-requirements.txt dev-requirements.txt -*-
+#
+#
+# Part of the ``envie`` package, ``https://github.com/randomir/envie``.
