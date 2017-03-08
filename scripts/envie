@@ -251,7 +251,7 @@ function mkenv() {
             req=$(readlink -f "$req")
             pip_auto_reqs+=("$req")
             pip_opts+=(-r "$req")
-        done < <(_find_closest "requirement.txt" ".")
+        done < <(_find_closest "requirements.txt" ".")
         (( quietness < 1 )) && echo "Found ${#pip_auto_reqs[@]} requirement file(s): ${pip_auto_reqs[*]}"
         pip_valid_reqs+=("${pip_auto_reqs[@]}")
     fi
@@ -299,6 +299,8 @@ function mkenv() {
 
         (( quietness < 1 )) && echo "Pip requirements installed."
     fi
+
+    return 0
 }
 
 function mkenv2() {
@@ -356,6 +358,8 @@ function rmenv() {
         _errmsg "Invalid VirtualEnv path in VIRTUAL_ENV: '$envpath'."
         return 1
     fi
+
+    return 0
 }
 
 
@@ -478,6 +482,8 @@ function lsenv() {
     else
         _lsenv_locate_vs_find_race "$@"
     fi
+
+    return 0
 }
 
 
@@ -541,6 +547,8 @@ function lsupenv() {
         dir="${dir#./}"
     done
     echo "$list"
+
+    return 0
 }
 
 
@@ -607,6 +615,8 @@ function chenv() {
             fi
         done
     fi
+
+    return 0
 }
 
 
@@ -618,6 +628,7 @@ function cdenv() {
         _errmsg "Virtual environment not active. Use 'chenv' to activate."
         return 1
     fi
+    return 0
 }
 
 
