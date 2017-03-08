@@ -10,6 +10,9 @@ Welcome to Envie's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   intro
+   commands
+   config
 
 
 Indices and tables
