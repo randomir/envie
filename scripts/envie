@@ -414,7 +414,7 @@ function lsenv() {
     while getopts ":flvqh-:" opt; do
         case $opt in
             h)
-                echo "Find and list all virtualenvs under START_DIR."
+                echo "Find and list all virtualenvs under DIR."
                 echo "Usage:"
                 echo "    $FUNCNAME [-f|-l] [DIR [AVOID_SUBDIR]]"
                 echo "Options:"
@@ -471,7 +471,7 @@ function lsupenv() {
     while getopts ":flvqh-:" opt; do
         case $opt in
             h)
-                echo "Find and list all virtualenvs under START_DIR."
+                echo "Find and list all virtualenvs below DIR, or above if none found below."
                 echo "Usage:"
                 echo "    $FUNCNAME [-f|-l] [DIR]"
                 echo "Options:"
