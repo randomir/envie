@@ -5,8 +5,9 @@ At its core, ``envie`` is a set of Bash functions aiming to increase your
 productivity when dealing with mundane VirtualEnv tasks, like: creating,
 destroying, listing, switching and activating environments.
 
-But ``envie`` really shines when it comes to auto-discovery and auto-activation
-of VirtualEnvs relevant to your project (or executable). Just say:
+But ``envie`` really shines when it comes to auto-discovery, auto-activation
+and auto-creation VirtualEnvs relevant to your project (or executable).
+Just say:
 
 .. code-block:: bash
 
@@ -119,6 +120,18 @@ Create a throw-away environment with pre-installed ``dev-requirements.txt`` and
 local project in editable mode from ``/home/stevie/work/mypackage/``::
 
     $ mkenv -t -r dev-requirements.txt -i "-e /home/stevie/work/mypackage/"
+
+To automate the previous example, you can use ``envie-oneoff`` command in your hashbang,
+like this::
+
+    #!/usr/bin/env envie-oneoff
+    # -*- requirements: ./path/to/my/requirements.txt -*-
+
+    <your python code here>
+
+When executed, a throw-away virtualenv is created, requirements specified are
+installed inside, code is run, and the environment is destroyed afterwards.
+Other way to do is directly: ``envie-oneoff SCRIPT``.
 
 
 Change/activate environment
