@@ -88,7 +88,7 @@ script_dir=$(readlink -f "$(dirname "$user_script")")
 
 (
     cd "$script_dir"
-    mkenv_based_on_script_reqs "$user_script" \
-        && python "$user_script" \
-        && rmenv -f
+    mkenv_based_on_script_reqs "$user_script" && created=1
+    (( created )) && python "$user_script"
+    (( created )) && rmenv -f
 )
