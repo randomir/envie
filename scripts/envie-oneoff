@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Create a new throw-away virtual environment, install requirements specified, and
-# destroy the environment when the script finishes.
+# Create a new throw-away virtual environment, install requirements specified,
+# run the SCRIPT, and destroy the environment when the script finishes.
 #
 # Usage from the command line:
 #
@@ -19,3 +19,74 @@
 #
 #
 # Part of the ``envie`` package, ``https://github.com/randomir/envie``.
+
+set -e
+
+
+usage() {
+    echo "Create a new throw-away virtual environment, install requirements specified,"
+    echo "run the SCRIPT, and destroy the environment when the script finishes."
+    echo
+    echo "Usage:"
+    echo "    envie-oneoff SCRIPT"
+    echo
+    echo "Hashbang examples:"
+    echo
+    echo " 1) no requirements"
+    echo
+    echo "    #!/usr/bin/env envie-oneoff"
+    echo
+    echo ' 2) installs reqs from the closest "requirements.txt":'
+    echo
+    echo "    #!/usr/bin/env envie-oneoff"
+    echo "    # -*- requirements: auto -*-"
+    echo
+    echo " 3) installs reqs from the closest custom-named Pip requirements files:"
+    echo
+    echo "    #!/usr/bin/env envie-oneoff"
+    echo "    # -*- requirements: test-requirements.txt dev-requirements.txt -*-"
+    echo
+}
+
+
+mkenv_based_on_script_reqs() {
+    local script="$1"
+    local reqs=$(sed -nre "s/^[ \t\v]*#.*?requirements[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$script" | paste -sd' ')
+    local req opts=(-t)
+    for req in $reqs; do
+        if [ "$req" == "auto" ]; then
+            opts+=(-a)
+        else
+            # TODO: search for the closest req
+            opts+=(-r "$req")
+        fi
+    done
+
+    envie create "${opts[@]}"
+}
+
+
+if ! command -v envie &>/dev/null; then
+    echo "Envie not found. Install with: 'sudo pip install envie'."
+    exit 1
+fi
+
+if [ ! "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    usage
+    exit 255
+fi
+user_script="$1"
+
+if [ ! -r "$user_script" ]; then
+    echo "Script not found or not readable: '$user_script'."
+    exit 2
+fi
+script_dir=$(readlink -f "$(dirname "$user_script")")
+
+
+(
+    cd "$script_dir"
+    mkenv_based_on_script_reqs "$user_script" \
+        && python "$user_script" \
+        && rmenv -f
+)
