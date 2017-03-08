@@ -20,8 +20,6 @@
 #
 # Part of the ``envie`` package, ``https://github.com/randomir/envie``.
 
-set -e
-
 
 usage() {
     echo "Create a new throw-away virtual environment, install requirements specified,"
@@ -52,17 +50,18 @@ usage() {
 mkenv_based_on_script_reqs() {
     local script="$1"
     local reqs=$(sed -nre "s/^[ \t\v]*#.*?requirements[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$script" | paste -sd' ')
-    local req opts=(-t)
+    local req subreq opts=(-t -q)
     for req in $reqs; do
         if [ "$req" == "auto" ]; then
             opts+=(-a)
         else
-            # TODO: search for the closest req
-            opts+=(-r "$req")
+            for subreq in "$(_find_closest "$req" ".")"; do
+                opts+=(-r "$subreq")
+            done
         fi
     done
 
-    envie create "${opts[@]}"
+    mkenv "${opts[@]}"
 }
 
 
@@ -77,12 +76,15 @@ if [ ! "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
 fi
 user_script="$1"
 
+# source envie (we need _find_closest later on), don't pass-through our args
+set --
+. "$(which envie)"
+
 if [ ! -r "$user_script" ]; then
     echo "Script not found or not readable: '$user_script'."
     exit 2
 fi
 script_dir=$(readlink -f "$(dirname "$user_script")")
-
 
 (
     cd "$script_dir"
