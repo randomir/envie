@@ -55,11 +55,11 @@ Summary
 
 - ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [-i <pip_pkg>] [-a] [<envdir> | -t] -- [virtualenv opts]`` - Create virtualenv in ``<envdir>`` (or in temporary dir, ``-t``) based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file and ``<pip_pkg>>`` package specifier.
 - ``envie remove`` / ``rmenv`` - Destroy the active environment.
-- ``envie go`` / ``chenv [-1] [-q] [-v] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``.
+- ``envie go`` / ``chenv [-1] [-q] [-v] [<basedir>] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
 - ``envie list`` / ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
 - ``envie find`` / ``lsupenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
-- ``envie [<keywords>]`` - Activate the closest virtual environment (relative to cwd, filtered by KEYWORDS), but only if it's unambiguous; shortcut for ``envie go -1 -v <keywords>``.
+- ``envie [<basedir>] [<keywords>]`` - Activate the closest virtual environment (relative to ``<basedir>``/cwd, filtered by KEYWORDS), but only if it's unambiguous; shortcut for ``envie go -1 -v <keywords>``.
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
 - ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
