@@ -568,8 +568,8 @@ function chenv() {
     while getopts ":1vhq" opt; do
         case $opt in
             h)
-                echo "Activate the closest Python virtual environment relative to DIR (or .),"
-                echo "interactively. A list of the closest environments is filtered by KEYWORDS."
+                echo "Interactively activate the closest Python virtual environment relative to DIR (or .)"
+                echo "A list of the closest environments is filtered by KEYWORDS."
                 echo "Usage:"
                 echo "    $FUNCNAME [-1] [-v] [-q] [DIR] [KEYWORDS]"
                 echo "Options:"
@@ -953,7 +953,7 @@ function __envie_usage() {
 		    envie {create [ENV] | remove | list [DIR] | find [DIR] | go [KEYWORDS] |
 		           python [SCRIPT] | run CMD | index | config}
 		    envie SCRIPT
-		    envie [KEYWORDS]
+		    envie [DIR] [KEYWORDS]
 
 		Commands:
 		    python SCRIPT  run Python SCRIPT in the closest environment
@@ -978,8 +978,8 @@ function __envie_usage() {
 		    #!/usr/bin/env envie
 		    # Python script here will be executed in the closest virtual env
 
-		The third form is basically an alias for 'envie go -v [KEYWORDS]'. It interactively
-		activates the closest environment (relative to cwd, filtered by KEYWORDS).
+		The third form is basically an alias for 'envie go -v [DIR] [KEYWORDS]'. It interactively
+		activates the closest environment (relative to DIR, or cwd, filtered by KEYWORDS).
 		If a single closest environment is detected, it is auto-activated.
 
 		For more details on a command, see its help with '-h', e.g. 'envie find -h'.

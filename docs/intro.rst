@@ -37,7 +37,7 @@ Start with ``envie help``
         envie {create [ENV] | remove | list [DIR] | find [DIR] | go [KEYWORDS] |
                python [SCRIPT] | run CMD | index | config}
         envie SCRIPT
-        envie [KEYWORDS]
+        envie [DIR] [KEYWORDS]
 
     Commands:
         python SCRIPT  run Python SCRIPT in the closest environment
@@ -62,8 +62,8 @@ Start with ``envie help``
         #!/usr/bin/env envie
         # Python script here will be executed in the closest virtual env
 
-    The third form is basically an alias for 'envie go -v [KEYWORDS]'. It interactively
-    activates the closest environment (relative to cwd, filtered by KEYWORDS).
+    The third form is basically an alias for 'envie go -v [DIR] [KEYWORDS]'. It interactively
+    activates the closest environment (relative to DIR, or cwd, filtered by KEYWORDS).
     If a single closest environment is detected, it is auto-activated.
 
     For more details on a command, see its help with '-h', e.g. 'envie find -h'.

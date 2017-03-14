@@ -11,7 +11,7 @@ Commands Reference
 
     envie SCRIPT
 
-    envie [KEYWORDS]
+    envie [DIR] [KEYWORDS]
 
 
 
@@ -139,16 +139,17 @@ up -- until at least one virtual environment is found.
 
 ::
 
-    Activate the closest Python virtual environment, interactively.
+    Interactively activate the closest Python virtual environment relative to DIR (or .)
     A list of the closest environments is filtered by KEYWORDS.
 
     Usage:
-        chenv [-1] [-v] [-q] [KEYWORDS]
+        chenv [-1] [-v] [-q] [DIR] [KEYWORDS]
 
     Options:
         -1    activate only if a single closest env found, abort otherwise
         -v    be verbose: show info messages (path to activated env)
         -q    be quiet: suppress error messages
+
 
 .. note:: TODO description, examples
 
