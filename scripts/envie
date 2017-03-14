@@ -850,12 +850,14 @@ function _envie_exec() {
 # main -- handle direct call: ``envie <cmd> <args> | <script>``
 # AND act as an chenv alias
 function __envie_main() {
-    local cmd script;
+    local cmd=go script;
 
     if [ $# -gt 0 ]; then
         if [ -f "$1" ]; then
+            # case: `envie SCRIPT`, alias for `envie python SCRIPT`
             cmd=python
         else
+            # case: `envie COMMAND ...`
             cmd="$1"
             shift
         fi
@@ -898,7 +900,7 @@ function __envie_main() {
             fi
             # handle: `envie python non-existing-file`
             if [ ! -f "$script" ]; then
-                _errmsg "'$script' is not a file. See 'envie --help'."
+                _errmsg "'$script' is not a regular file. See 'envie --help'."
                 return 1
             fi
             # handle: `envie python path/to/some/script.py`
@@ -922,13 +924,11 @@ function __envie_main() {
         find)
             lsupenv "$@";;
         go)
-            chenv "$@";;
+            chenv -v "$@";;
         help|--help|-h)
             __envie_usage;;
-        "")
-            chenv -1v "$@";;
         *)
-            chenv -1v "$cmd" "$@";;
+            chenv -v "$cmd" "$@";;
     esac
 }
 
