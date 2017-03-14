@@ -913,10 +913,8 @@ function __envie_main() {
             ;;
         create)
             mkenv "$@";;
-        tmp|temporary)
+        tmp)
             mkenv -t "$@";;
-        install)
-            mkenv -a "$@";;
         remove)
             rmenv "$@";;
         list)
@@ -952,8 +950,7 @@ function __envie_usage() {
 		    help           this help
 
 		    create [ENV]   create a new virtual environment (alias for mkenv)
-		    tmp, temporary create a throw-away env in /tmp (alias for mkenv -t)
-		    install        create env and install all detected requirements.txt (mkenv -a)
+		    tmp            create a throw-away env in /tmp (alias for mkenv -t)
 		    remove         destroy the active environment (alias for rmenv)
 
 		    list [DIR]     list virtual envs under DIR (alias for lsenv)
@@ -989,7 +986,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python run config index help create remove list find go tmp temporary install"
+    local cmds="python run config index help create remove list find go tmp"
 
     case "$prev" in
         run)

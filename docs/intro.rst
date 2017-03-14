@@ -48,8 +48,7 @@ Start with ``envie help``
         help           this help
 
         create [ENV]   create a new virtual environment (alias for mkenv)
-        tmp, temporary create a throw-away env in /tmp (alias for mkenv -t)
-        install        create env and install all detected requirements.txt (mkenv -a)
+        tmp            create a throw-away env in /tmp (alias for mkenv -t)
         remove         destroy the active environment (alias for rmenv)
 
         list [DIR]     list virtual envs under DIR (alias for lsenv)
