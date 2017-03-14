@@ -496,7 +496,7 @@ function lsenv() {
 
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
-# Usage: lsupenv [-f|-l] [<start_dir>]
+# Usage: lsupenv [-f|-l] [-v] [-q] [h] [<start_dir>]
 function lsupenv() {
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
@@ -561,17 +561,17 @@ function lsupenv() {
 
 
 # Changes virtual environment (activates the closest env if unique, or asks to
-# select among the closest envs)
-# Usage: chenv [-1] [-v] [-q] [-h]
+# select among the closest envs, relative to DIR and filtered by KEYWORDS)
+# Usage: chenv [-1] [-v] [-q] [-h] [DIR] [KEYWORDS]
 function chenv() {
     local opt OPTIND verbose=0 quiet=0 force_single=0
     while getopts ":1vhq" opt; do
         case $opt in
             h)
-                echo "Activate the closest Python virtual environment, interactively."
-                echo "A list of the closest environments is filtered by KEYWORDS."
+                echo "Activate the closest Python virtual environment relative to DIR (or .),"
+                echo "interactively. A list of the closest environments is filtered by KEYWORDS."
                 echo "Usage:"
-                echo "    $FUNCNAME [-1] [-v] [-q] [KEYWORDS]"
+                echo "    $FUNCNAME [-1] [-v] [-q] [DIR] [KEYWORDS]"
                 echo "Options:"
                 echo "    -1    activate only if a single closest env found, abort otherwise"
                 echo "    -v    be verbose: show info messages (path to activated env)"
@@ -593,13 +593,19 @@ function chenv() {
     done
     shift $((OPTIND-1))
 
-    local IFS envlist env len=0
+    local IFS envlist env len=0 basedir="."
+
+    # is base DIR specified?
+    if [ -d "$1" ]; then
+        basedir="$1"
+        shift
+    fi
 
     if [ "$#" -gt 0 ]; then
         # additional filtering by KEYWORDS required
-        envlist=$(guessing_envie.py . "$@")
+        envlist=$(guessing_envie.py "$basedir" "$@")
     else
-        envlist=$(lsupenv -q)
+        envlist=$(lsupenv -q "$basedir")
     fi
 
     [ "$envlist" ] && len=$(wc -l <<<"$envlist")
