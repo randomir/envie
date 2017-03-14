@@ -39,7 +39,7 @@ def matching(path_tokens, words):
     """
     path_score = 0
     for word in words:
-        sims = list(map(lambda p: similarity(word, p), path_tokens))
+        sims = [0] + list(map(lambda p: similarity(word, p), path_tokens))
         score = max(sims)
         if score > 0:
             del path_tokens[sims.index(score)]
