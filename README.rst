@@ -6,7 +6,7 @@ productivity when dealing with mundane VirtualEnv tasks, like: creating,
 destroying, listing, switching and activating environments.
 
 But ``envie`` really shines when it comes to auto-discovery, auto-activation
-and auto-creation VirtualEnvs relevant to your project (or executable).
+and auto-creation of VirtualEnvs relevant to your project (or executable).
 Just say:
 
 .. code-block:: bash
@@ -46,7 +46,8 @@ or even:
 
     $ envie project awesome
 
-(keywords filter all virtual envs in vicinity and activate the best match - if unique)
+(keywords filter all virtual envs in vicinity and activate the best match - if unique;
+if not unique you're prompted to select the exact environment you wish to activate)
 
 
 Summary

@@ -63,8 +63,9 @@ Start with ``envie help``
         #!/usr/bin/env envie
         # Python script here will be executed in the closest virtual env
 
-    The third form is basically an alias for 'chenv -1 -v'. It activates the closest
-    environment (relative to cwd, filtered by KEYWORDS), but only if it's unambiguous.
+    The third form is basically an alias for 'envie go -v [KEYWORDS]'. It interactively
+    activates the closest environment (relative to cwd, filtered by KEYWORDS).
+    If a single closest environment is detected, it is auto-activated.
 
     For more details on a command, see its help with '-h', e.g. 'envie find -h'.
 
