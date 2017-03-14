@@ -112,6 +112,14 @@ function _mkftemp() {
     [ -d /dev/shm ] && mktemp --tmpdir=/dev/shm || mktemp
 }
 
+# Tests that `dir` is subdirectory of `basedir`.
+# Both `dir` and `basedir` have to exist.
+# Usage: _is_subdir_of DIR BASEDIR
+function _is_subdir_of() {
+    local dir="$(readlink -e "$1")" basedir="$(readlink -e "$2")"
+    [ -d "$basedir" ] && [ -d "$dir" ] && [[ $dir =~ ^$basedir ]]
+}
+
 function _command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
@@ -477,7 +485,7 @@ function lsenv() {
         _lsenv_find "$@"
     elif (( force_locate )); then
         _lsenv_locate "$@"
-    elif (( ! _ENVIE_USE_DB )); then
+    elif (( ! _ENVIE_USE_DB )) || ! _is_subdir_of "${1:-.}" "$_ENVIE_INDEX_ROOT"; then
         _lsenv_find "$@"
     else
         _lsenv_locate_vs_find_race "$@"
