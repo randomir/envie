@@ -3,15 +3,15 @@ Commands Reference
 
 .. code-block:: bash
 
-    envie {go [KEYWORDS] |
+    envie [DIR] [KEYWORDS]
+
+    envie SCRIPT
+
+    envie {go [DIR] [KEYWORDS] |
            create ... | remove |
            list [DIR] | find [DIR] |
            python [SCRIPT] | run CMD |
            index | config}
-
-    envie SCRIPT
-
-    envie [DIR] [KEYWORDS]
 
 
 

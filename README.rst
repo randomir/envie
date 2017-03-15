@@ -53,17 +53,17 @@ if not unique you're prompted to select the exact environment you wish to activa
 Summary
 -------
 
-- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [-i <pip_pkg>] [-a] [<envdir> | -t] -- [virtualenv opts]`` - Create virtualenv in ``<envdir>`` (or in temporary dir, ``-t``) based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file and ``<pip_pkg>>`` package specifier.
+- ``envie create`` / ``mkenv [-2|-3|-p <pyexec>] [-r <pip_req>] [-i <pip_pkg>] [-a] [<envdir> | -t] -- [virtualenv opts]`` - Create virtualenv in ``<envdir>`` (or in temporary dir, ``-t``) based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file and ``<pip_pkg>`` package specifier.
 - ``envie remove`` / ``rmenv`` - Destroy the active environment.
 - ``envie go`` / ``chenv [-1] [-q] [-v] [<basedir>] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
 - ``envie list`` / ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
 - ``envie find`` / ``lsupenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
-- ``envie [<basedir>] [<keywords>]`` - Activate the closest virtual environment (relative to ``<basedir>``/cwd, filtered by KEYWORDS), but only if it's unambiguous; shortcut for ``envie go -1 -v <keywords>``.
+- ``envie [<basedir>] [<keywords>]`` - Activate the closest virtual environment (relative to ``<basedir>``/cwd, filtered by ``<keywords>``), but only if it's unambiguous; shortcut for ``envie go -1 -v <basedir> <keywords>``.
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
-- ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
 - ``envie config`` - Interactively configure envie.
+- ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
 - ``envie help`` - Print usage help. For details on a specific command use the '-h' switch (like ``envie go -h``).
 
 
@@ -117,8 +117,8 @@ Create Python 3 environment in ``env`` and install pip packages from
 
     $ mkenv3 -r requirements.txt
 
-Create a throw-away environment with pre-installed ``dev-requirements.txt`` and
-local project in editable mode from ``/home/stevie/work/mypackage/``::
+Create a throw-away environment with a pre-installed ``dev-requirements.txt`` and
+a local project in editable mode from ``/home/stevie/work/mypackage/``::
 
     $ mkenv -t -r dev-requirements.txt -i "-e /home/stevie/work/mypackage/"
 
@@ -132,7 +132,7 @@ like this::
 
 When executed, a throw-away virtualenv is created, requirements specified are
 installed inside, code is run, and the environment is destroyed afterwards.
-Other way to do is directly: ``envie-oneoff SCRIPT``.
+Other way to do it is directly: ``envie-oneoff SCRIPT``.
 
 
 Change/activate environment
