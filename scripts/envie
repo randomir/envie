@@ -562,16 +562,17 @@ function lsupenv() {
 
 # Changes virtual environment (activates the closest env if unique, or asks to
 # select among the closest envs, relative to DIR and filtered by KEYWORDS)
-# Usage: chenv [-1] [-v] [-q] [-h] [DIR] [KEYWORDS]
+# Usage: chenv [-1] [-v] [-q] [-h] [DIR] [--] [KEYWORDS]
 function chenv() {
     local opt OPTIND verbose=0 quiet=0 force_single=0
     while getopts ":1vhq" opt; do
         case $opt in
             h)
                 echo "Interactively activate the closest Python virtual environment relative to DIR (or .)"
-                echo "A list of the closest environments is filtered by KEYWORDS."
+                echo "A list of the closest environments is filtered by KEYWORDS. Separate KEYWORDS with --"
+                echo "if they start with a dash, or a dir with the same name exists."
                 echo "Usage:"
-                echo "    $FUNCNAME [-1] [-v] [-q] [DIR] [KEYWORDS]"
+                echo "    $FUNCNAME [-1] [-v] [-q] [DIR] [--] [KEYWORDS]"
                 echo "Options:"
                 echo "    -1    activate only if a single closest env found, abort otherwise"
                 echo "    -v    be verbose: show info messages (path to activated env)"
@@ -595,8 +596,10 @@ function chenv() {
 
     local IFS envlist env len=0 basedir="."
 
-    # is base DIR specified?
-    if [ -d "$1" ]; then
+    # KEYWORDS separated with --? base DIR specified?
+    if [ "$1" == "--" ]; then
+        shift;
+    elif [ -d "$1" ]; then
         basedir="$1"
         shift
     fi
