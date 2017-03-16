@@ -149,16 +149,20 @@ function mkenv() {
         case $opt in
             h)
                 echo "Create Python (2/3) virtual environment in DEST_DIR based on PYTHON."
+                echo
                 echo "Usage:"
                 echo "    mkenv [-2|-3|-p PYTHON] [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv2 [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
-                echo "    mkenv3 [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
+                echo "    mkenv2 [-r PIP_REQ] [-i PIP_PKG] [-a] [-t] [DEST_DIR] ..."
+                echo "    mkenv3 [-r PIP_REQ] [-r PIP_REQ] [-a] [-t] [DEST_DIR] ..."
+                echo
                 echo "Options:"
                 echo "    -2, -3      use Python 2, or Python 3"
                 echo "    -p PYTHON   use Python accessible with PYTHON name,"
                 echo "                like 'python3.5', or '/usr/local/bin/mypython'."
-                echo "    -r PIP_REQ  install pip requirements in the created virtualenv"
-                echo "    -i PIP_PKG  install pip package in the created virtualenv"
+                echo "    -r PIP_REQ  install pip requirements in the created virtualenv,"
+                echo "                e.g. '-r dev-requirements.txt'"
+                echo "    -i PIP_PKG  install pip package in the created virtualenv,"
+                echo "                e.g. '-i Django>=1.9', '-i /var/pip/pkg', '-i "'"-e git+https://gith..."'"'"
                 echo "    -a          autodetect and install pip requirements"
                 echo "                (search for the closest 'requirements.txt' and install it)"
                 echo "    -t          create throw-away env in /tmp"
