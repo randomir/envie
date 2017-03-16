@@ -332,8 +332,10 @@ function rmenv() {
         case $opt in
             h)
                 echo "Remove (delete) the base directory of the active virtual environment."
+                echo
                 echo "Usage:"
                 echo "    $FUNCNAME [-f]"
+                echo
                 echo "Options:"
                 echo "    -f    force; don't ask for permission"
                 return;;
@@ -448,8 +450,10 @@ function lsenv() {
         case $opt in
             h)
                 echo "Find and list all virtualenvs under DIR."
+                echo
                 echo "Usage:"
                 echo "    $FUNCNAME [-f|-l] [DIR [AVOID_SUBDIR]]"
+                echo
                 echo "Options:"
                 echo "    -f, --find    use only 'find' for search"
                 echo "    -l, --locate  use only 'locate' for search"
@@ -507,8 +511,10 @@ function lsupenv() {
         case $opt in
             h)
                 echo "Find and list all virtualenvs below DIR, or above if none found below."
+                echo
                 echo "Usage:"
                 echo "    $FUNCNAME [-f|-l] [DIR]"
+                echo
                 echo "Options:"
                 echo "    -f, --find    use only 'find' for search"
                 echo "    -l, --locate  use only 'locate' for search"
@@ -575,8 +581,10 @@ function chenv() {
                 echo "Interactively activate the closest Python virtual environment relative to DIR (or .)"
                 echo "A list of the closest environments is filtered by KEYWORDS. Separate KEYWORDS with --"
                 echo "if they start with a dash, or a dir with the same name exists."
+                echo
                 echo "Usage:"
                 echo "    $FUNCNAME [-1] [-v] [-q] [DIR] [--] [KEYWORDS]"
+                echo
                 echo "Options:"
                 echo "    -1    activate only if a single closest env found, abort otherwise"
                 echo "    -v    be verbose: show info messages (path to activated env)"
@@ -675,8 +683,10 @@ function __envie_index() {
             h)
                 echo "(Re-)index virtual environments under '$_ENVIE_INDEX_ROOT'."
                 echo "To change index root, run 'envie config'."
+                echo
                 echo "Usage:"
                 echo "    envie index [-c] [-v] [-q]"
+                echo
                 echo "Options:"
                 echo "    -c    rebuild virtualenvs cache"
                 echo "    -v    be verbose: show info messages"
@@ -774,8 +784,10 @@ function __envie_config() {
                 esac;;
             h)
                 echo "Interactively configure Envie."
+                echo
                 echo "Usage:"
                 echo "    envie config [--register|--unregister]"
+                echo
                 echo "Options:"
                 echo "    --register    just add Envie sourcing statement to .bashrc"
                 echo "    --unregister  just remove Envie sourcing statement from .bashrc"
