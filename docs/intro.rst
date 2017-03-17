@@ -50,14 +50,12 @@ Start with ``envie help``
 
         list [DIR]     list virtual envs under DIR (alias for lsenv)
         find [DIR]     like 'list', but also look above, until env found (alias for lsupenv)
-        go [KEYWORDS]  interactively activate the closest environment (alias for chenv)
-                       (adaptively select the most relevant virtual env for list of KEYWORDS)
 
         config         interactively configure Envie
         index          (re-)index virtualenvs under /
         help           this help
 
-    The first form is basically an alias for 'envie go -v [DIR] [KEYWORDS]'. It interactively
+    The first form is basically an alias for 'chenv -v [DIR] [KEYWORDS]'. It interactively
     activates the closest environment (relative to DIR, or cwd, filtered by KEYWORDS).
     If a single closest environment is detected, it is auto-activated.
 
@@ -76,5 +74,5 @@ Start with ``envie help``
         envie run /path/to/exec    # execute an executable in the closest env
         envie ~ my cool project    # activate the env with words my,cool,project in its path,
                                    # residing somewhere under your home dir (~)
-        mkenv -ta && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
-        envie tmp -a && ./setup.py test && envie remove -f   # more verbose version of the above
+        mkenv -tr req.txt && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
+        envie tmp -r req.txt && ./setup.py test && envie remove -f   # more verbose version of the above

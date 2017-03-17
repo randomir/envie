@@ -7,11 +7,37 @@ Commands Reference
 
     envie SCRIPT
 
-    envie {go [DIR] [KEYWORDS] |
-           create ... | remove |
+    envie {create ... | remove |
            list [DIR] | find [DIR] |
            python [SCRIPT] | run CMD |
-           index | config}
+           index | config | help}
+
+
+
+``envie`` / ``chenv`` - Interactively activate the closest virtual environment
+------------------------------------------------------------------------------
+
+::
+
+    Interactively activate the closest Python virtual environment relative to DIR (or .)
+    A list of the closest environments is filtered by KEYWORDS. Separate KEYWORDS with --
+    if they start with a dash, or a dir with the same name exists.
+
+    Usage:
+        chenv [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]
+        envie ...
+
+    Options:
+        -1            activate only if a single closest env found, abort otherwise
+        -f, --find    use only 'find' for search
+        -l, --locate  use only 'locate' for search
+        -v            be verbose: show info messages (path to activated env)
+        -q            be quiet: suppress error messages
+
+    For details on other Envie uses, see 'envie help'.
+
+
+.. note:: TODO description, examples
 
 
 
@@ -148,30 +174,3 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
 Similar to ``envie list``, but with a key distinction: if no environments are
 found below the starting ``DIR``, the search is being expanded -- level by level
 up -- until at least one virtual environment is found.
-
-
-
-``envie go`` / ``chenv`` - Interactively activate the closest virtual environment
----------------------------------------------------------------------------------
-
-::
-
-    Interactively activate the closest Python virtual environment relative to DIR (or .)
-    A list of the closest environments is filtered by KEYWORDS. Separate KEYWORDS with --
-    if they start with a dash, or a dir with the same name exists.
-
-    Usage:
-        chenv [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]
-        envie ...
-
-    Options:
-        -1            activate only if a single closest env found, abort otherwise
-        -f, --find    use only 'find' for search
-        -l, --locate  use only 'locate' for search
-        -v            be verbose: show info messages (path to activated env)
-        -q            be quiet: suppress error messages
-
-    For details on other Envie uses, see 'envie help'.
-
-
-.. note:: TODO description, examples
