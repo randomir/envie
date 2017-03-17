@@ -154,6 +154,7 @@ function mkenv() {
                 echo "    mkenv [-2|-3|-e PYTHON] [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]"
                 echo "    mkenv2 [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] ..."
                 echo "    mkenv3 [-r PIP_REQ] [-p PIP_REQ] [-a] [-t] [DEST_DIR] ..."
+                echo "    envie create ..."
                 echo
                 echo "Options:"
                 echo "    -2, -3      use Python 2, or Python 3"
@@ -168,6 +169,8 @@ function mkenv() {
                 echo "    -t          create throw-away env in /tmp"
                 echo "    -v[v]       be verbose: show virtualenv&pip info/debug messages"
                 echo "    -q[q]       be quiet: suppress info/error messages"
+                echo
+                echo "For details on other Envie uses, see 'envie help'."
                 return;;
             e)
                 pyname="$OPTARG";;
@@ -335,9 +338,12 @@ function rmenv() {
                 echo
                 echo "Usage:"
                 echo "    $FUNCNAME [-f]"
+                echo "    envie remove ..."
                 echo
                 echo "Options:"
                 echo "    -f    force; don't ask for permission"
+                echo
+                echo "For details on other Envie uses, see 'envie help'."
                 return;;
             f)
                 force=1;;
@@ -453,6 +459,7 @@ function lsenv() {
                 echo
                 echo "Usage:"
                 echo "    $FUNCNAME [-f|-l] [DIR [AVOID_SUBDIR]]"
+                echo "    envie list ..."
                 echo
                 echo "Options:"
                 echo "    -f, --find    use only 'find' for search"
@@ -460,6 +467,8 @@ function lsenv() {
                 echo "                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)"
                 echo "    -v            be verbose: show info messages"
                 echo "    -q            be quiet: suppress error messages"
+                echo
+                echo "For details on other Envie uses, see 'envie help'."
                 return;;
             f)
                 force_find=1;;
@@ -514,6 +523,7 @@ function lsupenv() {
                 echo
                 echo "Usage:"
                 echo "    $FUNCNAME [-f|-l] [DIR]"
+                echo "    envie find ..."
                 echo
                 echo "Options:"
                 echo "    -f, --find    use only 'find' for search"
@@ -521,6 +531,8 @@ function lsupenv() {
                 echo "                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)"
                 echo "    -v            be verbose: show info messages"
                 echo "    -q            be quiet: suppress error messages"
+                echo
+                echo "For details on other Envie uses, see 'envie help'."
                 return;;
             f)
                 force_find=1;;
@@ -583,7 +595,8 @@ function chenv() {
                 echo "if they start with a dash, or a dir with the same name exists."
                 echo
                 echo "Usage:"
-                echo "    $FUNCNAME [-1] [-f | -l] [-v] [-q] [DIR] [--] [KEYWORDS]"
+                echo "    $FUNCNAME [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]"
+                echo "    envie ..."
                 echo
                 echo "Options:"
                 echo "    -1            activate only if a single closest env found, abort otherwise"
@@ -591,6 +604,8 @@ function chenv() {
                 echo "    -l, --locate  use only 'locate' for search"
                 echo "    -v            be verbose: show info messages (path to activated env)"
                 echo "    -q            be quiet: suppress error messages"
+                echo
+                echo "For details on other Envie uses, see 'envie help'."
                 return;;
             v)
                 verbose=1;;
@@ -976,7 +991,7 @@ function __envie_main() {
             lsupenv "$@";;
         go)
             chenv -v "$@";;
-        help|--help|-h)
+        help)
             __envie_usage;;
         *)
             chenv -v "$cmd" "$@";;
@@ -989,7 +1004,7 @@ function __envie_usage() {
 		location in relation to code, but works best if they're near (nested or in level).
 
 		Usage:
-		    envie [DIR] [KEYWORDS]
+		    envie [OPTIONS] [DIR] [KEYWORDS]
 		    envie SCRIPT
 		    envie {create [ENV] | remove | list [DIR] | find [DIR] | go [KEYWORDS] |
 		           python [SCRIPT] | run CMD | config | index | help}

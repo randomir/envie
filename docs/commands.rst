@@ -26,6 +26,7 @@ Commands Reference
         mkenv [-2|-3|-e PYTHON] [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]
         mkenv2 [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] ...
         mkenv3 [-r PIP_REQ] [-p PIP_REQ] [-a] [-t] [DEST_DIR] ...
+        envie create ...
 
     Options:
         -2, -3      use Python 2, or Python 3
@@ -40,6 +41,9 @@ Commands Reference
         -t          create throw-away env in /tmp
         -v[v]       be verbose: show virtualenv&pip info/debug messages
         -q[q]       be quiet: suppress info/error messages
+
+    For details on other Envie uses, see 'envie help'.
+
 
 This command creates a new Python virtual environment with the ``virtualenv``
 tool in a destination directory ``DEST_DIR`` (defaults to: ``env`` in current
@@ -84,9 +88,12 @@ env, simply destroy it with ``rmenv -f``.
 
     Usage:
         rmenv [-f]
-    
+        envie remove ...
+
     Options:
         -f    force; don't ask for permission
+
+    For details on other Envie uses, see 'envie help'.
 
 
 
@@ -99,6 +106,7 @@ env, simply destroy it with ``rmenv -f``.
 
     Usage:
         lsenv [-f|-l] [DIR [AVOID_SUBDIR]]
+        envie list ...
 
     Options:
         -f, --find    use only 'find' for search
@@ -106,6 +114,9 @@ env, simply destroy it with ``rmenv -f``.
                       (by default, try find for 0.4s, then failback to locate)
         -v            be verbose: show info messages
         -q            be quiet: suppress error messages
+
+    For details on other Envie uses, see 'envie help'.
+
 
 ``envie list`` searches down only, starting with the ``DIR`` given (default ``.``).
 The search method is defined with config, but it can be overriden with ``-f``
@@ -122,6 +133,7 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
 
     Usage:
         lsupenv [-f|-l] [DIR]
+        envie find ...
 
     Options:
         -f, --find    use only 'find' for search
@@ -129,6 +141,8 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
                       (by default, try find for 0.4s, then failback to locate)
         -v            be verbose: show info messages
         -q            be quiet: suppress error messages
+
+    For details on other Envie uses, see 'envie help'.
 
 
 Similar to ``envie list``, but with a key distinction: if no environments are
@@ -143,16 +157,21 @@ up -- until at least one virtual environment is found.
 ::
 
     Interactively activate the closest Python virtual environment relative to DIR (or .)
-    A list of the closest environments is filtered by KEYWORDS.
+    A list of the closest environments is filtered by KEYWORDS. Separate KEYWORDS with --
+    if they start with a dash, or a dir with the same name exists.
 
     Usage:
-        chenv [-1] [-v] [-q] [DIR] [KEYWORDS]
+        chenv [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]
+        envie ...
 
     Options:
-        -1    activate only if a single closest env found, abort otherwise
-        -v    be verbose: show info messages (path to activated env)
-        -q    be quiet: suppress error messages
+        -1            activate only if a single closest env found, abort otherwise
+        -f, --find    use only 'find' for search
+        -l, --locate  use only 'locate' for search
+        -v            be verbose: show info messages (path to activated env)
+        -q            be quiet: suppress error messages
+
+    For details on other Envie uses, see 'envie help'.
 
 
 .. note:: TODO description, examples
-

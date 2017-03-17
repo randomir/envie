@@ -34,7 +34,7 @@ Start with ``envie help``
     location in relation to code, but works best if they're near (nested or in level).
 
     Usage:
-        envie [DIR] [KEYWORDS]
+        envie [OPTIONS] [DIR] [KEYWORDS]
         envie SCRIPT
         envie {create [ENV] | remove | list [DIR] | find [DIR] | go [KEYWORDS] |
                python [SCRIPT] | run CMD | config | index | help}
@@ -54,7 +54,7 @@ Start with ``envie help``
                        (adaptively select the most relevant virtual env for list of KEYWORDS)
 
         config         interactively configure Envie
-        index          (re-)index virtualenvs
+        index          (re-)index virtualenvs under /
         help           this help
 
     The first form is basically an alias for 'envie go -v [DIR] [KEYWORDS]'. It interactively
