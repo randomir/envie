@@ -932,10 +932,12 @@ function __envie_main() {
     fi
 
     case "$cmd" in
-        index)
-            __envie_index "$@";;
         config)
             __envie_config "$@";;
+        index)
+            __envie_index "$@";;
+        help)
+            __envie_usage;;
         run)
             # execute CMD
             script="$1"
@@ -989,10 +991,6 @@ function __envie_main() {
             lsenv "$@";;
         find)
             lsupenv "$@";;
-        go)
-            chenv -v "$@";;
-        help)
-            __envie_usage;;
         *)
             chenv -v "$cmd" "$@";;
     esac
@@ -1020,14 +1018,12 @@ function __envie_usage() {
 
 		    list [DIR]     list virtual envs under DIR (alias for lsenv)
 		    find [DIR]     like 'list', but also look above, until env found (alias for lsupenv)
-		    go [KEYWORDS]  interactively activate the closest environment (alias for chenv)
-		                   (adaptively select the most relevant virtual env for list of KEYWORDS)
 
 		    config         interactively configure Envie
 		    index          (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
 		    help           this help
 
-		The first form is basically an alias for 'envie go -v [DIR] [KEYWORDS]'. It interactively
+		The first form is basically an alias for 'chenv -v [DIR] [KEYWORDS]'. It interactively
 		activates the closest environment (relative to DIR, or cwd, filtered by KEYWORDS).
 		If a single closest environment is detected, it is auto-activated.
 
@@ -1046,8 +1042,8 @@ function __envie_usage() {
 		    envie run /path/to/exec    # execute an executable in the closest env
 		    envie ~ my cool project    # activate the env with words my,cool,project in its path,
 		                               # residing somewhere under your home dir (~)
-		    mkenv -ta && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
-		    envie tmp -a && ./setup.py test && envie remove -f   # more verbose version of the above
+		    mkenv -tr req.txt && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
+		    envie tmp -r req.txt && ./setup.py test && envie remove -f   # more verbose version of the above
 	END
 }
 
@@ -1056,7 +1052,7 @@ function __envie_usage() {
 function __envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local cmds="python run config index help create remove list find go tmp"
+    local cmds="python run create remove tmp list find config index help"
 
     case "$prev" in
         run)
