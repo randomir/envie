@@ -20,20 +20,23 @@ Commands Reference
 
 ::
 
-    Create a Python (2/3) virtual environment in DEST_DIR based on PYTHON.
+    Create Python (2/3) virtual environment in DEST_DIR based on PYTHON.
 
     Usage:
-        mkenv [-2|-3|-p PYTHON] [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]
-        mkenv2 [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]
-        mkenv3 [-r PIP_REQ] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]
-    
+        mkenv [-2|-3|-e PYTHON] [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]
+        mkenv2 [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] ...
+        mkenv3 [-r PIP_REQ] [-p PIP_REQ] [-a] [-t] [DEST_DIR] ...
+
     Options:
         -2, -3      use Python 2, or Python 3
-        -p PYTHON   use Python accessible with PYTHON name,
+        -e PYTHON   use Python accessible with PYTHON name,
                     like 'python3.5', or '/usr/local/bin/mypython'.
-        -r PIP_REQ  install pip requirements in the created virtualenv
-        -i PIP_PKG  install pip package in the created virtualenv
+        -r PIP_REQ  install pip requirements in the created virtualenv,
+                    e.g. '-r dev-requirements.txt'
+        -p PIP_PKG  install pip package in the created virtualenv,
+                    e.g. '-p "Django>=1.9"', '-p /var/pip/pkg', '-p "-e git+https://gith..."'
         -a          autodetect and install pip requirements
+                    (search for the closest 'requirements.txt' and install it)
         -t          create throw-away env in /tmp
         -v[v]       be verbose: show virtualenv&pip info/debug messages
         -q[q]       be quiet: suppress info/error messages
@@ -44,13 +47,13 @@ directory, but it can be overriden with :doc:`config` variable ``_ENVIE_DEFAULT_
 
 The default Python interpreter version (executable) is defined with the config
 variable ``_ENVIE_DEFAULT_PYTHON`` and it will use system's default ``python``
-if otherwise unspecified. Python executable can be specified with ``-p``
-parameter like this: ``-p /path/to/python``, or ``-p python3.5``. The shorthand
+if otherwise unspecified. Python executable can be specified with ``-e``
+parameter like this: ``-e /path/to/python``, or ``-e python3.5``. The shorthand
 flags ``-2`` and ``-3`` will select the default Python 2 and Python 3
 interpreters available, respectively.
 
 To combine with ``pip`` and pre-install a set of Pip packages (requirements),
-you can use ``-r requirements-file.txt`` or  ``-i package/archive/url``. The
+you can use ``-r requirements-file.txt`` or  ``-p package/archive/url``. The
 first form will install requirements from a given file (or files, if option is
 repeated). You can combine it with ``-a`` flag which performs "requirements
 autodetection and install" (all files named ``requirements.txt`` below the
@@ -59,9 +62,9 @@ current directory are installed).
 The second form will accept any package specification recognized by
 pip and pass-through to pip -- for example:
 
-- ``-i requests``, ``-i "jsonplus>=0.6"``,
-- ``-i /path/to/my/local/package``,
-- ``-i "-e git+https://github.com/randomir/plucky.git#egg=plucky"``.
+- ``-p requests``, ``-p "jsonplus>=0.6"``,
+- ``-p /path/to/my/local/package``,
+- ``-p "-e git+https://github.com/randomir/plucky.git#egg=plucky"``.
 
 Throw-away or temporary environment is created with ``-t`` flag. The location
 and name of the virtual environment are chosen randomly with the ``mktemp``

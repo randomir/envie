@@ -54,7 +54,7 @@ Start with ``envie help``
                        (adaptively select the most relevant virtual env for list of KEYWORDS)
 
         config         interactively configure Envie
-        index          (re-)index virtualenvs under /home/stevie
+        index          (re-)index virtualenvs
         help           this help
 
     The first form is basically an alias for 'envie go -v [DIR] [KEYWORDS]'. It interactively
@@ -78,4 +78,3 @@ Start with ``envie help``
                                    # residing somewhere under your home dir (~)
         mkenv -ta && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
         envie tmp -a && ./setup.py test && envie remove -f   # more verbose version of the above
-
