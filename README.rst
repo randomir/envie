@@ -53,18 +53,17 @@ if not unique you're prompted to select the exact environment you wish to activa
 Summary
 -------
 
+- ``envie`` / ``chenv [-1] [-f|-l] [-q] [-v] [<basedir>] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
 - ``envie create`` / ``mkenv [-2|-3|-e <pyexec>] [-r <pip_req>] [-p <pip_pkg>] [-a] [<envdir> | -t] -- [virtualenv opts]`` - Create virtualenv in ``<envdir>`` (or in temporary dir, ``-t``) based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file and ``<pip_pkg>`` package specifier.
 - ``envie remove`` / ``rmenv`` - Destroy the active environment.
-- ``envie go`` / ``chenv [-1] [-q] [-v] [<basedir>] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``lsupenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
 - ``envie list`` / ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
 - ``envie find`` / ``lsupenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
-- ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
-- ``envie [<basedir>] [<keywords>]`` - Activate the closest virtual environment (relative to ``<basedir>``/cwd, filtered by ``<keywords>``), but only if it's unambiguous; shortcut for ``envie go -1 -v <basedir> <keywords>``.
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
 - ``envie config`` - Interactively configure envie.
 - ``envie index`` - (Re-)index virtual environments (for faster searches with ``locate``).
-- ``envie help`` - Print usage help. For details on a specific command use the '-h' switch (like ``envie go -h``).
+- ``envie help`` - Print usage help. For details on a specific command use the '-h' switch (like ``envie find -h``, or ``mkenv -h``).
+- ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
 
 
 Install
@@ -138,16 +137,16 @@ Other way to do it is directly: ``envie-oneoff SCRIPT``.
 Change/activate environment
 ...........................
 
-Use ``chenv`` to activate the closest environment, tree-wise. We first look 
-down the tree, then up the tree. If a single Python environment is found,
-it's automatically activated. In case the multiple environments are found,
-a choice is presented to user.
+Use ``envie`` (base command), or the explicit ``chenv`` to activate the closest 
+environment, tree-wise. We first look down the tree, then up the tree. 
+If a single Python environment is found, it's automatically activated. 
+In case the multiple environments are found, a choice is presented to user.
 
 ::
 
     stevie@caracal:~/demo$ ls -F
     env/ project/ file1 file2 ...
-    stevie@caracal:~/demo$ chenv
+    stevie@caracal:~/demo$ envie
     (env)stevie@caracal:~/demo$
 
 Assume the following tree exists::
@@ -164,21 +163,28 @@ Assume the following tree exists::
 
 Now, consider you work in ``~/demo/project1/src/deep/path/to/module``, but keep the environment
 in the ``env`` parallel to ``src``. Instead of manually switching to ``env`` and activating it with 
-something like ``source ../../../../../env/bin/activate``, just type ``chenv`` (``che<TAB>`` should
-actually do it, if you use tab completion)::
+something like ``source ../../../../../env/bin/activate``, just type ``envie`` (or ``chenv``)::
 
-    stevie@caracal:~/demo/project1/src/deep/path/to/module$ chenv
+    stevie@caracal:~/demo/project1/src/deep/path/to/module$ envie
     (env)stevie@caracal:~/demo/project1/src/deep/path/to/module$ which python
     /home/stevie/demo/project1/env/bin/python
 
 On the other hand, if there are multiple environments to choose from, you'll get a prompt::
 
-    stevie@caracal:~/demo$ chenv
+    stevie@caracal:~/demo$ envie
     1) ./project1/env
     2) ./project2/env
+    3) ./projectx/env
     #? 2
     (env)stevie@caracal:~/demo$ which python
     /home/stevie/demo/project2/env/bin/python
+
+If you know the name of your project (some specific path components -- `keywords`), you can
+preemptively filter, and auto-activate the project environment with::
+
+    stevie@caracal:~/demo$ envie x
+    (env)stevie@caracal:~/demo$ which python
+    /home/stevie/demo/projectx/env/bin/python
 
 
 Search/list environments
