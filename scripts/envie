@@ -574,8 +574,8 @@ function lsupenv() {
 # select among the closest envs, relative to DIR and filtered by KEYWORDS)
 # Usage: chenv [-1] [-v] [-q] [-h] [DIR] [--] [KEYWORDS]
 function chenv() {
-    local opt OPTIND verbose=0 quiet=0 force_single=0
-    while getopts ":1vhq" opt; do
+    local opt OPTIND verbose=0 quiet=0 force_single=0 force_find=0 force_locate=0
+    while getopts ":1vhqfl-:" opt; do
         case $opt in
             h)
                 echo "Interactively activate the closest Python virtual environment relative to DIR (or .)"
@@ -583,12 +583,14 @@ function chenv() {
                 echo "if they start with a dash, or a dir with the same name exists."
                 echo
                 echo "Usage:"
-                echo "    $FUNCNAME [-1] [-v] [-q] [DIR] [--] [KEYWORDS]"
+                echo "    $FUNCNAME [-1] [-f | -l] [-v] [-q] [DIR] [--] [KEYWORDS]"
                 echo
                 echo "Options:"
-                echo "    -1    activate only if a single closest env found, abort otherwise"
-                echo "    -v    be verbose: show info messages (path to activated env)"
-                echo "    -q    be quiet: suppress error messages"
+                echo "    -1            activate only if a single closest env found, abort otherwise"
+                echo "    -f, --find    use only 'find' for search"
+                echo "    -l, --locate  use only 'locate' for search"
+                echo "    -v            be verbose: show info messages (path to activated env)"
+                echo "    -q            be quiet: suppress error messages"
                 return;;
             v)
                 verbose=1;;
@@ -596,12 +598,26 @@ function chenv() {
                 quiet=1;;
             1)
                 force_single=1;;
+            f)
+                force_find=1;;
+            l)
+                force_locate=1;;
             \?)
                 _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
             :)
                 _errmsg "Option -$OPTARG requires an argument. See '$FUNCNAME -h' for help on usage."
                 return 255;;
+            -)
+                case "$OPTARG" in
+                    find)
+                        force_find=1;;
+                    locate)
+                        force_locate=1;;
+                    *)
+                        _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
+                        return 255;;
+                esac;;
         esac
     done
     shift $((OPTIND-1))
@@ -616,11 +632,15 @@ function chenv() {
         shift
     fi
 
+    local lsargs=(-q)
+    (( force_find )) && lsargs+=(-f)
+    (( force_locate )) && lsargs+=(-l)
+
     if [ "$#" -gt 0 ]; then
         # additional filtering by KEYWORDS required
         envlist=$(guessing_envie.py "$basedir" "$@")
     else
-        envlist=$(lsupenv -q "$basedir")
+        envlist=$(lsupenv "${lsargs[@]}" "$basedir")
     fi
 
     [ "$envlist" ] && len=$(wc -l <<<"$envlist")
