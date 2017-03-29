@@ -934,7 +934,7 @@ function _envie_exec() {
 # main -- handle direct call: ``envie <cmd> <args> | <script>``
 # AND act as an chenv alias
 function __envie_main() {
-    local cmd=activate script;
+    local cmd= script;
 
     if [ $# -gt 0 ]; then
         if [ -f "$1" ]; then
