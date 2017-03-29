@@ -67,6 +67,7 @@ Start with ``envie help``
 
     The third form exposes explicit commands for virtual env creation, removal, discovery, etc.
     For more details on a specific command, see its help with '-h', e.g. 'envie find -h'.
+    Each of these commands has a shorter alias (mkenv, lsenv, chenv, rmenv, etc).
 
     Examples:
         envie python               # run interactive Python shell in the closest env
