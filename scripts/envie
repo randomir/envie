@@ -315,6 +315,13 @@ function mkenv() {
         (( quietness < 1 )) && echo "Pip requirements installed."
     fi
 
+    # if run as script (`envie create`), we will not stay in the env created
+    if (( ! _ENVIE_SOURCED )); then
+        _errmsg "NOTE: Envie is not sourced; Virtualenv is created, but could not stay active in your current shell."
+        _errmsg "Source Envie manually with: '. `which envie`',"
+        _errmsg "or add it to .bashrc with: 'envie config --register'."
+    fi
+
     return 0
 }
 
@@ -645,6 +652,14 @@ function chenv() {
     elif [ -d "$1" ]; then
         basedir="$1"
         shift
+    fi
+
+    # check we are running as function
+    if (( ! _ENVIE_SOURCED )); then
+        _errmsg "NOTE: Envie is not sourced, so virtual env activation CAN NOT work!"
+        _errmsg "Source Envie it manually with: '. `which envie`',"
+        _errmsg "or add it to .bashrc with: 'envie config --register'."
+        return 3
     fi
 
     local lsargs=(-q)
