@@ -3,6 +3,7 @@
 setup() {
     envie_bin=$(which envie)
     polygon_dir=$(mktemp)
+    echo "(using envie from $envie_bin)"
     echo "(created polygon dir: $polygon_dir)"
 }
 
@@ -45,4 +46,4 @@ test_envie_create_3() {
 }
 
 
-. unittest.inc && main
+. $(dirname "$0")/unittest.inc && main

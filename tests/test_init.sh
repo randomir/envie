@@ -48,4 +48,4 @@ test_cdenv_present_after_sourcing() {
     env -i bash -c '. '"$envie_bin"' && [ $(type -t cdenv) == "function" ]'
 }
 
-. unittest.inc && main
+. $(dirname "$0")/unittest.inc && main
