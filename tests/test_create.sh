@@ -43,4 +43,55 @@ test_envie_create_3() (
     test -e "./py3env/bin/python" && "./py3env/bin/python" -V 2>&1 | grep "^Python 3";
 )
 
+test_envie_create_custom_python_exec() (
+    cd "$polygon_dir"
+    env -i "$envie_bin" create -e python pycustom
+    test -e "./pycustom/bin/python"
+)
+
+test_envie_create_install_requirements() (
+    cd "$polygon_dir"
+    echo -e "plucky\njsonplus" >requirements.txt
+    env -i "$envie_bin" create -r requirements.txt withreqs
+    test -e "./withreqs/bin/python"
+    . "./withreqs/bin/activate"
+    [ "$(pip freeze | grep "plucky\|jsonplus" -c)" -eq 2 ]
+)
+
+test_envie_create_install_package() (
+    cd "$polygon_dir"
+    env -i "$envie_bin" create -p "plucky>=0.3.5" withpkg
+    test -e "./withpkg/bin/python"
+    . "./withpkg/bin/activate"
+    [ "$(pip freeze | grep plucky -c)" -eq 1 ]
+)
+
+test_envie_create_install_requirements_autodetect() (
+    cd "$polygon_dir"
+    echo -e "plucky\njsonplus" >requirements.txt
+    env -i "$envie_bin" create -a withautoreqs
+    . "./withautoreqs/bin/activate"
+    [ "$(pip freeze | grep "plucky\|jsonplus" -c)" -eq 2 ]
+)
+
+test_mkenv() (
+    cd "$polygon_dir"
+    . "$envie_bin"
+    set +e
+    mkenv myenv
+    set -e
+    [ -e "./myenv/bin/python" ]
+    [ "$VIRTUAL_ENV" ]
+)
+
+test_mkenv_throwaway_with_removal() (
+    cd "$polygon_dir"
+    . "$envie_bin"
+    set +e
+    mkenv -t
+    [ "$VIRTUAL_ENV" ] || return 1
+    rmenv -f
+    [ ! "$VIRTUAL_ENV" ] || return 1
+)
+
 . $(dirname "$0")/unittest.inc && main
