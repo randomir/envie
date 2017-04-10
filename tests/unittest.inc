@@ -1,4 +1,13 @@
 #!/bin/bash
+# Simple bash unit tests: discovery and runner with assertions.
+#
+# Usage. Source this file from the end of your tests file:
+#   . unittest.inc && main
+#
+# Your tests file should contain unit tests as shell functions named `test_...`.
+# Tests will be run in the order they are defined in the file, testing the exit
+# code for success (asserting exit code is zero).
+
 
 assert() {
     local fn="$1" out
