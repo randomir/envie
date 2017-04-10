@@ -1,7 +1,7 @@
 #!/bin/bash
 
 setup() {
-    local tests_dir=$(dirname "$0")
+    tests_dir=$(dirname "$0")
     envie_bin=$(readlink -f "$tests_dir/../scripts/envie")
     echo "(using envie from $envie_bin)"
 }
