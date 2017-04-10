@@ -50,7 +50,9 @@ main() {
     local cnt=$(wc -l <<<"$tests")
     echo -e "Running ${ANSI_BOLD}${cnt}${ANSI_RESET} tests from ${ANSI_BOLD}${collection}${ANSI_RESET}:"
 
+    [ "$(type -t setup)" == "function" ] && setup
     for test in $tests; do
         assert "$test"
     done
+    [ "$(type -t teardown)" == "function" ] && teardown
 }
