@@ -1,46 +1,51 @@
 #!/bin/bash
 
-test_envie_is_in_path() {
-    which envie
+setup() {
+    local tests_dir=$(dirname "$0")
+    envie_bin=$(readlink -f "$tests_dir/../scripts/envie")
+    echo "(using envie from $envie_bin)"
+}
+
+test_envie_bin_found() {
+    [ -x "$envie_bin" ]
 }
 
 test_envie_sourcing_works() {
-    . `which envie`
+    . "$envie_bin"
 }
 
 test_envie_is_function_after_sourcing() {
-    env -i bash -c '. $(which envie) && [ $(type -t envie) == "function" ]'
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t envie) == "function" ]'
 }
 
 test_envie_help() {
-    local bin=$(which envie)
-    env -i "$bin" help | grep 'Your virtual environments wrangler'
+    env -i "$envie_bin" help | grep 'Your virtual environments wrangler'
 }
 
 test_mkenv_present_after_sourcing() {
-    env -i bash -c '. $(which envie) && [ $(type -t mkenv) == "function" ] '\
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t mkenv) == "function" ] '\
                    '&& [ $(type -t mkenv2) == "function" ] '\
                    '&& [ $(type -t mkenv3) == "function" ]'
 }
 
 test_rmenv_present_after_sourcing() {
-    env -i bash -c '. $(which envie) && [ $(type -t rmenv) == "function" ]'
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t rmenv) == "function" ]'
 }
 
 test_lsenv_present_after_sourcing() {
-    env -i bash -c '. $(which envie) && [ $(type -t lsenv) == "function" ]'
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t lsenv) == "function" ]'
 }
 
 test_lsupenv_present_after_sourcing() {
-    env -i bash -c '. $(which envie) && [ $(type -t lsupenv) == "function" ]'
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t lsupenv) == "function" ]'
 }
 
 test_chenv_present_after_sourcing() {
-    env -i bash -c '. $(which envie) && [ $(type -t chenv) == "function" ]'
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t chenv) == "function" ]'
 }
 
 test_cdenv_present_after_sourcing() {
-    env -i bash -c '. $(which envie) && [ $(type -t cdenv) == "function" ]'
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t cdenv) == "function" ]'
 }
 
 . unittest.inc && main
