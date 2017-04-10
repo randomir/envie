@@ -51,8 +51,12 @@ main() {
     echo -e "Running ${ANSI_BOLD}${cnt}${ANSI_RESET} tests from ${ANSI_BOLD}${collection}${ANSI_RESET}:"
 
     [ "$(type -t setup)" == "function" ] && setup || true
+    local errorcode=$?
     for test in $tests; do
         assert "$test"
+        errorcode=$((errorcode || $?))
     done
     [ "$(type -t teardown)" == "function" ] && teardown || true
+    errorcode=$((errorcode || $?))
+    return $errorcode
 }
