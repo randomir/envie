@@ -23,7 +23,7 @@ fi
 assert() {
     local fn="$1" out
     echo -n "- ${fn}..."
-    out=$(eval "$fn" 2>&1)
+    out=$(eval "set -e; $fn" 2>&1)
     if (( $? )); then
         echo -e "${ANSI_RED}ERROR!${ANSI_RESET}"
         echo "$out"
