@@ -11,7 +11,7 @@
 
 assert() {
     local fn="$1" out
-    echo -n "${fn}..."
+    echo -n "- ${fn}..."
     out=$(eval "$fn" 2>&1)
     if (( $? )); then
         echo "FAILED!"
@@ -24,7 +24,7 @@ assert() {
 }
 
 main() {
-    local testfile="$0" tests
+    local testfile="$0" collection=$(basename "$0") tests
     if [ ! -r "$testfile" ]; then
         echo "Invalid testfile: $testfile"
         return 1
@@ -36,7 +36,7 @@ main() {
     fi
 
     local cnt=$(wc -l <<<"$tests")
-    echo "Running $cnt tests:"
+    echo "Running $cnt tests from $collection:"
 
     for test in $tests; do
         assert "$test"
