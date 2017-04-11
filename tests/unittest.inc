@@ -14,6 +14,7 @@
 if [ -t 1 ] && [ -n "$(which tput)" ] && (( $(tput colors) >= 8 )); then
     ANSI_RESET=$(tput sgr0)
     ANSI_BOLD=$(tput bold)
+    ANSI_DEFAULT=$(tput setaf 9)
     ANSI_BLACK=$(tput setaf 0)
     ANSI_RED=$(tput setaf 1)
     ANSI_GREEN=$(tput setaf 2)
@@ -50,13 +51,32 @@ main() {
     local cnt=$(wc -l <<<"$tests")
     echo -e "Running ${ANSI_BOLD}${cnt}${ANSI_RESET} tests from ${ANSI_BOLD}${collection}${ANSI_RESET}:"
 
-    [ "$(type -t setup)" == "function" ] && setup || true
-    local errorcode=$?
+    # setup
+    if [ "$(type -t setup)" == "function" ] && ! setup; then
+        echo -en "${ANSI_BOLD}${collection}${ANSI_RESET}: "
+        echo -e "${ANSI_RED}${ANSI_BOLD}Setup failed. Skipping test suite.\n${ANSI_RESET}"
+        return 3
+    fi
+
+    # run all tests
+    local some_tests_failed=0
     for test in $tests; do
-        assert "$test"
-        errorcode=$((errorcode || $?))
+        ! assert "$test" && some_tests_failed=1
     done
-    [ "$(type -t teardown)" == "function" ] && teardown || true
-    errorcode=$((errorcode || $?))
-    return $errorcode
+
+    # teardown
+    if [ "$(type -t teardown)" == "function" ] && ! teardown; then
+        echo -en "${ANSI_BOLD}${collection}${ANSI_RESET}: "
+        echo -e "${ANSI_RED}${ANSI_BOLD}Teardown failed.\n${ANSI_RESET}"
+        return 4
+    fi
+
+    echo -en "${ANSI_BOLD}${collection}${ANSI_RESET}: "
+    if (( some_tests_failed )); then
+        echo -e "${ANSI_RED}${ANSI_BOLD}FAILED!\n${ANSI_RESET}"
+        return 5
+    else
+        echo -e "${ANSI_GREEN}${ANSI_BOLD}OK.\n${ANSI_RESET}"
+        return 0
+    fi
 }
