@@ -1,7 +1,9 @@
 .PHONY: test clean upload
 
-test: tests/test_*
-	@for test in $^; do env -i TERM=$$TERM bash "$$test"; done
+test_%: tests/test_%
+	@env -i TERM=$$TERM bash "$<"
+
+test: $(patsubst tests/%,%,$(wildcard tests/test_*))
 
 upload:
 	python setup.py sdist bdist_wheel upload
