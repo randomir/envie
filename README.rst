@@ -1,6 +1,23 @@
 Navigate and manage Python VirtualEnvs
 ======================================
 
+.. image:: https://img.shields.io/pypi/v/envie.svg
+    :target: https://pypi.python.org/pypi/envie
+
+.. image:: https://img.shields.io/badge/platform-linux-red.svg
+    :target: https://pypi.python.org/pypi/envie
+
+.. image:: https://img.shields.io/badge/shell-bash-blue.svg
+    :target: https://pypi.python.org/pypi/envie
+
+.. image:: https://img.shields.io/pypi/pyversions/envie.svg
+    :target: https://pypi.python.org/pypi/envie
+
+.. image:: https://api.travis-ci.org/randomir/envie.svg?branch=master
+    :target: https://travis-ci.org/randomir/envie
+
+----
+
 At its core, ``envie`` is a set of Bash functions aiming to increase your
 productivity when dealing with mundane VirtualEnv tasks, like: creating,
 destroying, listing, switching and activating environments.
