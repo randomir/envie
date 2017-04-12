@@ -1093,4 +1093,4 @@ function envie() {
     __envie_main "$@"
 }
 
-(( ! _ENVIE_SOURCED )) && __envie_main "$@" || true
+(( _ENVIE_SOURCED )) || __envie_main "$@"
