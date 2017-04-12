@@ -55,13 +55,13 @@ To just activate the closest virtual env, just type ``envie``:
 
 .. code-block:: bash
 
-    ~/work/my-project-awesome$ envie
+    ~/work/my-project-awesome-cattoy$ envie
 
 or even:
 
 .. code-block:: bash
 
-    $ envie project awesome
+    $ envie awesome toy
 
 (keywords filter all virtual envs in vicinity and activate the best match - if unique;
 if not unique you're prompted to select the exact environment you wish to activate)
@@ -83,8 +83,8 @@ Summary
 - ``cdenv`` - ``cd`` to the base dir of the currently active virtualenv (``$VIRTUAL_ENV``).
 
 
-Install
--------
+Install & configure
+-------------------
 
 For convenience, ``envie`` is packaged and distributed as a Python package. To
 install, simply type::
@@ -92,15 +92,27 @@ install, simply type::
     $ sudo pip install envie
     $ envie config
 
-    # start clean
-    $ . ~/.bashrc   # or, open a new shell
+    # start clean:
+    $ . ~/.bashrc
+    
+    # or, open a new shell
 
-The second line above will run a short configuration/setup procedure. If in doubt,
-go with the defaults.
+After install, be sure to run a (short and interactive) configuration procedure with ``envie config``.
+If in doubt, go with the defaults.
 
 By default, ``envie`` sourcing statement is added to your ``.bashrc`` file, ``locate`` 
 index is set as a preferred source (it's set to be rebuilt every 15m, or on demand),
 with all relevant environments' ancestor dir set to your ``$HOME`` directory.
+
+
+Testing
+.......
+
+Run all test suites locally with::
+
+    $ make test
+
+(after cloning the repo.)
 
 
 Examples
