@@ -77,9 +77,7 @@ test_envie_create_install_requirements_autodetect() (
 test_mkenv() (
     cd "$polygon_dir"
     . "$envie_bin"
-    set +e
     mkenv myenv
-    set -e
     [ -e "./myenv/bin/python" ]
     [ "$VIRTUAL_ENV" ]
 )
@@ -87,7 +85,6 @@ test_mkenv() (
 test_mkenv_throwaway_with_removal() (
     cd "$polygon_dir"
     . "$envie_bin"
-    set +e
     mkenv -t
     [ "$VIRTUAL_ENV" ] || return 1
     rmenv -f

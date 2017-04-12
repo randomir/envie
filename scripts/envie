@@ -57,7 +57,7 @@ function _errmsg() {
 }
 
 function _deactivate() {
-    [ "$VIRTUAL_ENV" ] && [ "$(type -t deactivate)" == "function" ] && deactivate
+    [ "$VIRTUAL_ENV" ] && [ "$(type -t deactivate)" == "function" ] && deactivate || true
 }
 
 function _activate() {
