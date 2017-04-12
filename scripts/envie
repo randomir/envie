@@ -272,7 +272,6 @@ function mkenv() {
         pip_valid_reqs+=("${pip_auto_reqs[@]}")
     fi
 
-    mkdir -p "$envpath"
     local output virtualenv_opts=(--no-site-packages -p "$pypath")
 
     (( quietness > 0 )) && virtualenv_opts+=(-q)
@@ -281,9 +280,9 @@ function mkenv() {
     (
         cd "$envpath"
         if (( verbosity > 0 )); then
-            virtualenv "${virtualenv_opts[@]}" "$@" .
+            virtualenv "${virtualenv_opts[@]}" "$@" "$envpath"
         else
-            output=$(virtualenv "${virtualenv_opts[@]}" "$@" . 2>&1)
+            output=$(virtualenv "${virtualenv_opts[@]}" "$@" "$envpath" 2>&1)
             if (( $? )); then
                 (( quietness < 2 )) && _errmsg "$output"
                 exit 1
