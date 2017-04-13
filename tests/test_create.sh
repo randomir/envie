@@ -74,23 +74,6 @@ test_envie_create_install_requirements_autodetect() (
     [ "$(pip freeze | grep "plucky\|jsonplus" -c)" -eq 2 ]
 )
 
-test_mkenv() (
-    cd "$polygon_dir"
-    . "$envie_bin"
-    mkenv myenv
-    [ -e "./myenv/bin/python" ]
-    [ "$VIRTUAL_ENV" ]
-)
-
-test_mkenv_throwaway_with_removal() (
-    cd "$polygon_dir"
-    . "$envie_bin"
-    mkenv -t
-    [ "$VIRTUAL_ENV" ] || return 1
-    rmenv -f
-    [ ! "$VIRTUAL_ENV" ] || return 1
-)
-
 test_envie_create_error_existing_envname() (
     cd "$polygon_dir"
     env -i "$envie_bin" create
