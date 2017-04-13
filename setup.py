@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='envie',
-    version='0.4.22',
+    version='0.4.23',
     description="Bash helpers for navigating and managing Python VirtualEnvs.",
     long_description=open('README.rst').read(),
     author='Radomir Stevanovic',
