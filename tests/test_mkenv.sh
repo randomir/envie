@@ -56,21 +56,18 @@ test_mkenv_install_requirements() (
     echo -e "plucky\njsonplus" >requirements.txt
     mkenv -r requirements.txt withreqs
     [ -e "./withreqs/bin/python" ]
-    . "./withreqs/bin/activate"
     [ "$(pip freeze | grep "plucky\|jsonplus" -c)" -eq 2 ]
 )
 
 test_mkenv_install_package() (
     mkenv -p "plucky>=0.3.5" withpkg
     [ -e "./withpkg/bin/python" ]
-    . "./withpkg/bin/activate"
     [ "$(pip freeze | grep plucky -c)" -eq 1 ]
 )
 
 test_mkenv_install_requirements_autodetect() (
     echo -e "plucky\njsonplus" >requirements.txt
     mkenv -a withautoreqs
-    . "./withautoreqs/bin/activate"
     [ "$(pip freeze | grep "plucky\|jsonplus" -c)" -eq 2 ]
 )
 
