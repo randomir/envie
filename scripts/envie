@@ -278,7 +278,6 @@ function mkenv() {
     (( verbosity > 1 )) && virtualenv_opts+=(-v)
 
     (
-        cd "$envpath"
         if (( verbosity > 0 )); then
             virtualenv "${virtualenv_opts[@]}" "$@" "$envpath"
         else
@@ -300,7 +299,6 @@ function mkenv() {
         (( verbosity > 1 )) && pip_opts+=(-v)
 
         (
-            cd "$envpath"
             if (( verbosity > 0 )); then
                 pip install "${pip_opts[@]}"
             else
