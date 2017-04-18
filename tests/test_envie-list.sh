@@ -187,7 +187,7 @@ test_envie_list_locate_multiple() (
     [ "$list" == "$expected" ]
 )
 
-test_envie_list_find_multiple_levels() (
+test_envie_list_locate_multiple_levels() (
     cd "$polygon_dir"
     local list=$("$envie_bin" list --locate | sort)
     local expected
