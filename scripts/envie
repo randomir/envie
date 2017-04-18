@@ -403,7 +403,7 @@ function _lsenv_locate() {
     local dir="${1:-.}" avoid="${2:-}"
     local absdir=$(readlink -e "$dir")
     [ "$absdir" = / ] && dir=/
-    if (( _ENVIE_LS_INDEX && $(_envie_db_age) > _ENVIE_LOCATE_LIMIT_SEC )); then
+    if (( _ENVIE_LS_INDEX )) && _envie_db_too_old; then
         __envie_index
     fi
     locate -d "$_ENVIE_DB_PATH" --existing "$absdir"'*/bin/activate_this.py' \
@@ -714,6 +714,13 @@ function cdenv() {
 function _envie_db_age() {
     [ ! -e "$_ENVIE_DB_PATH" ] && return 1
     echo $(( $(date +%s) - $(date -r "$_ENVIE_DB_PATH" +%s) ))
+}
+
+function _envie_db_too_old() {
+    local age
+    age=$(_envie_db_age)
+    (( $? )) && return 0
+    (( age > _ENVIE_LOCATE_LIMIT_SEC ))
 }
 
 function _envie_locate_exists() {
