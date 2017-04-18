@@ -59,7 +59,7 @@ setup() {
 
     # fake envierc for testing
     echo -n "(creating test envierc..."
-    HOME="$polygon_dir"
+    export HOME="$polygon_dir"
     config_dir="$polygon_dir/.config/envie"
     mkdir -p "$config_dir"
     _dump_test_config >"$config_dir/envierc"
@@ -68,7 +68,7 @@ setup() {
         . "$envie_bin"
         [ "$_ENVIE_CONFIG_PATH" == "$config_dir/envierc" ] && (( _ENVIE_USE_DB ))
     ); then
-        echo "OK)"
+        echo "DONE)"
     else
         echo "FAILED)"
         return 1
