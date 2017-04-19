@@ -138,6 +138,19 @@ function _humanized_age() {
     fi
 }
 
+# Operating on a stream of lines, substitutes each ^PREFIX match with SUBS.
+# The key difference from grep/sed: PREFIX is a fixed string (not regexp).
+# Usage: stream | _prefix_subs PREFIX SUBS -> stream'
+function _prefix_subs() {
+    declare -x prefix=${1:-} subs=${2:-}
+    awk '{
+        if (index($0, ENVIRON["prefix"]) == 1) {
+            print ENVIRON["subs"] substr($0, length(ENVIRON["prefix"]) + 1)
+        } else {
+            print $0
+        }
+    }'
+}
 
 
 # Creates a new environment in <path/to/env>, based on <python_exec>.
@@ -400,8 +413,7 @@ function _lsenv_find() {
 # `lsenv` via `locate`
 # Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
 function _lsenv_locate() {
-    local dir="${1:-.}"
-    declare -x avoid="${2:-}"
+    declare -x dir="${1:-.}" avoid="${2:-}"
     local absdir=$(readlink -e "$dir")
     [ "$absdir" = / ] && dir=/
     if (( _ENVIE_LS_INDEX )) && _envie_db_too_old; then
@@ -409,7 +421,8 @@ function _lsenv_locate() {
     fi
     local list=$(
         locate -d "$_ENVIE_DB_PATH" --existing "$absdir"'/*/bin/activate_this.py' \
-        | sed -e 's#/bin/activate_this\.py$##' -e "s#^$absdir#$dir#"
+        | sed -e 's#/bin/activate_this\.py$##' \
+        | _prefix_subs "$absdir" "$dir"
     )
     if [ "$avoid" ]; then
         echo "$list" | awk 'index($0, ENVIRON["avoid"])!=1'
