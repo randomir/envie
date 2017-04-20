@@ -3,10 +3,10 @@
 test: tests_setup tests tests_teardown
 
 tests_setup:
-	@[ -x tests/global_setup ] && ./tests/global_setup || true
+	@[ ! -x tests/global_setup ] || ./tests/global_setup
 
 tests_teardown:
-	@[ -x tests/global_teardown ] && ./tests/global_teardown || true
+	@[ ! -x tests/global_teardown ] || ./tests/global_teardown
 
 test_%: tests/test_%
 	@env -i TERM=$$TERM bash "$<"
