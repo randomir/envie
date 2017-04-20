@@ -676,7 +676,7 @@ function chenv() {
     # check we are running as function
     if (( ! _ENVIE_SOURCED )); then
         _errmsg "NOTE: Envie is not sourced, so virtual env activation CAN NOT work!"
-        _errmsg "Source Envie it manually with: '. `which envie`',"
+        _errmsg "Source Envie manually with: '. `which envie`',"
         _errmsg "or add it to .bashrc with: 'envie config --register'."
         return 3
     fi
@@ -990,7 +990,7 @@ function __envie_main() {
                         script=$(readlink -f "$script")
                         cd "$(dirname "$script")"
                     fi
-                    chenv -1v && exec "$script" "$@"
+                    _ENVIE_SOURCED=1 chenv -1v && exec "$script" "$@"
                 )
             else
                 _errmsg "'$script' is not a valid command. See 'envie --help'."
@@ -1005,7 +1005,7 @@ function __envie_main() {
             # handle: `envie python`
             if [ ! "$script" ]; then
                 (
-                    chenv -1v && exec python
+                    _ENVIE_SOURCED=1 chenv -1v && exec python
                 )
                 return "$?"
             fi
@@ -1019,7 +1019,7 @@ function __envie_main() {
                 # move closer to script for proper env detection
                 script=$(readlink -f "$script")
                 cd "$(dirname "$script")"
-                chenv -1v && exec python "$script" "$@"
+                _ENVIE_SOURCED=1 chenv -1v && exec python "$script" "$@"
             )
             ;;
         create)
