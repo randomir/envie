@@ -49,12 +49,12 @@ main() {
     fi
 
     local cnt=$(wc -l <<<"$tests")
-    echo -e "Running ${ANSI_BOLD}${cnt}${ANSI_RESET} tests from ${ANSI_BOLD}${collection}${ANSI_RESET}:"
+    echo -e "\nRunning ${ANSI_BOLD}${cnt}${ANSI_RESET} tests from ${ANSI_BOLD}${collection}${ANSI_RESET}:"
 
     # setup
     if [ "$(type -t setup)" == "function" ] && ! setup; then
         echo -en "${ANSI_BOLD}${collection}${ANSI_RESET}: "
-        echo -e "${ANSI_RED}${ANSI_BOLD}Setup failed. Skipping test suite.\n${ANSI_RESET}"
+        echo -e "${ANSI_RED}${ANSI_BOLD}Setup failed. Skipping test suite.${ANSI_RESET}"
         return 3
     fi
 
@@ -67,16 +67,16 @@ main() {
     # teardown
     if [ "$(type -t teardown)" == "function" ] && ! teardown; then
         echo -en "${ANSI_BOLD}${collection}${ANSI_RESET}: "
-        echo -e "${ANSI_RED}${ANSI_BOLD}Teardown failed.\n${ANSI_RESET}"
+        echo -e "${ANSI_RED}${ANSI_BOLD}Teardown failed.${ANSI_RESET}"
         return 4
     fi
 
     echo -en "${ANSI_BOLD}${collection}${ANSI_RESET}: "
     if (( some_tests_failed )); then
-        echo -e "${ANSI_RED}${ANSI_BOLD}FAILED!\n${ANSI_RESET}"
+        echo -e "${ANSI_RED}${ANSI_BOLD}FAILED!${ANSI_RESET}"
         return 5
     else
-        echo -e "${ANSI_GREEN}${ANSI_BOLD}OK.\n${ANSI_RESET}"
+        echo -e "${ANSI_GREEN}${ANSI_BOLD}OK.${ANSI_RESET}"
         return 0
     fi
 }

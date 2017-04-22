@@ -1,7 +1,7 @@
 #!/bin/bash
 
 teardown() {
-    echo "Running global teardown script."
+    echo -e "\nRunning global teardown script."
 
     [ -d "$polygon_dir" ] && [[ "$polygon_dir" =~ ^/tmp/ ]] || return 255
 
