@@ -221,4 +221,106 @@ test_envie_find_locate_multiple_envs_multiple_level_up_from_relpath() (
 )
 
 
+# test 'envie find' using find vs. locate rate (the default)
+
+test_envie_find_race_inside_env_root_from_cwd() (
+    cd "$polygon_dir/project_a/env_a"
+    local list=$("$envie_bin" find)
+    echo $list
+    [ "$list" == "." ]
+)
+
+test_envie_find_race_inside_env_root_from_abspath() (
+    local list=$("$envie_bin" find "$polygon_dir/project_a/env_a")
+    [ "$list" == "$polygon_dir/project_a/env_a" ]
+)
+
+test_envie_find_race_inside_env_root_from_relpath() (
+    local list=$("$envie_bin" find "project_a/env_a")
+    [ "$list" == "project_a/env_a" ]
+)
+
+
+test_envie_find_race_inside_env_bin_from_cwd() (
+    cd "$polygon_dir/project_a/env_a/bin"
+    local list=$("$envie_bin" find)
+    [ "$list" == ".." ]
+)
+
+test_envie_find_race_inside_env_bin_from_abspath() (
+    local list=$("$envie_bin" find "$polygon_dir/project_a/env_a/bin")
+    [ "$list" == "$polygon_dir/project_a/env_a" ]
+)
+
+test_envie_find_race_inside_env_bin_from_relpath() (
+    local list=$("$envie_bin" find "./project_a/env_a/bin")
+    [ "$list" == "project_a/env_a" ]
+)
+
+
+test_envie_find_race_single_level_down_from_cwd() (
+    cd "$polygon_dir/project_a"
+    local list=$("$envie_bin" find)
+    [ "$list" == "./env_a" ]
+)
+
+test_envie_find_race_single_level_down_from_abspath() (
+    local list=$("$envie_bin" find "$polygon_dir/project_a")
+    [ "$list" == "$polygon_dir/project_a/env_a" ]
+)
+
+test_envie_find_race_single_level_down_from_relpath() (
+    local list=$("$envie_bin" find "project_a")
+    [ "$list" == "project_a/env_a" ]
+)
+
+
+test_envie_find_race_single_level_up_from_cwd() (
+    cd "$polygon_dir/project_a/src"
+    local list=$("$envie_bin" find)
+    [ "$list" == "../env_a" ]
+)
+
+test_envie_find_race_single_level_up_from_abspath() (
+    local list=$("$envie_bin" find "$polygon_dir/project_a/src")
+    [ "$list" == "$polygon_dir/project_a/env_a" ]
+)
+
+test_envie_find_race_single_level_up_from_relpath() (
+    local list=$("$envie_bin" find "project_a/src")
+    [ "$list" == "project_a/env_a" ]
+)
+
+
+test_envie_find_race_normalize_abspath() (
+    local list=$("$envie_bin" find "$polygon_dir/project_a/../project_b")
+    [ "$list" == "$polygon_dir/project_b/env_b" ]
+)
+
+test_envie_find_race_normalize_relpath() (
+    cd "$polygon_dir/project_a"
+    local list=$("$envie_bin" find "../project_b/env_b/local/bin/")
+    [ "$list" == "../project_b/env_b" ]
+)
+
+
+test_envie_find_race_multiple_envs_multiple_level_up_from_relpath() (
+    local list=$("$envie_bin" find ".config/envie" | sort)
+    local expected
+    expected=$(cat <<-END
+		./project_a/env_a
+		./project_b/env_b
+		./project_c/sub_a/env_ca1
+		./project_c/sub_a/env_ca2
+		./project_c/sub_a/env_ca3
+		./project_c/sub_b/env_cb
+		./project_c/sub_c/env_cc
+	END
+    )
+    echo "$list"
+    echo "$expected"
+    [ "$list" == "$expected" ]
+)
+
+
 . $(dirname "$0")/unittest.inc && main
