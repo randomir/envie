@@ -134,20 +134,6 @@ test_envie_list_locate_multiple() (
     [ "$list" == "$expected" ]
 )
 
-test_envie_list_locate_multiple_avoid_some() (
-    cd "$polygon_dir/project_c"
-    local list=$("$envie_bin" list --locate . ./sub_a | sort)
-    local expected
-    expected=$(cat <<-END
-		./sub_b/env_cb
-		./sub_c/env_cc
-	END
-    )
-    echo "$list"
-    echo "$expected"
-    [ "$list" == "$expected" ]
-)
-
 test_envie_list_locate_multiple_levels() (
     cd "$polygon_dir"
     local list=$("$envie_bin" list --locate | sort)
