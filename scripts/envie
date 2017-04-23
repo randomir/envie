@@ -594,13 +594,16 @@ function lsupenv() {
     (( verbose )) && lsargs+=(-v)
     (( quiet )) && lsargs+=(-q)
 
-    local list len=0 dir=${1:-.} prevdir
+    local list len=0 dir=${1:-.} prevdir normargs=()
+    if [[ ! "$dir" =~ ^/ ]]; then
+        normargs+=(--relative-to=.)
+    fi
     while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
+        dir=$(realpath -e "${normargs[@]}" "$dir")
         list=$(lsenv "${lsargs[@]}" "$dir" "$prevdir")
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
         dir="$dir/.."
-        dir="${dir#./}"
     done
     echo "$list"
 
