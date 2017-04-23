@@ -8,6 +8,7 @@ versions:
 	@python3 -V
 	@pip -V
 	@echo virtualenv: $(shell virtualenv --version)
+	@dpkg -l | grep coreutils
 
 test: versions tests_setup tests tests_teardown
 
