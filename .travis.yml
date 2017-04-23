@@ -15,7 +15,7 @@ python:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y mlocate python-virtualenv python3-virtualenv
+  - sudo apt-get install -y mlocate python-virtualenv
 
 script: make test
 
