@@ -1,8 +1,15 @@
-.PHONY: test clean upload
+.PHONY: test clean upload versions
 
 polygon_dir := $(shell mktemp -d)
 
-test: tests_setup tests tests_teardown
+versions:
+	@echo Versions used:
+	@python2 -V
+	@python3 -V
+	@pip -V
+	@echo virtualenv: $(shell virtualenv --version)
+
+test: versions tests_setup tests tests_teardown
 
 tests_setup: tests/global_setup.sh
 	@if [ -x "$<" ]; then env -i polygon_dir=${polygon_dir} bash "$<"; fi
