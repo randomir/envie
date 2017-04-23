@@ -9,6 +9,7 @@
 [[ $0 != "$BASH_SOURCE" ]] && _ENVIE_SOURCED=1 || _ENVIE_SOURCED=0
 
 # the defaults
+_ENVIE_UTILS="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/envie/utils.py"
 _ENVIE_SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
 _ENVIE_DEFAULT_ENVNAME=env
 _ENVIE_DEFAULT_PYTHON=python
@@ -69,6 +70,38 @@ function _is_virtualenv() {
     [ -e "$1/bin/activate_this.py" ] && [ -x "$1/bin/python" ]
 }
 
+function _command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# internal utils fallback
+
+function _envie_internal() {
+    local name="$1"
+    shift
+    python "$_ENVIE_UTILS" "$name" "$@"
+}
+
+function _readlink() {
+    local path="$1"
+    if _command_exists readlink; then
+        readlink -f "$path"
+    else
+        _envie_internal readlink "$path"
+    fi
+}
+
+function _realpath() {
+    local path="$1" relativeto="${2:-}"
+    if _command_exists realpath; then
+        local opts=(-mLP)
+        [ "$relativeto" ] && opts+=(--relative-to="$relativeto")
+        realpath "${opts[@]}" "$path"
+    else
+        _envie_internal realpath "$path" "$relativeto"
+    fi
+}
+
 # Prints all descendant of a process `ppid`, level-wise, bottom-up.
 # Usage: _get_proc_descendants ppid
 function _get_proc_descendants() {
@@ -119,10 +152,6 @@ function _mkftemp() {
 function _is_subdir_of() {
     local dir="$(readlink -e "$1")" basedir="$(readlink -e "$2")"
     [ -d "$basedir" ] && [ -d "$dir" ] && [[ $dir =~ ^$basedir ]]
-}
-
-function _command_exists() {
-    command -v "$1" >/dev/null 2>&1
 }
 
 function _humanized_age() {
@@ -587,12 +616,10 @@ function lsupenv() {
     (( verbose )) && lsargs+=(-v)
     (( quiet )) && lsargs+=(-q)
 
-    local list len=0 dir=${1:-.} prevdir normargs=()
-    if [[ ! "$dir" =~ ^/ ]]; then
-        normargs+=(--relative-to=.)
-    fi
+    local list len=0 dir=${1:-.} prevdir relbase=.
+    [[ "$dir" =~ ^/ ]] && relbase=''
     while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
-        dir=$(realpath -e "${normargs[@]}" "$dir")
+        dir=$(_realpath "$dir" "$relbase")
         list=$(lsenv "${lsargs[@]}" "$dir" "$prevdir")
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
