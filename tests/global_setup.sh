@@ -34,7 +34,7 @@ setup() {
         exec 2>&1
 
         mkdir -p project_a
-        "$envie_bin" create -3 "./project_a/env_a"
+        "$envie_bin" create -3 -vvv "./project_a/env_a"
         mkdir project_a/src
         
         mkdir -p project_b
