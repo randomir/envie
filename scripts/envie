@@ -420,7 +420,7 @@ function _lsenv_locate() {
         __envie_index
     fi
     local list=$(
-        locate -d "$_ENVIE_DB_PATH" --existing "$absdir"'/*/bin/activate_this.py' \
+        locate -d "$_ENVIE_DB_PATH" --existing "$absdir"'*/bin/activate_this.py' \
         | sed -e 's#/bin/activate_this\.py$##' \
         | _prefix_subs "$absdir" "$dir"
     )
