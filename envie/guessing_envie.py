@@ -78,7 +78,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit(255)
 
-    cwd=sys.argv[1]
+    cwd = sys.argv[1]
     tokens = sys.argv[2:]
 
     phrase = ' '.join(tokens)
