@@ -324,4 +324,37 @@ test_lsupenv_race_multiple_envs_multiple_level_up_from_relpath() (
 )
 
 
+# misc
+
+test_lsupenv_relpath_find_f() (
+    cd "$polygon_dir/project_a"
+    local list=$(lsupenv -f "../project_b/env_b/local/bin/")
+    [ "$list" == "../project_b/env_b" ]
+)
+
+test_lsupenv_relpath_locate_l() (
+    cd "$polygon_dir/project_a"
+    local list=$(lsupenv -l "../project_b/env_b/local/bin/")
+    [ "$list" == "../project_b/env_b" ]
+)
+
+test_envie_find_sourced_relpath_race() (
+    cd "$polygon_dir/project_a"
+    local list=$(envie find "../project_b/env_b/local/bin/")
+    [ "$list" == "../project_b/env_b" ]
+)
+
+test_envie_find_sourced_relpath_find_f() (
+    cd "$polygon_dir/project_a"
+    local list=$(envie find -f "../project_b/env_b/local/bin/")
+    [ "$list" == "../project_b/env_b" ]
+)
+
+test_envie_find_sourced_relpath_locate_l() (
+    cd "$polygon_dir/project_a"
+    local list=$(envie find -l "../project_b/env_b/local/bin/")
+    [ "$list" == "../project_b/env_b" ]
+)
+
+
 . $(dirname "$0")/unittest.inc && main
