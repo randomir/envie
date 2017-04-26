@@ -1,9 +1,16 @@
 #!/usr/bin/env python
+import re
 from setuptools import setup
+
+def parse_envie_version():
+    for line in open('scripts/envie').readlines():
+        m = re.match(r'^_ENVIE_VERSION="([^"]+)"$', line)
+        if m:
+            return m.group(1)
 
 setup(
     name='envie',
-    version='0.4.25',
+    version=parse_envie_version(),
     description="Bash helpers for navigating and managing Python VirtualEnvs.",
     long_description=open('README.rst').read(),
     author='Radomir Stevanovic',
