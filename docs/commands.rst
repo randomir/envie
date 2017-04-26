@@ -150,7 +150,7 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
 
 
 
-``envie find`` / ``lsupenv [DIR]`` - Find the closest virtual around ``DIR``
+``envie find`` / ``findenv [DIR]`` - Find the closest virtual around ``DIR``
 ----------------------------------------------------------------------------
 
 ::
@@ -158,7 +158,7 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
     Find and list all virtualenvs below DIR, or above if none found below.
 
     Usage:
-        lsupenv [-f|-l] [DIR]
+        findenv [-f|-l] [DIR]
         envie find ...
 
     Options:

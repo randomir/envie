@@ -14,95 +14,95 @@ setup() {
     . "$envie_bin"
 }
 
-test_lsupenv_help() (
-    lsupenv -h | grep 'Find and list all virtualenvs below DIR, or above if none found below.'
+test_findenv_help() (
+    findenv -h | grep 'Find and list all virtualenvs below DIR, or above if none found below.'
 )
 
 
-# test 'lsupenv' using find
+# test 'findenv' using find
 
-test_lsupenv_inside_env_root_from_cwd() (
+test_findenv_inside_env_root_from_cwd() (
     cd "$polygon_dir/project_a/env_a"
-    local list=$(lsupenv --find)
+    local list=$(findenv --find)
     [ "$list" == "." ]
 )
 
-test_lsupenv_inside_env_root_from_abspath() (
-    local list=$(lsupenv --find "$polygon_dir/project_a/env_a")
+test_findenv_inside_env_root_from_abspath() (
+    local list=$(findenv --find "$polygon_dir/project_a/env_a")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_inside_env_root_from_relpath() (
-    local list=$(lsupenv --find "project_a/env_a")
+test_findenv_inside_env_root_from_relpath() (
+    local list=$(findenv --find "project_a/env_a")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_inside_env_bin_from_cwd() (
+test_findenv_inside_env_bin_from_cwd() (
     cd "$polygon_dir/project_a/env_a/bin"
-    local list=$(lsupenv --find)
+    local list=$(findenv --find)
     [ "$list" == ".." ]
 )
 
-test_lsupenv_inside_env_bin_from_abspath() (
-    local list=$(lsupenv --find "$polygon_dir/project_a/env_a/bin")
+test_findenv_inside_env_bin_from_abspath() (
+    local list=$(findenv --find "$polygon_dir/project_a/env_a/bin")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_inside_env_bin_from_relpath() (
-    local list=$(lsupenv --find "./project_a/env_a/bin")
+test_findenv_inside_env_bin_from_relpath() (
+    local list=$(findenv --find "./project_a/env_a/bin")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_single_level_down_from_cwd() (
+test_findenv_single_level_down_from_cwd() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv --find)
+    local list=$(findenv --find)
     [ "$list" == "./env_a" ]
 )
 
-test_lsupenv_single_level_down_from_abspath() (
-    local list=$(lsupenv --find "$polygon_dir/project_a")
+test_findenv_single_level_down_from_abspath() (
+    local list=$(findenv --find "$polygon_dir/project_a")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_single_level_down_from_relpath() (
-    local list=$(lsupenv --find "project_a")
+test_findenv_single_level_down_from_relpath() (
+    local list=$(findenv --find "project_a")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_single_level_up_from_cwd() (
+test_findenv_single_level_up_from_cwd() (
     cd "$polygon_dir/project_a/src"
-    local list=$(lsupenv --find)
+    local list=$(findenv --find)
     [ "$list" == "../env_a" ]
 )
 
-test_lsupenv_single_level_up_from_abspath() (
-    local list=$(lsupenv --find "$polygon_dir/project_a/src")
+test_findenv_single_level_up_from_abspath() (
+    local list=$(findenv --find "$polygon_dir/project_a/src")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_single_level_up_from_relpath() (
-    local list=$(lsupenv --find "project_a/src")
+test_findenv_single_level_up_from_relpath() (
+    local list=$(findenv --find "project_a/src")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_normalize_abspath() (
-    local list=$(lsupenv --find "$polygon_dir/project_a/../project_b")
+test_findenv_normalize_abspath() (
+    local list=$(findenv --find "$polygon_dir/project_a/../project_b")
     [ "$list" == "$polygon_dir/project_b/env_b" ]
 )
 
-test_lsupenv_normalize_relpath() (
+test_findenv_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv --find "../project_b/env_b/local/bin/")
+    local list=$(findenv --find "../project_b/env_b/local/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 
-test_lsupenv_multiple_envs_multiple_level_up_from_relpath() (
-    local list=$(lsupenv --find ".config/envie" | sort)
+test_findenv_multiple_envs_multiple_level_up_from_relpath() (
+    local list=$(findenv --find ".config/envie" | sort)
     local expected
     expected=$(cat <<-END
 		./project_a/env_a
@@ -120,91 +120,91 @@ test_lsupenv_multiple_envs_multiple_level_up_from_relpath() (
 )
 
 
-# test 'lsupenv' using locate
+# test 'findenv' using locate
 
-test_lsupenv_locate_inside_env_root_from_cwd() (
+test_findenv_locate_inside_env_root_from_cwd() (
     cd "$polygon_dir/project_a/env_a"
-    local list=$(lsupenv --locate)
+    local list=$(findenv --locate)
     echo $list
     [ "$list" == "." ]
 )
 
-test_lsupenv_locate_inside_env_root_from_abspath() (
-    local list=$(lsupenv --locate "$polygon_dir/project_a/env_a")
+test_findenv_locate_inside_env_root_from_abspath() (
+    local list=$(findenv --locate "$polygon_dir/project_a/env_a")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_locate_inside_env_root_from_relpath() (
-    local list=$(lsupenv --locate "project_a/env_a")
+test_findenv_locate_inside_env_root_from_relpath() (
+    local list=$(findenv --locate "project_a/env_a")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_locate_inside_env_bin_from_cwd() (
+test_findenv_locate_inside_env_bin_from_cwd() (
     cd "$polygon_dir/project_a/env_a/bin"
-    local list=$(lsupenv --locate)
+    local list=$(findenv --locate)
     [ "$list" == ".." ]
 )
 
-test_lsupenv_locate_inside_env_bin_from_abspath() (
-    local list=$(lsupenv --locate "$polygon_dir/project_a/env_a/bin")
+test_findenv_locate_inside_env_bin_from_abspath() (
+    local list=$(findenv --locate "$polygon_dir/project_a/env_a/bin")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_locate_inside_env_bin_from_relpath() (
-    local list=$(lsupenv --locate "./project_a/env_a/bin")
+test_findenv_locate_inside_env_bin_from_relpath() (
+    local list=$(findenv --locate "./project_a/env_a/bin")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_locate_single_level_down_from_cwd() (
+test_findenv_locate_single_level_down_from_cwd() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv --locate)
+    local list=$(findenv --locate)
     [ "$list" == "./env_a" ]
 )
 
-test_lsupenv_locate_single_level_down_from_abspath() (
-    local list=$(lsupenv --locate "$polygon_dir/project_a")
+test_findenv_locate_single_level_down_from_abspath() (
+    local list=$(findenv --locate "$polygon_dir/project_a")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_locate_single_level_down_from_relpath() (
-    local list=$(lsupenv --locate "project_a")
+test_findenv_locate_single_level_down_from_relpath() (
+    local list=$(findenv --locate "project_a")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_locate_single_level_up_from_cwd() (
+test_findenv_locate_single_level_up_from_cwd() (
     cd "$polygon_dir/project_a/src"
-    local list=$(lsupenv --locate)
+    local list=$(findenv --locate)
     [ "$list" == "../env_a" ]
 )
 
-test_lsupenv_locate_single_level_up_from_abspath() (
-    local list=$(lsupenv --locate "$polygon_dir/project_a/src")
+test_findenv_locate_single_level_up_from_abspath() (
+    local list=$(findenv --locate "$polygon_dir/project_a/src")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_locate_single_level_up_from_relpath() (
-    local list=$(lsupenv --locate "project_a/src")
+test_findenv_locate_single_level_up_from_relpath() (
+    local list=$(findenv --locate "project_a/src")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_locate_normalize_abspath() (
-    local list=$(lsupenv --locate "$polygon_dir/project_a/../project_b")
+test_findenv_locate_normalize_abspath() (
+    local list=$(findenv --locate "$polygon_dir/project_a/../project_b")
     [ "$list" == "$polygon_dir/project_b/env_b" ]
 )
 
-test_lsupenv_locate_normalize_relpath() (
+test_findenv_locate_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv --locate "../project_b/env_b/local/bin/")
+    local list=$(findenv --locate "../project_b/env_b/local/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 
-test_lsupenv_locate_multiple_envs_multiple_level_up_from_relpath() (
-    local list=$(lsupenv --locate ".config/envie" | sort)
+test_findenv_locate_multiple_envs_multiple_level_up_from_relpath() (
+    local list=$(findenv --locate ".config/envie" | sort)
     local expected
     expected=$(cat <<-END
 		./project_a/env_a
@@ -222,91 +222,91 @@ test_lsupenv_locate_multiple_envs_multiple_level_up_from_relpath() (
 )
 
 
-# test 'lsupenv' using find vs. locate rate (the default)
+# test 'findenv' using find vs. locate rate (the default)
 
-test_lsupenv_race_inside_env_root_from_cwd() (
+test_findenv_race_inside_env_root_from_cwd() (
     cd "$polygon_dir/project_a/env_a"
-    local list=$(lsupenv)
+    local list=$(findenv)
     echo $list
     [ "$list" == "." ]
 )
 
-test_lsupenv_race_inside_env_root_from_abspath() (
-    local list=$(lsupenv "$polygon_dir/project_a/env_a")
+test_findenv_race_inside_env_root_from_abspath() (
+    local list=$(findenv "$polygon_dir/project_a/env_a")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_race_inside_env_root_from_relpath() (
-    local list=$(lsupenv "project_a/env_a")
+test_findenv_race_inside_env_root_from_relpath() (
+    local list=$(findenv "project_a/env_a")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_race_inside_env_bin_from_cwd() (
+test_findenv_race_inside_env_bin_from_cwd() (
     cd "$polygon_dir/project_a/env_a/bin"
-    local list=$(lsupenv)
+    local list=$(findenv)
     [ "$list" == ".." ]
 )
 
-test_lsupenv_race_inside_env_bin_from_abspath() (
-    local list=$(lsupenv "$polygon_dir/project_a/env_a/bin")
+test_findenv_race_inside_env_bin_from_abspath() (
+    local list=$(findenv "$polygon_dir/project_a/env_a/bin")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_race_inside_env_bin_from_relpath() (
-    local list=$(lsupenv "./project_a/env_a/bin")
+test_findenv_race_inside_env_bin_from_relpath() (
+    local list=$(findenv "./project_a/env_a/bin")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_race_single_level_down_from_cwd() (
+test_findenv_race_single_level_down_from_cwd() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv)
+    local list=$(findenv)
     [ "$list" == "./env_a" ]
 )
 
-test_lsupenv_race_single_level_down_from_abspath() (
-    local list=$(lsupenv "$polygon_dir/project_a")
+test_findenv_race_single_level_down_from_abspath() (
+    local list=$(findenv "$polygon_dir/project_a")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_race_single_level_down_from_relpath() (
-    local list=$(lsupenv "project_a")
+test_findenv_race_single_level_down_from_relpath() (
+    local list=$(findenv "project_a")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_race_single_level_up_from_cwd() (
+test_findenv_race_single_level_up_from_cwd() (
     cd "$polygon_dir/project_a/src"
-    local list=$(lsupenv)
+    local list=$(findenv)
     [ "$list" == "../env_a" ]
 )
 
-test_lsupenv_race_single_level_up_from_abspath() (
-    local list=$(lsupenv "$polygon_dir/project_a/src")
+test_findenv_race_single_level_up_from_abspath() (
+    local list=$(findenv "$polygon_dir/project_a/src")
     [ "$list" == "$polygon_dir/project_a/env_a" ]
 )
 
-test_lsupenv_race_single_level_up_from_relpath() (
-    local list=$(lsupenv "project_a/src")
+test_findenv_race_single_level_up_from_relpath() (
+    local list=$(findenv "project_a/src")
     [ "$list" == "project_a/env_a" ]
 )
 
 
-test_lsupenv_race_normalize_abspath() (
-    local list=$(lsupenv "$polygon_dir/project_a/../project_b")
+test_findenv_race_normalize_abspath() (
+    local list=$(findenv "$polygon_dir/project_a/../project_b")
     [ "$list" == "$polygon_dir/project_b/env_b" ]
 )
 
-test_lsupenv_race_normalize_relpath() (
+test_findenv_race_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv "../project_b/env_b/local/bin/")
+    local list=$(findenv "../project_b/env_b/local/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 
-test_lsupenv_race_multiple_envs_multiple_level_up_from_relpath() (
-    local list=$(lsupenv ".config/envie" | sort)
+test_findenv_race_multiple_envs_multiple_level_up_from_relpath() (
+    local list=$(findenv ".config/envie" | sort)
     local expected
     expected=$(cat <<-END
 		./project_a/env_a
@@ -326,15 +326,15 @@ test_lsupenv_race_multiple_envs_multiple_level_up_from_relpath() (
 
 # misc
 
-test_lsupenv_relpath_find_f() (
+test_findenv_relpath_find_f() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv -f "../project_b/env_b/local/bin/")
+    local list=$(findenv -f "../project_b/env_b/local/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
-test_lsupenv_relpath_locate_l() (
+test_findenv_relpath_locate_l() (
     cd "$polygon_dir/project_a"
-    local list=$(lsupenv -l "../project_b/env_b/local/bin/")
+    local list=$(findenv -l "../project_b/env_b/local/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 

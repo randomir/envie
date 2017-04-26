@@ -36,8 +36,8 @@ test_lsenv_present_after_sourcing() {
     env -i bash -c '. '"$envie_bin"' && [ $(type -t lsenv) == "function" ]'
 }
 
-test_lsupenv_present_after_sourcing() {
-    env -i bash -c '. '"$envie_bin"' && [ $(type -t lsupenv) == "function" ]'
+test_findenv_present_after_sourcing() {
+    env -i bash -c '. '"$envie_bin"' && [ $(type -t findenv) == "function" ]'
 }
 
 test_chenv_present_after_sourcing() {

@@ -49,7 +49,7 @@ Start with ``envie help``
         tmp            create a throw-away env in /tmp (alias for mkenv -t)
 
         list [DIR]     list virtual envs under DIR (alias for lsenv)
-        find [DIR]     like 'list', but also look above, until env found (alias for lsupenv)
+        find [DIR]     like 'list', but also look above, until env found (alias for findenv)
 
         config         interactively configure Envie
         index          (re-)index virtualenvs under /

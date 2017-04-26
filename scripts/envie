@@ -125,7 +125,7 @@ function _killtree() {
     done
 }
 
-# Finds a file NAME closest to DIR (or .), similarly to ``lsupenv``: by
+# Finds a file NAME closest to DIR (or .), similarly to ``findenv``: by
 # first looking down and then up dir-by-dir until a first match is found.
 # Usage: _find_closest NAME [DIR]
 function _find_closest() {
@@ -562,8 +562,8 @@ function lsenv() {
 
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
-# Usage: lsupenv [-f|-l] [-v] [-q] [h] [<start_dir>]
-function lsupenv() {
+# Usage: findenv [-f|-l] [-v] [-q] [h] [<start_dir>]
+function findenv() {
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
         case $opt in
@@ -713,7 +713,7 @@ function chenv() {
         # additional filtering by KEYWORDS required
         envlist=$(guessing_envie.py "$basedir" "$@")
     else
-        envlist=$(lsupenv "${lsargs[@]}" "$basedir")
+        envlist=$(findenv "${lsargs[@]}" "$basedir")
     fi
 
     [ "$envlist" ] && len=$(wc -l <<<"$envlist")
@@ -1057,7 +1057,7 @@ function __envie_main() {
         list)
             lsenv "$@";;
         find)
-            lsupenv "$@";;
+            findenv "$@";;
         *)
             chenv -v "$cmd" "$@";;
     esac
@@ -1084,7 +1084,7 @@ function __envie_usage() {
 		    tmp            create a throw-away env in /tmp (alias for mkenv -t)
 
 		    list [DIR]     list virtual envs under DIR (alias for lsenv)
-		    find [DIR]     like 'list', but also look above, until env found (alias for lsupenv)
+		    find [DIR]     like 'list', but also look above, until env found (alias for findenv)
 
 		    config         interactively configure Envie
 		    index          (re-)index virtualenvs under $_ENVIE_INDEX_ROOT
