@@ -7,6 +7,7 @@ from __future__ import absolute_import, print_function
 import sys
 import os
 import os.path
+from filters import fuzzy_filter
 
 
 def readlink(path, *args):
@@ -37,7 +38,8 @@ if __name__ == '__main__':
 
     tools = {
         'readlink': readlink,
-        'realpath': realpath
+        'realpath': realpath,
+        'filter': fuzzy_filter
     }
 
     if tool in tools:

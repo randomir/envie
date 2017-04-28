@@ -2,10 +2,8 @@
 from __future__ import print_function
 import re
 import sys
-from functools import partial
-from operator import itemgetter, ge
+from operator import itemgetter
 from difflib import SequenceMatcher
-import subprocess
 
 
 def tokenize(phrase, sep='\W+', minlen=1, unique=False):
@@ -47,12 +45,13 @@ def matching(path_tokens, words):
     return path_score
 
 
-def fuzzy_filter(phrase):
+def fuzzy_filter(*args):
     """Try to find a best match between (virtualenv) paths given on stdin
     and the list of tokens the user gave in ``phrase``.
     Prefer full word (phrase token) to path-component match, then prefix match
     and then a difflib-based match.
     """
+    phrase = ' '.join(list(args))
     words = tokenize(phrase)
     results = []
     while True:
@@ -68,12 +67,13 @@ def fuzzy_filter(phrase):
 
     results.sort()
     best_score = max(results, key=itemgetter(0))[0]
+
+    ret = []
     for r in results:
         if r[0] >= best_score:
-            print(r[1])
+            ret.append(r[1])
+    return '\n'.join(ret)
 
 
 if __name__ == '__main__':
-    tokens = sys.argv[1:]
-    phrase = ' '.join(tokens)
-    fuzzy_filter(phrase)
+    print(fuzzy_filter(sys.argv[1:]))

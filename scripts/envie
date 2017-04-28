@@ -15,6 +15,7 @@
 
 # the defaults
 _ENVIE_UTILS="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/envie/utils.py"
+echo --- "$_ENVIE_UTILS"
 _ENVIE_DEFAULT_ENVNAME=env
 _ENVIE_DEFAULT_PYTHON=python
 _ENVIE_CONFIG_DIR="$HOME/.config/envie"
@@ -613,7 +614,7 @@ function lsenv() {
         else
             _lsenv_locate_vs_find_race "${args[@]}"
         fi
-    } | guessing_envie.py "$@"
+    } | _envie_internal filter "$@"
 
     return 0
 }
@@ -695,7 +696,7 @@ function findenv() {
         prevdir="$dir"
         dir="$dir/.."
     done
-    echo "$list" | guessing_envie.py "$@"
+    echo "$list" | _envie_internal filter "$@"
 
     return 0
 }
