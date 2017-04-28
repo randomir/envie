@@ -84,6 +84,10 @@ function _command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+function _command_runs() {
+    "$@" >/dev/null 2>&1
+}
+
 # internal utils fallback
 
 function _envie_internal() {
@@ -102,16 +106,22 @@ function _envie_internal() {
 # Usage: _readlink path
 function _readlink() {
     local path="$1"
-    if _command_exists readlink; then
-        # TODO: fix discrepancy - always require existence
-        #  - on BSD: all components must exist (or fails with 1)
-        #  - in GNU: all but the last component must exist
-        readlink -f "$path"
-    else
-        _envie_internal readlink "$path"
-    fi
+    _envie_internal readlink "$path"
 }
+# with default (slower) python impl inplace,
+# try to remap `_readlink` to a native `readlink`, if possible
+if _command_exists readlink; then
+    if _command_runs readlink -e .; then
+        # GNU coretools
+        _readlink() { readlink -e "$1"; }
+    elif _command_runs readlink -f .; then
+        # BSD
+        _readlink() { readlink -f "$1"; }
+    fi
+fi
 
+# Calculate relative path from `relativeto` to `path`.
+# Usage: _realpath path relativeto
 function _realpath() {
     local path="$1" relativeto="${2:-}"
     if _command_exists realpath; then
