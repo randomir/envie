@@ -15,7 +15,7 @@ def readlink(path, *args):
     Return canonical (normalized, absolute) path by following every symlinks,
     without requirements on components existence.
     """
-    print(os.path.realpath(os.path.expanduser(path)))
+    return os.path.realpath(os.path.expanduser(path))
 
 
 def realpath(path, start=None, *args):
@@ -26,7 +26,7 @@ def realpath(path, start=None, *args):
     path = readlink(path)
     if not start:
         return path
-    print(os.path.relpath(path, start))
+    return os.path.relpath(path, start)
 
 
 if __name__ == '__main__':
@@ -37,8 +37,8 @@ if __name__ == '__main__':
     args = sys.argv[2:]
 
     tools = {
-        'readlink': readlink,
-        'realpath': realpath,
+        'readlink': lambda *args: print(readlink(*args)),
+        'realpath': lambda *args: print(realpath(*args)),
         'filter': fuzzy_filter
     }
 
