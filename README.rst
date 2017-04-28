@@ -45,7 +45,7 @@ or, just import it at the beginning of your Python program:
 .. code-block:: python
 
     #!/usr/bin/python
-    import envie.require
+    import envie.activate_closest
 
 and in each of these cases the Python script will be executed in the closest
 virtual environment (for the definition of the *closest environment* see below,
