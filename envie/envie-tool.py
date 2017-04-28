@@ -7,7 +7,7 @@ from __future__ import absolute_import, print_function
 import sys
 import os
 import os.path
-from filters import fuzzy_filter
+from envie.filters import fuzzy_filter
 
 
 def readlink(path, *args):
