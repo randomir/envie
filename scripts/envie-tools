@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import os
+import sys
+
+# ensure `envie` is accessible, without being installed via pip:
+scriptsdir = os.path.dirname(os.path.abspath(__file__))
+projectroot = os.path.normpath(os.path.join(scriptsdir, os.pardir))
+sys.path.insert(0, projectroot)
+
+from envie.utils import readlink, realpath
+from envie.filters import fuzzy_filter
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.exit(255)
+
+    tool = sys.argv[1]
+    args = sys.argv[2:]
+
+    tools = {
+        'readlink': lambda *args: print(readlink(*args)),
+        'realpath': lambda *args: print(realpath(*args)),
+        'filter': fuzzy_filter
+    }
+
+    if tool in tools:
+        tools[tool](*args)
+    else:
+        sys.exit(1)

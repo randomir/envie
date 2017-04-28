@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-
-"""Envie cross-platform tools, serving as a fallback if a tool is not available
+"""Envie cross-platform utils, serving as a fallback if a tool is not available
 on a particular user's platform."""
 
-from __future__ import print_function
-import sys
-import os
 import os.path
-from filters import fuzzy_filter
 
 
 def readlink(path, *args):
@@ -27,22 +21,3 @@ def realpath(path, start=None, *args):
     if not start:
         return path
     return os.path.relpath(path, start)
-
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        sys.exit(255)
-
-    tool = sys.argv[1]
-    args = sys.argv[2:]
-
-    tools = {
-        'readlink': lambda *args: print(readlink(*args)),
-        'realpath': lambda *args: print(realpath(*args)),
-        'filter': fuzzy_filter
-    }
-
-    if tool in tools:
-        tools[tool](*args)
-    else:
-        sys.exit(1)

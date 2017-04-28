@@ -51,7 +51,7 @@ function _envie_load_config() {
     [ -r "$_ENVIE_CONFIG_PATH" ] && . "$_ENVIE_CONFIG_PATH"
     # TODO: basic config options validity check (data types, ranges, etc.)
 
-    _ENVIE_TOOL_PATH=$(_bootstrap_abspath "$(dirname "${BASH_SOURCE[0]}")/../envie/envie-tool.py")
+    _ENVIE_TOOL_PATH=$(_bootstrap_abspath "$(dirname "${BASH_SOURCE[0]}")/../scripts/envie-tools")
     _ENVIE_SOURCE=$(_readlink "${BASH_SOURCE[0]}")
 }
 
