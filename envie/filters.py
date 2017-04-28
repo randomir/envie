@@ -65,15 +65,14 @@ def fuzzy_filter(*args):
         score = matching(path_tokens, words)
         results.append((score, env))
 
-    results.sort()
-    best_score = max(results, key=itemgetter(0))[0]
+    if results:
+        results.sort()
+        best_score = max(results, key=itemgetter(0))[0]
 
-    ret = []
     for r in results:
         if r[0] >= best_score:
-            ret.append(r[1])
-    return '\n'.join(ret)
+            print(r[1])
 
 
 if __name__ == '__main__':
-    print(fuzzy_filter(sys.argv[1:]))
+    fuzzy_filter(sys.argv[1:])
