@@ -472,7 +472,7 @@ function rmenv() {
 
 
 # Lists all environments below the <start_dir>.
-# Usage: lsenv [<start_dir> [<avoid_subdir>]]
+# Usage: _lsenv_find [<start_dir> [<avoid_subdir>]]
 function _lsenv_find() {
     local dir="${1:-.}" avoid="${2:-}"
     find "$dir" -path "$avoid" -prune -o \
@@ -481,7 +481,7 @@ function _lsenv_find() {
 }
 
 # `lsenv` via `locate`
-# Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
+# Usage: _lsenv_locate [<start_dir>]
 function _lsenv_locate() {
     local dir="${1:-.}"
     local absdir=$(_readlink "$dir")
@@ -538,16 +538,16 @@ function __find_fast_bailout() {
 # specified explicitly (via opts or env var). If search method undefined, use
 # `find vs locate race` where find is allowed to run for 400ms, and then aborted
 # favor of locate.
-# Usage: lsenv [-f|-l] [<start_dir> [<avoid_subdir>]]
+# Usage: lsenv [-f|-l] [<start_dir> [<avoid_subdir>]] [--] [keywords]
 function lsenv() {
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
         case $opt in
             h)
-                echo "Find and list all virtualenvs under DIR."
+                echo "Find and list all virtualenvs under DIR, optionally filtered by KEYWORDS."
                 echo
                 echo "Usage:"
-                echo "    $FUNCNAME [-f|-l] [DIR [AVOID_SUBDIR]]"
+                echo "    $FUNCNAME [-f|-l] [DIR [AVOID_SUBDIR]] [--] [KEYWORDS]"
                 echo "    envie list ..."
                 echo
                 echo "Options:"
@@ -587,31 +587,50 @@ function lsenv() {
     done
     shift $((OPTIND-1))
 
-    if (( force_find )); then
-        _lsenv_find "$@"
-    elif (( force_locate )); then
-        _lsenv_locate "$@"
-    elif (( ! _ENVIE_USE_DB )) || ! _is_subdir_of "${1:-.}" "$_ENVIE_INDEX_ROOT"; then
-        _lsenv_find "$@"
-    else
-        _lsenv_locate_vs_find_race "$@"
+    # parse DIR, AVOID_SUBDIR, --, and KEYWORDS
+    local args=()
+    if [ "$1" == "--" ]; then
+        shift;
+    elif [ -d "$1" ]; then
+        # dir
+        args+=("$1")
+        shift
+        if [ -d "$1" ]; then
+            # avoid_subdir
+            args+=("$1")
+            shift
+        fi
+        [ "$1" == "--" ] && shift
     fi
+
+    {
+        if (( force_find )); then
+            _lsenv_find "${args[@]}"
+        elif (( force_locate )); then
+            _lsenv_locate "${args[@]}"
+        elif (( ! _ENVIE_USE_DB )) || ! _is_subdir_of "${1:-.}" "$_ENVIE_INDEX_ROOT"; then
+            _lsenv_find "${args[@]}"
+        else
+            _lsenv_locate_vs_find_race "${args[@]}"
+        fi
+    } | guessing_envie.py "$@"
 
     return 0
 }
 
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
-# Usage: findenv [-f|-l] [-v] [-q] [h] [<start_dir>]
+# Usage: findenv [-f|-l] [-v] [-q] [h] [<start_dir>] [--] [keywords]
 function findenv() {
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
         case $opt in
             h)
                 echo "Find and list all virtualenvs below DIR, or above if none found below."
+                echo "List of virtualenv paths returned is optionally filtered by KEYWORDS."
                 echo
                 echo "Usage:"
-                echo "    $FUNCNAME [-f|-l] [DIR]"
+                echo "    $FUNCNAME [-f|-l] [DIR] [--] [KEYWORDS]"
                 echo "    envie find ..."
                 echo
                 echo "Options:"
@@ -651,13 +670,23 @@ function findenv() {
     done
     shift $((OPTIND-1))
 
+    # parse DIR, --, and KEYWORDS
+    local dir="."
+    if [ "$1" == "--" ]; then
+        shift;
+    elif [ -d "$1" ]; then
+        dir="$1"
+        shift
+        [ "$1" == "--" ] && shift
+    fi
+
     local lsargs=()
     (( force_find )) && lsargs+=(-f)
     (( force_locate )) && lsargs+=(-l)
     (( verbose )) && lsargs+=(-v)
     (( quiet )) && lsargs+=(-q)
 
-    local list len=0 dir=${1:-.} prevdir relbase=.
+    local list len=0 prevdir relbase="."
     [[ "$dir" =~ ^/ ]] && relbase=''
     while [ "$len" -eq 0 ] && [ "$(_readlink "$prevdir")" != / ]; do
         dir=$(_realpath "$dir" "$relbase")
@@ -666,7 +695,7 @@ function findenv() {
         prevdir="$dir"
         dir="$dir/.."
     done
-    echo "$list"
+    echo "$list" | guessing_envie.py "$@"
 
     return 0
 }
@@ -727,17 +756,9 @@ function chenv() {
     done
     shift $((OPTIND-1))
 
-    local IFS envlist env len=0 basedir="."
+    local IFS envlist env len=0
 
-    # KEYWORDS separated with --? base DIR specified?
-    if [ "$1" == "--" ]; then
-        shift;
-    elif [ -d "$1" ]; then
-        basedir="$1"
-        shift
-    fi
-
-    # check we are running as function
+    # check if we are running as a function (otherwise unable to activate)
     if (( ! _ENVIE_SOURCED )); then
         _errmsg "NOTE: Envie is not sourced, so virtual env activation CAN NOT work!"
         _errmsg "Source Envie manually with: '. `which envie`',"
@@ -749,12 +770,8 @@ function chenv() {
     (( force_find )) && lsargs+=(-f)
     (( force_locate )) && lsargs+=(-l)
 
-    if [ "$#" -gt 0 ]; then
-        # additional filtering by KEYWORDS required
-        envlist=$(guessing_envie.py "$basedir" "$@")
-    else
-        envlist=$(findenv "${lsargs[@]}" "$basedir")
-    fi
+    # keywords filtering is done by findenv
+    envlist=$(findenv "${lsargs[@]}" "$@")
 
     [ "$envlist" ] && len=$(wc -l <<<"$envlist")
     if [ "$len" -eq 1 ]; then

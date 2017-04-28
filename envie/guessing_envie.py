@@ -47,22 +47,21 @@ def matching(path_tokens, words):
     return path_score
 
 
-def guesstimate(cwd, phrase):
-    """Try to find a best match around ``cwd`` between the closest environments
+def fuzzy_filter(phrase):
+    """Try to find a best match between (virtualenv) paths given on stdin
     and the list of tokens the user gave in ``phrase``.
     Prefer full word (phrase token) to path-component match, then prefix match
     and then a difflib-based match.
     """
-    try:
-        output = subprocess.check_output(
-            'envie find -q "%s"' % cwd, shell=True).decode('ascii').strip('\n')
-        envs = output.split('\n')
-    except subprocess.CalledProcessError as exc:
-        sys.exit(1)
-
     words = tokenize(phrase)
     results = []
-    for env in envs:
+    while True:
+        # one environment path per line; break on EOF
+        line = sys.stdin.readline()
+        if not line:
+            break
+        env = line.strip()
+        # score each env path according to `words` correspondence
         path_tokens = tokenize(env, unique=True)
         score = matching(path_tokens, words)
         results.append((score, env))
@@ -75,11 +74,6 @@ def guesstimate(cwd, phrase):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        sys.exit(255)
-
-    cwd = sys.argv[1]
-    tokens = sys.argv[2:]
-
+    tokens = sys.argv[1:]
     phrase = ' '.join(tokens)
-    guesstimate(cwd, phrase)
+    fuzzy_filter(phrase)
