@@ -121,17 +121,23 @@ if _command_exists readlink; then
 fi
 
 # Calculate relative path from `relativeto` to `path`.
-# Usage: _realpath path relativeto
+# Usage: _realpath path [relativeto]
 function _realpath() {
     local path="$1" relativeto="${2:-}"
-    if _command_exists realpath; then
-        local opts=(-mLP)
-        [ "$relativeto" ] && opts+=(--relative-to="$relativeto")
-        realpath "${opts[@]}" "$path"
-    else
-        _envie_internal realpath "$path" "$relativeto"
-    fi
+    _envie_internal realpath "$path" "$relativeto"
 }
+# with python _realpath impl inplace, try to override with
+# platform-specific native impl:
+if _command_exists realpath; then
+    if _command_runs realpath -mLP --relative-to=. /; then
+        function _realpath() {
+            local path="$1" relativeto="${2:-}"
+            local opts=(-mLP)
+            [ "$relativeto" ] && opts+=(--relative-to="$relativeto")
+            realpath "${opts[@]}" "$path"
+        }
+    fi
+fi
 
 # Prints all descendant of a process `ppid`, level-wise, bottom-up.
 # Usage: _get_proc_descendants ppid
