@@ -689,12 +689,12 @@ function findenv() {
     [[ "$dir" =~ ^/ ]] && relbase=''
     while [ "$len" -eq 0 ] && [ "$(_readlink "$prevdir")" != / ]; do
         dir=$(_realpath "$dir" "$relbase")
-        list=$(lsenv "${lsargs[@]}" "$dir" "$prevdir")
+        list=$(lsenv "${lsargs[@]}" "$dir" "$prevdir" "$@")
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
         dir="$dir/.."
     done
-    echo "$list" | _envie_tool filter "$@"
+    echo "$list"
 
     return 0
 }
