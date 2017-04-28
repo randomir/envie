@@ -112,6 +112,10 @@ test_findenv_multiple_envs_multiple_level_up_from_relpath() (
 		./project_c/sub_a/env_ca3
 		./project_c/sub_b/env_cb
 		./project_c/sub_c/env_cc
+		./trusty-tahr/dev
+		./trusty-tahr/prod
+		./zesty-zapus/dev
+		./zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -214,6 +218,10 @@ test_findenv_locate_multiple_envs_multiple_level_up_from_relpath() (
 		./project_c/sub_a/env_ca3
 		./project_c/sub_b/env_cb
 		./project_c/sub_c/env_cc
+		./trusty-tahr/dev
+		./trusty-tahr/prod
+		./zesty-zapus/dev
+		./zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -316,6 +324,10 @@ test_findenv_race_multiple_envs_multiple_level_up_from_relpath() (
 		./project_c/sub_a/env_ca3
 		./project_c/sub_b/env_cb
 		./project_c/sub_c/env_cc
+		./trusty-tahr/dev
+		./trusty-tahr/prod
+		./zesty-zapus/dev
+		./zesty-zapus/prod
 	END
     )
     echo "$list"

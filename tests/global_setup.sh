@@ -52,6 +52,14 @@ setup() {
 
         mkdir -p project_c/sub_c
         "$envie_bin" create "./project_c/sub_c/env_cc"
+
+        mkdir -p trusty-tahr
+        "$envie_bin" create "trusty-tahr/dev"
+        "$envie_bin" create "trusty-tahr/prod"
+
+        mkdir -p zesty-zapus
+        "$envie_bin" create "zesty-zapus/dev"
+        "$envie_bin" create "zesty-zapus/prod"
     )
     if (( $? )); then
         echo "FAILED)"

@@ -86,6 +86,10 @@ test_lsenv_find_multiple_levels() (
 		./project_c/sub_a/env_ca3
 		./project_c/sub_b/env_cb
 		./project_c/sub_c/env_cc
+		./trusty-tahr/dev
+		./trusty-tahr/prod
+		./zesty-zapus/dev
+		./zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -147,6 +151,10 @@ test_lsenv_locate_multiple_levels() (
 		./project_c/sub_a/env_ca3
 		./project_c/sub_b/env_cb
 		./project_c/sub_c/env_cc
+		./trusty-tahr/dev
+		./trusty-tahr/prod
+		./zesty-zapus/dev
+		./zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -222,6 +230,67 @@ test_lsenv_race_multiple_levels() (
 		./project_c/sub_a/env_ca3
 		./project_c/sub_b/env_cb
 		./project_c/sub_c/env_cc
+		./trusty-tahr/dev
+		./trusty-tahr/prod
+		./zesty-zapus/dev
+		./zesty-zapus/prod
+	END
+    )
+    echo "$list"
+    echo "$expected"
+    [ "$list" == "$expected" ]
+)
+
+
+# test filtering
+
+test_lsenv_filter_firstlevel() (
+    cd "$polygon_dir"
+    local list=$(lsenv trusty | sort)
+    local expected
+    expected=$(cat <<-END
+		./trusty-tahr/dev
+		./trusty-tahr/prod
+	END
+    )
+    echo "$list"
+    echo "$expected"
+    [ "$list" == "$expected" ]
+)
+
+test_lsenv_filter_secondlevel() (
+    cd "$polygon_dir"
+    local list=$(lsenv dev | sort)
+    local expected
+    expected=$(cat <<-END
+		./trusty-tahr/dev
+		./zesty-zapus/dev
+	END
+    )
+    echo "$list"
+    echo "$expected"
+    [ "$list" == "$expected" ]
+)
+
+test_lsenv_filter_firstlevel_from_path() (
+    local list=$(lsenv "$polygon_dir" trusty | sort)
+    local expected
+    expected=$(cat <<-END
+		$polygon_dir/trusty-tahr/dev
+		$polygon_dir/trusty-tahr/prod
+	END
+    )
+    echo "$list"
+    echo "$expected"
+    [ "$list" == "$expected" ]
+)
+
+test_lsenv_filter_secondlevel_from_path_with_sep() (
+    local list=$(lsenv "$polygon_dir" -- dev | sort)
+    local expected
+    expected=$(cat <<-END
+		$polygon_dir/trusty-tahr/dev
+		$polygon_dir/zesty-zapus/dev
 	END
     )
     echo "$list"
