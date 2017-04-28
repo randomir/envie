@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Envie cross-platform utils, serving as a fallback if a tool is not available
+"""Envie cross-platform tools, serving as a fallback if a tool is not available
 on a particular user's platform."""
 
 from __future__ import absolute_import, print_function

@@ -14,8 +14,6 @@
 [[ $0 != "$BASH_SOURCE" ]] && _ENVIE_SOURCED=1 || _ENVIE_SOURCED=0
 
 # the defaults
-_ENVIE_UTILS="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/envie/utils.py"
-echo --- "$_ENVIE_UTILS"
 _ENVIE_DEFAULT_ENVNAME=env
 _ENVIE_DEFAULT_PYTHON=python
 _ENVIE_CONFIG_DIR="$HOME/.config/envie"
@@ -91,10 +89,10 @@ function _command_runs() {
 
 # internal utils fallback
 
-function _envie_internal() {
+function _envie_tool() {
     local name="$1"
     shift
-    python "$_ENVIE_UTILS" "$name" "$@"
+    envie-tool.py "$name" "$@"
 }
 
 # Resolve existing `path` to an absolute path, with all symbolic links
@@ -107,7 +105,7 @@ function _envie_internal() {
 # Usage: _readlink path
 function _readlink() {
     local path="$1"
-    _envie_internal readlink "$path"
+    _envie_tool readlink "$path"
 }
 # with default (slower) python impl inplace,
 # try to remap `_readlink` to a native `readlink`, if possible
@@ -125,7 +123,7 @@ fi
 # Usage: _realpath path [relativeto]
 function _realpath() {
     local path="$1" relativeto="${2:-}"
-    _envie_internal realpath "$path" "$relativeto"
+    _envie_tool realpath "$path" "$relativeto"
 }
 # with python _realpath impl inplace, try to override with
 # platform-specific native impl:
@@ -614,7 +612,7 @@ function lsenv() {
         else
             _lsenv_locate_vs_find_race "${args[@]}"
         fi
-    } | _envie_internal filter "$@"
+    } | _envie_tool filter "$@"
 
     return 0
 }
@@ -696,7 +694,7 @@ function findenv() {
         prevdir="$dir"
         dir="$dir/.."
     done
-    echo "$list" | _envie_internal filter "$@"
+    echo "$list" | _envie_tool filter "$@"
 
     return 0
 }
