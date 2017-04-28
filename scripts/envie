@@ -52,7 +52,7 @@ function _envie_load_config() {
     [ -r "$_ENVIE_CONFIG_PATH" ] && . "$_ENVIE_CONFIG_PATH"
     # TODO: basic config options validity check (data types, ranges, etc.)
 
-    _ENVIE_SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
+    _ENVIE_SOURCE=$(_readlink "${BASH_SOURCE[0]}")
 }
 
 
@@ -92,9 +92,20 @@ function _envie_internal() {
     python "$_ENVIE_UTILS" "$name" "$@"
 }
 
+# Resolve existing `path` to an absolute path, with all symbolic links
+# resolved recursively along the way.
+#
+# Tries to be cross-platform compatible, using `readlink -f` from GNU tools 
+# or BSD, and falling back to our internal Python implementation if `readlink`
+# not available.
+#
+# Usage: _readlink path
 function _readlink() {
     local path="$1"
     if _command_exists readlink; then
+        # TODO: fix discrepancy - always require existence
+        #  - on BSD: all components must exist (or fails with 1)
+        #  - in GNU: all but the last component must exist
         readlink -f "$path"
     else
         _envie_internal readlink "$path"
@@ -140,7 +151,7 @@ function _killtree() {
 function _find_closest() {
     local name="$1"
     local list len=0 dir=${2:-.} prevdir
-    while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
+    while [ "$len" -eq 0 ] && [ "$(_readlink "$prevdir")" != / ]; do
         list=$(find "$dir" -path "$prevdir" -prune -o -name .git -o -name .hg -o -name .svn -prune -o -name "$name" -print 2>/dev/null)
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
@@ -160,7 +171,7 @@ function _mkftemp() {
 # Both `dir` and `basedir` have to exist.
 # Usage: _is_subdir_of DIR BASEDIR
 function _is_subdir_of() {
-    local dir="$(readlink -e "$1")" basedir="$(readlink -e "$2")"
+    local dir="$(_readlink "$1")" basedir="$(_readlink "$2")"
     [ -d "$basedir" ] && [ -d "$dir" ] && [[ $dir =~ ^$basedir ]]
 }
 
@@ -299,7 +310,7 @@ function mkenv() {
     local pip_valid_reqs=() pip_auto_reqs=() pip_opts=() req
     for req in "${pip_requirements[@]}"; do
         if [ -f "$req" ]; then
-            req=$(readlink -f "$req")
+            req=$(_readlink "$req")
             pip_valid_reqs+=("$req")
             pip_opts+=(-r "$req")
         else
@@ -320,7 +331,7 @@ function mkenv() {
     if (( autodetect )); then
         (( quietness < 1 )) && echo "Searching for all requirements.txt files..."
         while read req; do
-            req=$(readlink -f "$req")
+            req=$(_readlink "$req")
             pip_auto_reqs+=("$req")
             pip_opts+=(-r "$req")
         done < <(_find_closest "requirements.txt" ".")
@@ -457,7 +468,7 @@ function _lsenv_find() {
 # Compatible with: lsenv [<start_dir> [<avoid_subdir>]]
 function _lsenv_locate() {
     local dir="${1:-.}"
-    local absdir=$(readlink -e "$dir")
+    local absdir=$(_readlink "$dir")
     [ "$absdir" = / ] && dir=/
     if (( _ENVIE_LS_INDEX )) && _envie_db_too_old; then
         __envie_index
@@ -632,7 +643,7 @@ function findenv() {
 
     local list len=0 dir=${1:-.} prevdir relbase=.
     [[ "$dir" =~ ^/ ]] && relbase=''
-    while [ "$len" -eq 0 ] && [ "$(readlink -e "$prevdir")" != / ]; do
+    while [ "$len" -eq 0 ] && [ "$(_readlink "$prevdir")" != / ]; do
         dir=$(_realpath "$dir" "$relbase")
         list=$(lsenv "${lsargs[@]}" "$dir" "$prevdir")
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
@@ -943,7 +954,7 @@ function __envie_config() {
         read -p "Common ancestor dir of all environments to be indexed [$_ENVIE_INDEX_ROOT]: " ans
         if [ "$ans" ]; then
             if [ -d "$ans" ]; then
-                _ENVIE_INDEX_ROOT=$(readlink -f "$ans")
+                _ENVIE_INDEX_ROOT=$(_readlink "$ans")
             else
                 echo "Invalid dir $ans. Skipping."
             fi
@@ -1033,7 +1044,7 @@ function __envie_main() {
                 (
                     # move closer to script for env detection
                     if [ -f "$script" ]; then
-                        script=$(readlink -f "$script")
+                        script=$(_readlink "$script")
                         cd "$(dirname "$script")"
                     fi
                     _ENVIE_SOURCED=1 chenv -1v && exec "$script" "$@"
@@ -1063,7 +1074,7 @@ function __envie_main() {
             # handle: `envie python path/to/some/script.py`
             (
                 # move closer to script for proper env detection
-                script=$(readlink -f "$script")
+                script=$(_readlink "$script")
                 cd "$(dirname "$script")"
                 _ENVIE_SOURCED=1 chenv -1v && exec python "$script" "$@"
             )
