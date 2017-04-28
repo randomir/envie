@@ -3,11 +3,11 @@
 """Envie cross-platform tools, serving as a fallback if a tool is not available
 on a particular user's platform."""
 
-from __future__ import absolute_import, print_function
+from __future__ import print_function
 import sys
 import os
 import os.path
-from envie.filters import fuzzy_filter
+from filters import fuzzy_filter
 
 
 def readlink(path, *args):

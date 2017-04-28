@@ -51,6 +51,7 @@ function _envie_load_config() {
     [ -r "$_ENVIE_CONFIG_PATH" ] && . "$_ENVIE_CONFIG_PATH"
     # TODO: basic config options validity check (data types, ranges, etc.)
 
+    _ENVIE_TOOL_PATH=$(_bootstrap_abspath "$(dirname "${BASH_SOURCE[0]}")/../envie/envie-tool.py")
     _ENVIE_SOURCE=$(_readlink "${BASH_SOURCE[0]}")
 }
 
@@ -92,7 +93,11 @@ function _command_runs() {
 function _envie_tool() {
     local name="$1"
     shift
-    envie-tool.py "$name" "$@"
+    python "$_ENVIE_TOOL_PATH" "$name" "$@"
+}
+
+function _bootstrap_abspath() {
+    python -c "import sys, os.path; sys.stdout.write(os.path.realpath(sys.argv[1]))" "$1"
 }
 
 # Resolve existing `path` to an absolute path, with all symbolic links
