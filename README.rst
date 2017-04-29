@@ -73,8 +73,8 @@ Summary
 - ``envie`` / ``chenv [-1] [-f|-l] [-q] [-v] [<basedir>] [<keywords>]`` - Interactively activate the closest environment (looking down, then up, with ``findenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
 - ``envie create`` / ``mkenv [-2|-3|-e <pyexec>] [-r <pip_req>] [-p <pip_pkg>] [-a] [<envdir> | -t] -- [virtualenv opts]`` - Create virtualenv in ``<envdir>`` (or in temporary dir, ``-t``) based on Python version ``<pyexec>``, optionally install Pip packages from ``<pip_req>`` requirements file and ``<pip_pkg>`` package specifier.
 - ``envie remove`` / ``rmenv`` - Destroy the active environment.
-- ``envie list`` / ``lsenv [-f|-l] [<dir>|"." [<avoid>]]`` - List all environments below ``<dir>`` directory, skipping ``<avoid>`` subdir.
-- ``envie find`` / ``findenv [-f|-l] [<dir>|"."]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting with ``<dir>``.
+- ``envie list`` / ``lsenv [-f|-l] [<dir>] [<keywords>]`` - List all environments below ``<dir>`` directory, optionally filtered by a list of ``<keywords>``.
+- ``envie find`` / ``findenv [-f|-l] [<dir>] [<keywords>]`` - Find the closest environments by first looking down and then dir-by-dir up the tree, starting in ``<dir>``; optionally filtered by a list of ``<keywords>``.
 - ``envie python <script>``, ``envie <script>`` - Run python ``script`` in the closest virtual environment.
 - ``envie run <command>`` - Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
 - ``envie config`` - Interactively configure envie.
@@ -223,6 +223,19 @@ To search down the tree for valid Python VirtualEnvs, use ``lsenv``.
 Likewise, to search up the tree, level by level, use ``findenv``.
 ``chenv`` uses ``findenv`` when searching for environment to activate.
 
+Suppose in your ``work`` directory you have projects named ``trusty`` and ``zesty``.
+And for both of them you keep ``dev`` and ``prod`` env::
+
+    $ lsenv dev
+
+    ./work/trusty/dev
+    ./work/zesty/dev
+
+or to activate trusty dev, all you need to type is::
+
+    $ envie t d
+
+    Activated virtual environment at './work/trusty/dev'.
 
 
 Enable faster search
@@ -235,6 +248,7 @@ deeper directory trees, it's often faster to use a pre-built directory index
 search, run ``envie config``::
 
     $ envie config
+
     Add to ~/.bashrc (strongly recommended) [Y/n]?
     Use locate/updatedb for faster search [Y/n]?
     Common ancestor dir of all environments to be indexed [/]:
