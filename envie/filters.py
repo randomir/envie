@@ -6,12 +6,23 @@ from operator import itemgetter
 from difflib import SequenceMatcher
 
 
-def tokenize(phrase, sep='\W+', minlen=1, unique=False):
+# detect `re` module unicode support
+# flags param is supported only in Python 2.7+
+try:
+    re.split('', '', flags=re.UNICODE)
+    default_sep = '\W+'
+    split_flags = dict(flags=re.UNICODE)
+except TypeError:
+    default_sep = '\s'
+    split_flags = dict()
+
+
+def tokenize(phrase, sep=default_sep, minlen=1, unique=False):
     """Split string ``phrase`` according to ``sep``, expunge all tokens longer
     than ``minlen`` and return a list of tokens (unique tokens if ``unique`` is 
     set).
     """
-    tokens = [s.lower() for s in re.split(sep, phrase, flags=re.U) if len(s) >= minlen]
+    tokens = [s.lower() for s in re.split(sep, phrase, **split_flags) if len(s) >= minlen]
     if unique:
         tokens = list(set(tokens))
     return tokens
