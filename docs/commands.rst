@@ -128,10 +128,10 @@ env, simply destroy it with ``rmenv -f``.
 
 ::
 
-    Find and list all virtualenvs under DIR.
+    Find and list all virtualenvs under DIR, optionally filtered by KEYWORDS.
 
     Usage:
-        lsenv [-f|-l] [DIR [AVOID_SUBDIR]]
+        lsenv [-f|-l] [DIR [AVOID_SUBDIR]] [--] [KEYWORDS]
         envie list ...
 
     Options:
@@ -144,9 +144,68 @@ env, simply destroy it with ``rmenv -f``.
     For details on other Envie uses, see 'envie help'.
 
 
-``envie list`` searches down only, starting with the ``DIR`` given (default ``.``).
+``envie list`` searches down only, starting in ``DIR`` (defaults to ``.``).
 The search method is defined with config, but it can be overriden with ``-f``
 and ``-l`` to force ``find`` or ``locate`` methods respectively.
+
+To narrow down the list of virtualenv paths, you can filter it by supplying ``KEYWORDS``.
+Filtering algorithm is not strict and exclusive (like grep), but fuzzy and typo- forgiving.
+
+It works like this: (1) all virtualenv paths discovered are split into directory components;
+(2) we try to greedily match all keywords to components by maximum similarity score;
+(3) paths are sorted by total similarity score; (4) the best matches are passed-thru - if
+there's a tie, all best matches are printed.
+
+When calculating similarity between directory name (path component) and a keyword, we
+assign: (1) maximum weight to a complete match (identity), (2) smaller, but still high, weight
+to a prefix match, and (3) the smallest (and variable) weight to a diff-metric similarity.
+
+For example, suppose you have a directory tree like this one::
+
+    ├── trusty-tahr
+    │   ├── dev
+    │   └── prod
+    ├── zesty-zapus
+    │   ├── dev
+    │   └── prod
+
+To get all environments containing ``dev`` word:
+
+.. code-block:: bash
+
+    $ lsenv dev
+    ./trusty-tahr/dev
+    ./zesty-zapus/dev
+
+To get all ``trusty`` envs, you can either filter by ``trusty`` (or ``tahr``, or ``hr``, or ``t``):
+
+.. code-block:: bash
+
+    $ lsenv hr
+    ./trusty-tahr/dev
+    ./trusty-tahr/prod
+
+or, list envs in ``./trusty-tahr`` dir:
+
+.. code-block:: bash
+
+    $ lsenv ./trusty-tahr
+    ./trusty-tahr/dev
+    ./trusty-tahr/prod
+
+Combine it:
+
+.. code-block:: bash
+
+    $ lsenv ./trusty-tahr pr
+    ./trusty-tahr/prod
+
+or with several keywords:
+
+.. code-block:: bash
+
+    $ lsenv z d
+    ./zesty-zapus/dev
 
 
 
@@ -156,9 +215,10 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
 ::
 
     Find and list all virtualenvs below DIR, or above if none found below.
+    List of virtualenv paths returned is optionally filtered by KEYWORDS.
 
     Usage:
-        findenv [-f|-l] [DIR]
+        findenv [-f|-l] [DIR] [--] [KEYWORDS]
         envie find ...
 
     Options:
@@ -174,3 +234,6 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
 Similar to ``envie list``, but with a key distinction: if no environments are
 found below the starting ``DIR``, the search is being expanded -- level by level
 up -- until at least one virtual environment is found.
+
+Description of discovery methods (``--find``/``--locate``), as well as keywords
+filtering behaviour given for ``envie list``/``lsenv`` apply here also.

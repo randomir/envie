@@ -37,7 +37,7 @@ Start with ``envie help``
         envie [OPTIONS] [DIR] [KEYWORDS]
         envie SCRIPT
         envie {create [ENV] | remove | list [DIR] | find [DIR] | go [KEYWORDS] |
-               python [SCRIPT] | run CMD | config | index | help}
+               python [SCRIPT] | run CMD | config | index | help | --version}
 
     Commands:
         python SCRIPT  run Python SCRIPT in the closest environment
@@ -52,7 +52,7 @@ Start with ``envie help``
         find [DIR]     like 'list', but also look above, until env found (alias for findenv)
 
         config         interactively configure Envie
-        index          (re-)index virtualenvs under /
+        index          (re-)index virtualenvs under custom basedir (default: $HOME)
         help           this help
 
     The first form is basically an alias for 'chenv -v [DIR] [KEYWORDS]'. It interactively
