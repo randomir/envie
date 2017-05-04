@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 setup() {
     tests_dir=$(dirname "$0")

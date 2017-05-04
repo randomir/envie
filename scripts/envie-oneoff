@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Create a new throw-away virtual environment, install requirements specified,
 # run the SCRIPT, and destroy the environment when the script finishes.

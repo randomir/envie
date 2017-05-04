@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function _dump_test_config() {
     # NB: $HOME == $polygon_dir

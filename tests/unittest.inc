@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Simple bash unit tests: discovery and runner with assertions.
 #
 # Usage. Source this file from the end of your tests file:

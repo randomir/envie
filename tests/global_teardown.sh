@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 teardown() {
     echo -e "\nRunning global teardown script."
