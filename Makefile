@@ -1,14 +1,23 @@
 .PHONY: test clean upload versions
 
+SHELL = bash
+
 polygon_dir := $(shell mktemp -d)
 
+# required: bash, (any) python, pip, virtualenv
+# optional: python2, python3, gnu coreutils
 versions:
 	@echo Versions used:
-	@python2 -V
-	@python3 -V
+	@echo ----
+	@bash --version | head -1
+	@echo Default Python: $$(python -V)
+	@python2 -V || true
+	@python3 -V || true
 	@pip -V
-	@echo virtualenv: $(shell virtualenv --version)
-	@dpkg -l | grep coreutils
+	@echo VirtualEnv: $$(virtualenv --version)
+	@dpkg-query -W coreutils || true
+	@pkg query %n-%v coreutils || true
+	@echo ----
 
 test: versions tests_setup tests tests_teardown
 
