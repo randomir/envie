@@ -51,6 +51,11 @@ function _envie_load_config() {
     [ -r "$_ENVIE_CONFIG_PATH" ] && . "$_ENVIE_CONFIG_PATH"
     # TODO: basic config options validity check (data types, ranges, etc.)
 
+    # global python path used for running `envie-tools`
+    # (envie package should be installed globally - and
+    # unavailable inside (possibly) active virtualenv)
+    _ENVIE_GLOBAL_PYTHON=$(_deactivate && which python)
+
     if _command_exists envie-tools; then
         # installed and available?
         _ENVIE_TOOL_PATH=$(which envie-tools)
@@ -59,10 +64,6 @@ function _envie_load_config() {
         _ENVIE_TOOL_PATH=$(_bootstrap_abspath "$(dirname "${BASH_SOURCE[0]}")/../scripts/envie-tools")
     fi
     _ENVIE_SOURCE=$(_readlink "${BASH_SOURCE[0]}")
-
-    # global python path used for running envie tools
-    # (envie package should be installed globally - and unavailable inside (possibly) active virtualenv)
-    _ENVIE_GLOBAL_PYTHON=$(_deactivate && which python)
 }
 
 
