@@ -9,7 +9,7 @@ from difflib import SequenceMatcher
 # detect `re` module unicode support
 # flags param is supported only in Python 2.7+
 try:
-    re.split('', '', flags=re.UNICODE)
+    re.split('x', 'y', flags=re.UNICODE)
     default_sep = '\W+'
     split_flags = dict(flags=re.UNICODE)
 except TypeError:
