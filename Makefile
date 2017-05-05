@@ -10,7 +10,7 @@ versions:
 	@echo Versions used:
 	@echo ----
 	@bash --version | head -1
-	@echo Default Python: $$(python -V)
+	@echo Default Python: $$(python -V 2>&1)
 	@python2 -V || true
 	@python3 -V || true
 	@pip -V
