@@ -13,10 +13,6 @@ python:
   - "3.6-dev"
   - "3.7-dev"
 
-os:
-  - linux
-  - osx
-
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y mlocate coreutils python-virtualenv
@@ -27,6 +23,13 @@ script:
   - make test
 
 matrix:
+  include:
+    - os: osx
+      language: generic
+      env: TOXENV=py27
+    - os: osx
+      language: generic
+      env: TOXENV=py35
   allow_failures:
     - python: "3.5-dev"
     - python: "3.6-dev"
