@@ -79,6 +79,12 @@ setup() {
         set -e
         . "$envie_bin"
         [ "$_ENVIE_CONFIG_PATH" == "$config_dir/envierc" ] && (( _ENVIE_USE_DB ))
+
+        echo "Envie internal vars:"
+        _envie_dump_config
+        echo "_ENVIE_TOOL_PATH=$_ENVIE_TOOL_PATH"
+        echo "_ENVIE_SOURCE=$_ENVIE_SOURCE"
+        echo "_ENVIE_GLOBAL_PYTHON=$_ENVIE_GLOBAL_PYTHON"
     ); then
         echo "DONE)"
     else
