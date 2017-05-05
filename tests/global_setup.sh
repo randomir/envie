@@ -76,7 +76,7 @@ setup() {
     mkdir -p "$config_dir"
     _dump_test_config >"$config_dir/envierc"
     if (
-        set -e
+        set -ex
         . "$envie_bin"
         [ "$_ENVIE_CONFIG_PATH" == "$config_dir/envierc" ] && (( _ENVIE_USE_DB ))
 
