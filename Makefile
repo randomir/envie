@@ -22,10 +22,10 @@ versions:
 test: versions tests_setup tests tests_teardown
 
 tests_setup: tests/global_setup.sh
-	@if [ -x "$<" ]; then env -i polygon_dir=${polygon_dir} bash "$<"; fi
+	@if [ -x "$<" ]; then env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"; fi
 
 tests_teardown: tests/global_teardown.sh
-	@if [ -x "$<" ]; then env -i polygon_dir=${polygon_dir} bash "$<"; fi
+	@if [ -x "$<" ]; then env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"; fi
 
 test_%: tests/test_%
 	@env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"

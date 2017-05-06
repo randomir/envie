@@ -9,8 +9,9 @@
 # code for success (asserting exit code is zero).
 
 
-# Define ansi coloring sequences ONLY if output to terminal and it supports colors.
+# Define ANSI coloring sequences ONLY if output to terminal and it supports colors.
 # NOTE: ncurses is required, but it gracefully fails-back to no-color if not present.
+export TERM="${TERM:-dumb}"
 if [ -t 1 ] && [ -n "$(which tput)" ] && (( $(tput colors) >= 8 )); then
     ANSI_RESET=$(tput sgr0)
     ANSI_BOLD=$(tput bold)
@@ -36,13 +37,23 @@ assert() {
 }
 
 
-main() {
+# Generic, cross-platform function for resolving a file path (since `readlink`
+# is not always available). Python implementation may be slower, but that's not
+# an issue for testing.
+#
+# Usage: abspath PATH
+abspath() {
+    python -c "import sys, os.path; sys.stdout.write(os.path.realpath(sys.argv[1]))" "$1"
+}
+
+
+unittest_main() {
     local testfile="$0" collection=$(basename "$0") tests
     if [ ! -r "$testfile" ]; then
         echo "Invalid testfile: $testfile"
         return 1
     fi
-    tests=$(grep -Po "^test_\w+" "$testfile")
+    tests=$(grep -Eo "^test_\w+" "$testfile")
     if (( $? )); then
         echo "Tests discovery failed."
         return 2

@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
+. $(dirname "$0")/unittest.inc
+
 setup() {
     tests_dir=$(dirname "$0")
-    envie_bin=$(readlink -f "$tests_dir/../scripts/envie")
+    envie_bin=$(abspath "$tests_dir/../scripts/envie")
     echo "(using envie from $envie_bin)"
 }
+
 
 test_envie_bin_found() {
     [ -x "$envie_bin" ]
@@ -48,4 +51,5 @@ test_cdenv_present_after_sourcing() {
     env -i bash -c '. '"$envie_bin"' && [ $(type -t cdenv) == "function" ]'
 }
 
-. $(dirname "$0")/unittest.inc && main
+
+unittest_main

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. $(dirname "$0")/unittest.inc
+
 function _dump_test_config() {
     # NB: $HOME == $polygon_dir
     cat <<-END
@@ -20,7 +22,7 @@ setup() {
     [ -d "$polygon_dir" ] && [[ "$polygon_dir" =~ ^/tmp/ ]] || return 255
 
     tests_dir=$(dirname "$0")
-    envie_bin=$(readlink -f "$tests_dir/../scripts/envie")
+    envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
     cd "$polygon_dir"
     echo "(using envie from $envie_bin)"

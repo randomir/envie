@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+. $(dirname "$0")/unittest.inc
+
 setup() {
     tests_dir=$(dirname "$0")
-    envie_bin=$(readlink -f "$tests_dir/../scripts/envie")
+    envie_bin=$(abspath "$tests_dir/../scripts/envie")
     polygon_dir=$(mktemp -d)
     cd "$polygon_dir"
     . "$envie_bin"
@@ -64,4 +66,5 @@ test_rmenv_forced() (
     ! virtualenv_exists another
 )
 
-. $(dirname "$0")/unittest.inc && main
+
+unittest_main

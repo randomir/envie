@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+. $(dirname "$0")/unittest.inc
+
 setup() {
     [ -d "$polygon_dir" ] && [[ "$polygon_dir" =~ ^/tmp/ ]] || return 255
 
     tests_dir=$(dirname "$0")
-    envie_bin=$(readlink -f "$tests_dir/../scripts/envie")
+    envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
     cd "$polygon_dir"
     echo "(using envie from $envie_bin)"
@@ -298,4 +300,4 @@ test_envie_list_filter_secondlevel_from_path_with_sep() (
 )
 
 
-. $(dirname "$0")/unittest.inc && main
+unittest_main

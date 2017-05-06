@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+. $(dirname "$0")/unittest.inc
+
 setup() {
     tests_dir=$(dirname "$0")
-    envie_bin=$(readlink -f "$tests_dir/../scripts/envie")
+    envie_bin=$(abspath "$tests_dir/../scripts/envie")
     polygon_dir=$(mktemp -d)
     cd "$polygon_dir"
     . "$envie_bin"
@@ -15,6 +17,7 @@ teardown() {
     echo "(removed polygon dir: $polygon_dir)"
 }
 
+
 test_mkenv_help() {
     mkenv -h | grep 'Create Python (2/3) virtual environment'
 }
@@ -22,13 +25,13 @@ test_mkenv_help() {
 test_mkenv_defaults() (
     mkenv
     local name="env"
-    [ -e "$name/bin/python" ] && [ "$VIRTUAL_ENV" == "$(readlink -f "$name")" ]
+    [ -e "$name/bin/python" ] && [ "$VIRTUAL_ENV" == "$(abspath "$name")" ]
 )
 
 test_mkenv_custom_envname() (
     mkenv pythonenv
     local name="pythonenv"
-    [ -e "$name/bin/python" ] && [ "$VIRTUAL_ENV" == "$(readlink -f "$name")" ]
+    [ -e "$name/bin/python" ] && [ "$VIRTUAL_ENV" == "$(abspath "$name")" ]
 )
 
 test_mkenv2() (
@@ -103,4 +106,5 @@ test_mkenv_error_pip_install_fail() (
     [ $? -eq 5 ]
 )
 
-. $(dirname "$0")/unittest.inc && main
+
+unittest_main
