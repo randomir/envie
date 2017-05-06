@@ -23,9 +23,9 @@ addons:
 
 # osx deps
 before_install:
-  - [[ "$TRAVIS_OS_NAME" == "osx" ]] && brew update
-  - [[ "$TRAVIS_OS_NAME" == "osx" ]] && { brew list python &>/dev/null || brew install python; }
-  - [[ "$TRAVIS_OS_NAME" == "osx" ]] && brew install pyenv-virtualenv
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list python &>/dev/null || brew install python; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pyenv-virtualenv; fi
 
 install:
   - python setup.py install
