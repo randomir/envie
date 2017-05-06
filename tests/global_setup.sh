@@ -19,7 +19,9 @@ function _dump_test_config() {
 setup() {
 	echo "Running global setup script."
 
-    [ -d "$polygon_dir" ] && [[ "$polygon_dir" =~ ^/tmp/ ]] || return 255
+    # make sure polygon dir exists and it's empty, so it's safe to delete it later
+    [ -d "$polygon_dir" ] && [ -z "$(ls -A "$polygon_dir")" ] || return 255
+    touch "$polygon_dir/envie-test-polygon" || return 254
 
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
@@ -28,7 +30,7 @@ setup() {
     echo "(using envie from $envie_bin)"
     echo "(using polygon dir: $polygon_dir)"
 
-    # create few envs
+    # create few envs in polygon_dir
     echo -n "(creating test environments in polygon dir..."
     local create_output
     create_output=$(

@@ -3,7 +3,7 @@
 . $(dirname "$0")/unittest.inc
 
 setup() {
-    [ -d "$polygon_dir" ] && [[ "$polygon_dir" =~ ^/tmp/ ]] || return 255
+    [ -f "$polygon_dir/envie-test-polygon" ] || return 255
 
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
