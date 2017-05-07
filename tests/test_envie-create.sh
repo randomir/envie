@@ -78,32 +78,28 @@ test_envie_create_install_requirements_autodetect() (
 
 test_envie_create_error_existing_envname() (
     cd "$polygon_dir"
-    env -i "$envie_bin" create
-    [ $? -eq 1 ]
+    # create should fail with 1, but to test it, we have to suppress 'exit on err'
+    env -i "$envie_bin" create || [ $? -eq 1 ]
 )
 
 test_envie_create_error_nonexisting_python_exec() (
     cd "$polygon_dir"
-    env -i "$envie_bin" create -e nonexisting_python noenv
-    [ $? -eq 2 ]
+    env -i "$envie_bin" create -e nonexisting_python noenv || [ $? -eq 2 ]
 )
 
 test_envie_create_error_invalid_python_exec() (
     cd "$polygon_dir"
-    env -i "$envie_bin" create -e bash noenv
-    [ $? -eq 3 ]
+    env -i "$envie_bin" create -e bash noenv || [ $? -eq 3 ]
 )
 
 test_envie_create_error_invalid_virtualenv_opt() (
     cd "$polygon_dir"
-    env -i "$envie_bin" create noenv -- --invalid-virtualenv-option
-    [ $? -eq 4 ]
+    env -i "$envie_bin" create noenv -- --invalid-virtualenv-option || [ $? -eq 4 ]
 )
 
 test_envie_create_error_pip_install_fail() (
     cd "$polygon_dir"
-    env -i "$envie_bin" create -p nonexisting_pip_package noenv
-    [ $? -eq 5 ]
+    env -i "$envie_bin" create -p nonexisting_pip_package noenv || [ $? -eq 5 ]
 )
 
 

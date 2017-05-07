@@ -26,19 +26,16 @@ test_envie_remove_help() {
 }
 
 test_envie_remove_error_outside_of_env() {
-    env -i "$envie_bin" remove
-    [ $? -eq 1 ]
+    env -i "$envie_bin" remove || [ $? -eq 1 ]
 }
 
 test_envie_remove_error_nonexisting_virtualenv() {
-    env -i VIRTUAL_ENV="$(mktemp -u)" "$envie_bin" remove
-    [ $? -eq 1 ]
+    env -i VIRTUAL_ENV="$(mktemp -u)" "$envie_bin" remove || [ $? -eq 1 ]
 }
 
 test_envie_remove_error_invalid_virtualenv() {
     local fakeenv=$(mktemp -p "$polygon_dir")
-    env -i VIRTUAL_ENV="$fakeenv" "$envie_bin" remove
-    [ $? -eq 1 ]
+    env -i VIRTUAL_ENV="$fakeenv" "$envie_bin" remove || [ $? -eq 1 ]
 }
 
 

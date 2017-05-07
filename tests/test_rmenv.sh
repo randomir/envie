@@ -28,20 +28,18 @@ test_rmenv_help() {
 
 test_rmenv_error_outside_of_env() (
     _deactivate
-    rmenv
-    [ $? -eq 1 ]
+    # rmenv should fail with 1, but to test it, we have to suppress 'exit on err'
+    rmenv || [ $? -eq 1 ]
 )
 
 test_rmenv_error_invalid_virtualenv() (
     VIRTUAL_ENV=$(mktemp -u)
-    rmenv
-    [ $? -eq 1 ]
+    rmenv || [ $? -eq 1 ]
 )
 
 test_rmenv_error_user_interactive_abort() (
     mkenv abort
-    echo n | rmenv
-    [ $? -eq 2 ]
+    echo n | rmenv || [ $? -eq 2 ]
 )
 
 test_rmenv_user_interactive() (
@@ -51,7 +49,6 @@ test_rmenv_user_interactive() (
     
     # interactively destroy it
     echo y | rmenv
-    [ $? -eq 0 ]
     ! virtualenv_exists shorty
 )
 
@@ -62,7 +59,6 @@ test_rmenv_forced() (
 
     # interactively destroy it
     rmenv -f
-    [ $? -eq 0 ]
     ! virtualenv_exists another
 )
 

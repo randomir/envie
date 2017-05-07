@@ -72,7 +72,8 @@ unittest_main() {
     # run all tests
     local some_tests_failed=0
     for test in $tests; do
-        ! assert "$test" && some_tests_failed=1
+        assert "$test"
+        (( $? )) && some_tests_failed=1
     done
 
     # teardown

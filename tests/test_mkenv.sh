@@ -82,28 +82,23 @@ test_mkenv_throwaway_with_removal() (
 )
 
 test_mkenv_error_existing_envname() (
-    mkenv
-    [ $? -eq 1 ]
+    mkenv || [ $? -eq 1 ]
 )
 
 test_mkenv_error_nonexisting_python_exec() (
-    mkenv -e nonexisting_python noenv
-    [ $? -eq 2 ]
+    mkenv -e nonexisting_python noenv || [ $? -eq 2 ]
 )
 
 test_mkenv_error_invalid_python_exec() (
-    mkenv -e bash noenv
-    [ $? -eq 3 ]
+    mkenv -e bash noenv || [ $? -eq 3 ]
 )
 
 test_mkenv_error_invalid_virtualenv_opt() (
-    mkenv noenv -- --invalid-virtualenv-option
-    [ $? -eq 4 ]
+    mkenv noenv -- --invalid-virtualenv-option || [ $? -eq 4 ]
 )
 
 test_mkenv_error_pip_install_fail() (
-    mkenv -p nonexisting_pip_package noenv
-    [ $? -eq 5 ]
+    mkenv -p nonexisting_pip_package noenv || [ $? -eq 5 ]
 )
 
 
