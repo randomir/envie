@@ -2,7 +2,11 @@
 
 SHELL = bash
 
-polygon_dir := $(shell mktemp -d)
+# if polygon_dir not provided via params, create a new temporary dir for this run
+ifndef polygon_dir
+	polygon_dir := $(shell mktemp -d)
+	global_setup := 1
+endif
 
 # required: bash, (any) python, pip, virtualenv
 # optional: python2, python3, gnu coreutils
@@ -22,10 +26,10 @@ versions:
 test: versions tests_setup tests tests_teardown
 
 tests_setup: tests/global_setup.sh
-	@if [ -x "$<" ]; then env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"; fi
+	@if [ "$global_setup" ] && [ -x "$<" ]; then env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"; fi
 
 tests_teardown: tests/global_teardown.sh
-	@if [ -x "$<" ]; then env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"; fi
+	@if [ "$global_setup" ] && [ -x "$<" ]; then env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"; fi
 
 test_%: tests/test_%
 	@env -i TERM=$$TERM polygon_dir=${polygon_dir} bash "$<"
