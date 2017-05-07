@@ -22,20 +22,20 @@ virtualenv_exists() {
 
 
 test_envie_remove_help() {
-    env -i "$envie_bin" remove -h | grep 'Remove (delete) the base directory'
+    "$envie_bin" remove -h | grep 'Remove (delete) the base directory'
 }
 
 test_envie_remove_error_outside_of_env() {
-    env -i "$envie_bin" remove || [ $? -eq 1 ]
+    "$envie_bin" remove || [ $? -eq 1 ]
 }
 
 test_envie_remove_error_nonexisting_virtualenv() {
-    env -i VIRTUAL_ENV="$(mktemp -u)" "$envie_bin" remove || [ $? -eq 1 ]
+    env VIRTUAL_ENV="$(mktemp -u)" "$envie_bin" remove || [ $? -eq 1 ]
 }
 
 test_envie_remove_error_invalid_virtualenv() {
     local fakeenv=$(mktemp -p "$polygon_dir")
-    env -i VIRTUAL_ENV="$fakeenv" "$envie_bin" remove || [ $? -eq 1 ]
+    env VIRTUAL_ENV="$fakeenv" "$envie_bin" remove || [ $? -eq 1 ]
 }
 
 
