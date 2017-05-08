@@ -520,7 +520,7 @@ function _lsenv_locate_vs_find_race() {
     { __find_and_return "$@" & echo $! >"$p_pid_find"; } 2>/dev/null
     { __locate_and_return "$@" & echo $! >"$p_pid_locate"; } 2>/dev/null
     { __find_fast_bailout & echo $! >"$p_pid_timer"; } 2>/dev/null
-    wait
+    wait 2>/dev/null
     if [ -e "$p_ret_find" ]; then
         cat "$p_ret_find"
     elif [ -e "$p_ret_locate" ]; then
