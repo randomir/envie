@@ -6,4 +6,5 @@ dist/
 *.pyc
 *.*~
 *.orig
+*.tmp
 docs/_build*

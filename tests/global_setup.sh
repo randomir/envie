@@ -3,7 +3,7 @@
 . $(dirname "$0")/unittest.inc
 
 function _dump_test_config() {
-    # NB: $HOME == $polygon_dir
+    # NB: $HOME == $sandbox_dir
     cat <<-END
 		_ENVIE_CONFIG_DIR="$HOME/.config/envie"
 		_ENVIE_USE_DB="1"
@@ -19,19 +19,19 @@ function _dump_test_config() {
 setup() {
 	echo "Running global setup script."
 
-    # make sure polygon dir exists and it's empty, so it's safe to delete it later
-    [ -d "$polygon_dir" ] && [ -z "$(ls -A "$polygon_dir")" ] || return 255
-    touch "$polygon_dir/envie-test-polygon" || return 254
+    # make sure sandbox dir exists and it's empty, so it's safe to delete it later
+    [ -d "$sandbox_dir" ] && [ -z "$(ls -A "$sandbox_dir")" ] || return 255
+    touch "$sandbox_dir/envie-test-sandbox" || return 254
 
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     echo "(using envie from $envie_bin)"
-    echo "(using polygon dir: $polygon_dir)"
+    echo "(using sandbox dir: $sandbox_dir)"
 
-    # create few envs in polygon_dir
-    echo -n "(creating test environments in polygon dir..."
+    # create few envs in sandbox_dir
+    echo -n "(creating test environments in sandbox dir..."
     local create_output
     create_output=$(
         set -e
@@ -75,8 +75,8 @@ setup() {
 
     # fake envierc for testing
     echo -n "(creating test envierc..."
-    export HOME="$polygon_dir"
-    config_dir="$polygon_dir/.config/envie"
+    export HOME="$sandbox_dir"
+    config_dir="$sandbox_dir/.config/envie"
     mkdir -p "$config_dir"
     _dump_test_config >"$config_dir/envierc"
     if (

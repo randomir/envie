@@ -5,16 +5,16 @@
 setup() {
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
-    polygon_dir=$(abspath "$(mktemp -d)")
-    cd "$polygon_dir"
+    sandbox_dir=$(abspath "$(mktemp -d)")
+    cd "$sandbox_dir"
     . "$envie_bin"
     echo "(envie sourced from $envie_bin)"
-    echo "(created polygon dir: $polygon_dir)"
+    echo "(created sandbox dir: $sandbox_dir)"
 }
 
 teardown() {
-    rm -rf "$polygon_dir"
-    echo "(removed polygon dir: $polygon_dir)"
+    rm -rf "$sandbox_dir"
+    echo "(removed sandbox dir: $sandbox_dir)"
 }
 
 

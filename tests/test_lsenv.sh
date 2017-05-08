@@ -3,19 +3,19 @@
 . $(dirname "$0")/unittest.inc
 
 setup() {
-    [ -f "$polygon_dir/envie-test-polygon" ] || return 255
+    [ -f "$sandbox_dir/envie-test-sandbox" ] || return 255
 
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
     # normalize, in case it contains symlinks (OS X temp dirs do)
-    polygon_dir=$(abspath "$polygon_dir")
+    sandbox_dir=$(abspath "$sandbox_dir")
 
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     echo "(using envie from $envie_bin)"
-    echo "(using polygon dir: $polygon_dir)"
+    echo "(using sandbox dir: $sandbox_dir)"
 
-    export HOME="$polygon_dir"
+    export HOME="$sandbox_dir"
     . "$envie_bin"
 }
 
@@ -27,29 +27,29 @@ test_lsenv_help() (
 # test list using find
 
 test_lsenv_find_empty_from_cwd() (
-    cd "$polygon_dir/project_a/src"
+    cd "$sandbox_dir/project_a/src"
     local list=$(lsenv -f)
     [ -z "$list" ]
 )
 
 test_lsenv_find_empty_from_path() (
-    local list=$(lsenv -f "$polygon_dir/project_a/src")
+    local list=$(lsenv -f "$sandbox_dir/project_a/src")
     [ -z "$list" ]
 )
 
 test_lsenv_find_single_py3_from_cwd() (
-    cd "$polygon_dir/project_a"
+    cd "$sandbox_dir/project_a"
     local list=$(lsenv -f)
     [ "$list" == "./env_a" ]
 )
 
 test_lsenv_find_single_py2_from_path() (
-    local list=$(lsenv -f "$polygon_dir/project_b")
-    [ "$list" == "$polygon_dir/project_b/env_b" ]
+    local list=$(lsenv -f "$sandbox_dir/project_b")
+    [ "$list" == "$sandbox_dir/project_b/env_b" ]
 )
 
 test_lsenv_find_multiple() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$(lsenv -f | sort)
     local expected
     expected=$(cat <<-END
@@ -66,7 +66,7 @@ test_lsenv_find_multiple() (
 )
 
 test_lsenv_find_multiple_avoid_some() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$(lsenv -f . ./sub_a | sort)
     local expected
     expected=$(cat <<-END
@@ -80,7 +80,7 @@ test_lsenv_find_multiple_avoid_some() (
 )
 
 test_lsenv_find_multiple_levels() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$(lsenv -f | sort)
     local expected
     expected=$(cat <<-END
@@ -106,29 +106,29 @@ test_lsenv_find_multiple_levels() (
 # test list using locate
 
 test_lsenv_locate_empty_from_cwd() (
-    cd "$polygon_dir/project_a/src"
+    cd "$sandbox_dir/project_a/src"
     local list=$(lsenv -l)
     [ -z "$list" ]
 )
 
 test_lsenv_locate_empty_from_path() (
-    local list=$(lsenv -l "$polygon_dir/project_a/src")
+    local list=$(lsenv -l "$sandbox_dir/project_a/src")
     [ -z "$list" ]
 )
 
 test_lsenv_locate_single_py3_from_cwd() (
-    cd "$polygon_dir/project_a"
+    cd "$sandbox_dir/project_a"
     local list=$(lsenv -l)
     [ "$list" == "./env_a" ]
 )
 
 test_lsenv_locate_single_py2_from_path() (
-    local list=$(lsenv -l "$polygon_dir/project_b")
-    [ "$list" == "$polygon_dir/project_b/env_b" ]
+    local list=$(lsenv -l "$sandbox_dir/project_b")
+    [ "$list" == "$sandbox_dir/project_b/env_b" ]
 )
 
 test_lsenv_locate_multiple() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$(lsenv -l | sort)
     local expected
     expected=$(cat <<-END
@@ -145,7 +145,7 @@ test_lsenv_locate_multiple() (
 )
 
 test_lsenv_locate_multiple_levels() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$(lsenv -l | sort)
     local expected
     expected=$(cat <<-END
@@ -171,29 +171,29 @@ test_lsenv_locate_multiple_levels() (
 # test list using find vs. locate rate
 
 test_lsenv_race_empty_from_cwd() (
-    cd "$polygon_dir/project_a/src"
+    cd "$sandbox_dir/project_a/src"
     local list=$(lsenv)
     [ -z "$list" ]
 )
 
 test_lsenv_race_empty_from_path() (
-    local list=$(lsenv "$polygon_dir/project_a/src")
+    local list=$(lsenv "$sandbox_dir/project_a/src")
     [ -z "$list" ]
 )
 
 test_lsenv_race_single_py3_from_cwd() (
-    cd "$polygon_dir/project_a"
+    cd "$sandbox_dir/project_a"
     local list=$(lsenv)
     [ "$list" == "./env_a" ]
 )
 
 test_lsenv_race_single_py2_from_path() (
-    local list=$(lsenv "$polygon_dir/project_b")
-    [ "$list" == "$polygon_dir/project_b/env_b" ]
+    local list=$(lsenv "$sandbox_dir/project_b")
+    [ "$list" == "$sandbox_dir/project_b/env_b" ]
 )
 
 test_lsenv_race_multiple() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$(lsenv | sort)
     local expected
     expected=$(cat <<-END
@@ -210,7 +210,7 @@ test_lsenv_race_multiple() (
 )
 
 test_lsenv_race_multiple_avoid_some() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$(lsenv . ./sub_a | sort)
     local expected
     expected=$(cat <<-END
@@ -224,7 +224,7 @@ test_lsenv_race_multiple_avoid_some() (
 )
 
 test_lsenv_race_multiple_levels() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$(lsenv | sort)
     local expected
     expected=$(cat <<-END
@@ -250,7 +250,7 @@ test_lsenv_race_multiple_levels() (
 # test filtering
 
 test_lsenv_filter_firstlevel() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$(lsenv trusty | sort)
     local expected
     expected=$(cat <<-END
@@ -264,7 +264,7 @@ test_lsenv_filter_firstlevel() (
 )
 
 test_lsenv_filter_secondlevel() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$(lsenv dev | sort)
     local expected
     expected=$(cat <<-END
@@ -278,11 +278,11 @@ test_lsenv_filter_secondlevel() (
 )
 
 test_lsenv_filter_firstlevel_from_path() (
-    local list=$(lsenv "$polygon_dir" trusty | sort)
+    local list=$(lsenv "$sandbox_dir" trusty | sort)
     local expected
     expected=$(cat <<-END
-		$polygon_dir/trusty-tahr/dev
-		$polygon_dir/trusty-tahr/prod
+		$sandbox_dir/trusty-tahr/dev
+		$sandbox_dir/trusty-tahr/prod
 	END
     )
     echo "$list"
@@ -291,11 +291,11 @@ test_lsenv_filter_firstlevel_from_path() (
 )
 
 test_lsenv_filter_secondlevel_from_path_with_sep() (
-    local list=$(lsenv "$polygon_dir" -- dev | sort)
+    local list=$(lsenv "$sandbox_dir" -- dev | sort)
     local expected
     expected=$(cat <<-END
-		$polygon_dir/trusty-tahr/dev
-		$polygon_dir/zesty-zapus/dev
+		$sandbox_dir/trusty-tahr/dev
+		$sandbox_dir/zesty-zapus/dev
 	END
     )
     echo "$list"

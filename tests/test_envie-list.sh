@@ -3,19 +3,19 @@
 . $(dirname "$0")/unittest.inc
 
 setup() {
-    [ -f "$polygon_dir/envie-test-polygon" ] || return 255
+    [ -f "$sandbox_dir/envie-test-sandbox" ] || return 255
 
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
     # normalize, in case it contains symlinks (OS X temp dirs do)
-    polygon_dir=$(abspath "$polygon_dir")
+    sandbox_dir=$(abspath "$sandbox_dir")
 
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     echo "(using envie from $envie_bin)"
-    echo "(using polygon dir: $polygon_dir)"
+    echo "(using sandbox dir: $sandbox_dir)"
 
-    export HOME="$polygon_dir"
+    export HOME="$sandbox_dir"
 }
 
 test_envie_list_help() (
@@ -26,29 +26,29 @@ test_envie_list_help() (
 # test list using find
 
 test_envie_list_find_empty_from_cwd() (
-    cd "$polygon_dir/project_a/src"
+    cd "$sandbox_dir/project_a/src"
     local list=$("$envie_bin" list --find)
     [ -z "$list" ]
 )
 
 test_envie_list_find_empty_from_path() (
-    local list=$("$envie_bin" list --find "$polygon_dir/project_a/src")
+    local list=$("$envie_bin" list --find "$sandbox_dir/project_a/src")
     [ -z "$list" ]
 )
 
 test_envie_list_find_single_py3_from_cwd() (
-    cd "$polygon_dir/project_a"
+    cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" list --find)
     [ "$list" == "./env_a" ]
 )
 
 test_envie_list_find_single_py2_from_path() (
-    local list=$("$envie_bin" list --find "$polygon_dir/project_b")
-    [ "$list" == "$polygon_dir/project_b/env_b" ]
+    local list=$("$envie_bin" list --find "$sandbox_dir/project_b")
+    [ "$list" == "$sandbox_dir/project_b/env_b" ]
 )
 
 test_envie_list_find_multiple() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$("$envie_bin" list --find | sort)
     local expected
     expected=$(cat <<-END
@@ -65,7 +65,7 @@ test_envie_list_find_multiple() (
 )
 
 test_envie_list_find_multiple_avoid_some() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$("$envie_bin" list --find . ./sub_a | sort)
     local expected
     expected=$(cat <<-END
@@ -79,7 +79,7 @@ test_envie_list_find_multiple_avoid_some() (
 )
 
 test_envie_list_find_multiple_levels() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$("$envie_bin" list --find | sort)
     local expected
     expected=$(cat <<-END
@@ -105,29 +105,29 @@ test_envie_list_find_multiple_levels() (
 # test list using locate
 
 test_envie_list_locate_empty_from_cwd() (
-    cd "$polygon_dir/project_a/src"
+    cd "$sandbox_dir/project_a/src"
     local list=$("$envie_bin" list --locate)
     [ -z "$list" ]
 )
 
 test_envie_list_locate_empty_from_path() (
-    local list=$("$envie_bin" list --locate "$polygon_dir/project_a/src")
+    local list=$("$envie_bin" list --locate "$sandbox_dir/project_a/src")
     [ -z "$list" ]
 )
 
 test_envie_list_locate_single_py3_from_cwd() (
-    cd "$polygon_dir/project_a"
+    cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" list --locate)
     [ "$list" == "./env_a" ]
 )
 
 test_envie_list_locate_single_py2_from_path() (
-    local list=$("$envie_bin" list --locate "$polygon_dir/project_b")
-    [ "$list" == "$polygon_dir/project_b/env_b" ]
+    local list=$("$envie_bin" list --locate "$sandbox_dir/project_b")
+    [ "$list" == "$sandbox_dir/project_b/env_b" ]
 )
 
 test_envie_list_locate_multiple() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$("$envie_bin" list --locate | sort)
     local expected
     expected=$(cat <<-END
@@ -144,7 +144,7 @@ test_envie_list_locate_multiple() (
 )
 
 test_envie_list_locate_multiple_levels() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$("$envie_bin" list --locate | sort)
     local expected
     expected=$(cat <<-END
@@ -170,29 +170,29 @@ test_envie_list_locate_multiple_levels() (
 # test list using find vs. locate rate
 
 test_envie_list_race_empty_from_cwd() (
-    cd "$polygon_dir/project_a/src"
+    cd "$sandbox_dir/project_a/src"
     local list=$("$envie_bin" list)
     [ -z "$list" ]
 )
 
 test_envie_list_race_empty_from_path() (
-    local list=$("$envie_bin" list "$polygon_dir/project_a/src")
+    local list=$("$envie_bin" list "$sandbox_dir/project_a/src")
     [ -z "$list" ]
 )
 
 test_envie_list_race_single_py3_from_cwd() (
-    cd "$polygon_dir/project_a"
+    cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" list)
     [ "$list" == "./env_a" ]
 )
 
 test_envie_list_race_single_py2_from_path() (
-    local list=$("$envie_bin" list "$polygon_dir/project_b")
-    [ "$list" == "$polygon_dir/project_b/env_b" ]
+    local list=$("$envie_bin" list "$sandbox_dir/project_b")
+    [ "$list" == "$sandbox_dir/project_b/env_b" ]
 )
 
 test_envie_list_race_multiple() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$("$envie_bin" list | sort)
     local expected
     expected=$(cat <<-END
@@ -209,7 +209,7 @@ test_envie_list_race_multiple() (
 )
 
 test_envie_list_race_multiple_avoid_some() (
-    cd "$polygon_dir/project_c"
+    cd "$sandbox_dir/project_c"
     local list=$("$envie_bin" list . ./sub_a | sort)
     local expected
     expected=$(cat <<-END
@@ -223,7 +223,7 @@ test_envie_list_race_multiple_avoid_some() (
 )
 
 test_envie_list_race_multiple_levels() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$("$envie_bin" list | sort)
     local expected
     expected=$(cat <<-END
@@ -249,7 +249,7 @@ test_envie_list_race_multiple_levels() (
 # test filtering
 
 test_envie_list_filter_firstlevel() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$("$envie_bin" list trusty | sort)
     local expected
     expected=$(cat <<-END
@@ -263,7 +263,7 @@ test_envie_list_filter_firstlevel() (
 )
 
 test_envie_list_filter_secondlevel() (
-    cd "$polygon_dir"
+    cd "$sandbox_dir"
     local list=$("$envie_bin" list dev | sort)
     local expected
     expected=$(cat <<-END
@@ -277,11 +277,11 @@ test_envie_list_filter_secondlevel() (
 )
 
 test_envie_list_filter_firstlevel_from_path() (
-    local list=$("$envie_bin" list "$polygon_dir" trusty | sort)
+    local list=$("$envie_bin" list "$sandbox_dir" trusty | sort)
     local expected
     expected=$(cat <<-END
-		$polygon_dir/trusty-tahr/dev
-		$polygon_dir/trusty-tahr/prod
+		$sandbox_dir/trusty-tahr/dev
+		$sandbox_dir/trusty-tahr/prod
 	END
     )
     echo "$list"
@@ -290,11 +290,11 @@ test_envie_list_filter_firstlevel_from_path() (
 )
 
 test_envie_list_filter_secondlevel_from_path_with_sep() (
-    local list=$("$envie_bin" list "$polygon_dir" -- dev | sort)
+    local list=$("$envie_bin" list "$sandbox_dir" -- dev | sort)
     local expected
     expected=$(cat <<-END
-		$polygon_dir/trusty-tahr/dev
-		$polygon_dir/zesty-zapus/dev
+		$sandbox_dir/trusty-tahr/dev
+		$sandbox_dir/zesty-zapus/dev
 	END
     )
     echo "$list"

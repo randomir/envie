@@ -3,10 +3,10 @@
 teardown() {
     echo -e "\nRunning global teardown script."
 
-    [ -f "$polygon_dir/envie-test-polygon" ] || return 255
+    [ -f "$sandbox_dir/envie-test-sandbox" ] || return 255
 
-    rm -rf "$polygon_dir"
-    echo "(removed polygon dir: $polygon_dir)"
+    rm -rf "$sandbox_dir"
+    echo "(removed sandbox dir: $sandbox_dir)"
 }
 
 teardown
