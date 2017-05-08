@@ -27,9 +27,8 @@ test_rmenv_help() {
 }
 
 test_rmenv_error_outside_of_env() (
-    _deactivate
     # rmenv should fail with 1, but to test it, we have to suppress 'exit on err'
-    rmenv || [ $? -eq 1 ]
+    VIRTUAL_ENV="" rmenv || [ $? -eq 1 ]
 )
 
 test_rmenv_error_invalid_virtualenv() (
