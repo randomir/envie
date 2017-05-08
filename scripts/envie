@@ -28,7 +28,7 @@ _ENVIE_LS_INDEX="0"          # updatedb on each lsenv?
 _ENVIE_FIND_LIMIT_SEC="0.4"  # abort find search if takes longer this (in seconds)
 _ENVIE_LOCATE_LIMIT_SEC="4"  # warn if index older than this (in seconds)
 _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
-_ENVIE_VERSION="0.4.31-dev"
+_ENVIE_VERSION="0.4.31"
 
 function _envie_dump_config() {
     cat <<-END
