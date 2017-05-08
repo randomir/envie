@@ -4,7 +4,7 @@ Navigate and manage Python VirtualEnvs
 .. image:: https://img.shields.io/pypi/v/envie.svg
     :target: https://pypi.python.org/pypi/envie
 
-.. image:: https://img.shields.io/badge/platform-GNU/Linux,%20BSD-red.svg
+.. image:: https://img.shields.io/badge/platform-GNU/Linux,%20BSD,%20Darwin/OS%20X-red.svg
     :target: https://pypi.python.org/pypi/envie
 
 .. image:: https://img.shields.io/badge/shell-bash-blue.svg
