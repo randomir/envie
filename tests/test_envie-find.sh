@@ -100,7 +100,7 @@ test_envie_find_normalize_abspath() (
 
 test_envie_find_normalize_relpath() (
     cd "$sandbox_dir/project_a"
-    local list=$("$envie_bin" find --find "../project_b/env_b/bin/" 2>&1)
+    local list=$("$envie_bin" find --find "../project_b/env_b/bin/")
     echo "$list"
     [ "$list" == "../project_b/env_b" ]
 )
