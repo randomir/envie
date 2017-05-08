@@ -26,7 +26,7 @@ test_envie_remove_help() {
 }
 
 test_envie_remove_error_outside_of_env() {
-    "$envie_bin" remove || [ $? -eq 1 ]
+    env -u VIRTUAL_ENV "$envie_bin" remove || [ $? -eq 1 ]
 }
 
 test_envie_remove_error_nonexisting_virtualenv() {
