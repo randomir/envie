@@ -5,7 +5,7 @@
 setup() {
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
-    polygon_dir=$(mktemp -d)
+    polygon_dir=$(abspath "$(mktemp -d)")
     cd "$polygon_dir"
     echo "(envie sourced from $envie_bin)"
     echo "(created polygon dir: $polygon_dir)"

@@ -8,6 +8,9 @@ setup() {
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
+    # normalize, in case it contains symlinks (OS X temp dirs do)
+    polygon_dir=$(abspath "$polygon_dir")
+
     cd "$polygon_dir"
     echo "(using envie from $envie_bin)"
     echo "(using polygon dir: $polygon_dir)"
@@ -97,7 +100,7 @@ test_envie_find_normalize_abspath() (
 
 test_envie_find_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$("$envie_bin" find --find "../project_b/env_b/local/bin/" 2>&1)
+    local list=$("$envie_bin" find --find "../project_b/env_b/bin/" 2>&1)
     echo "$list"
     [ "$list" == "../project_b/env_b" ]
 )
@@ -204,7 +207,7 @@ test_envie_find_locate_normalize_abspath() (
 
 test_envie_find_locate_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$("$envie_bin" find --locate "../project_b/env_b/local/bin/")
+    local list=$("$envie_bin" find --locate "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
@@ -310,7 +313,7 @@ test_envie_find_race_normalize_abspath() (
 
 test_envie_find_race_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$("$envie_bin" find "../project_b/env_b/local/bin/")
+    local list=$("$envie_bin" find "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
@@ -342,13 +345,13 @@ test_envie_find_race_multiple_envs_multiple_level_up_from_relpath() (
 
 test_envie_find_relpath_find_f() (
     cd "$polygon_dir/project_a"
-    local list=$("$envie_bin" find -f "../project_b/env_b/local/bin/")
+    local list=$("$envie_bin" find -f "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 test_envie_find_relpath_locate_l() (
     cd "$polygon_dir/project_a"
-    local list=$("$envie_bin" find -l "../project_b/env_b/local/bin/")
+    local list=$("$envie_bin" find -l "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 

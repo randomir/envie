@@ -8,6 +8,9 @@ setup() {
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
+    # normalize, in case it contains symlinks (OS X temp dirs do)
+    polygon_dir=$(abspath "$polygon_dir")
+
     cd "$polygon_dir"
     echo "(using envie from $envie_bin)"
     echo "(using polygon dir: $polygon_dir)"
@@ -98,7 +101,7 @@ test_findenv_normalize_abspath() (
 
 test_findenv_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$(findenv --find "../project_b/env_b/local/bin/")
+    local list=$(findenv --find "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
@@ -204,7 +207,7 @@ test_findenv_locate_normalize_abspath() (
 
 test_findenv_locate_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$(findenv --locate "../project_b/env_b/local/bin/")
+    local list=$(findenv --locate "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
@@ -310,7 +313,7 @@ test_findenv_race_normalize_abspath() (
 
 test_findenv_race_normalize_relpath() (
     cd "$polygon_dir/project_a"
-    local list=$(findenv "../project_b/env_b/local/bin/")
+    local list=$(findenv "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
@@ -342,31 +345,31 @@ test_findenv_race_multiple_envs_multiple_level_up_from_relpath() (
 
 test_findenv_relpath_find_f() (
     cd "$polygon_dir/project_a"
-    local list=$(findenv -f "../project_b/env_b/local/bin/")
+    local list=$(findenv -f "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 test_findenv_relpath_locate_l() (
     cd "$polygon_dir/project_a"
-    local list=$(findenv -l "../project_b/env_b/local/bin/")
+    local list=$(findenv -l "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 test_envie_find_sourced_relpath_race() (
     cd "$polygon_dir/project_a"
-    local list=$(envie find "../project_b/env_b/local/bin/")
+    local list=$(envie find "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 test_envie_find_sourced_relpath_find_f() (
     cd "$polygon_dir/project_a"
-    local list=$(envie find -f "../project_b/env_b/local/bin/")
+    local list=$(envie find -f "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 
 test_envie_find_sourced_relpath_locate_l() (
     cd "$polygon_dir/project_a"
-    local list=$(envie find -l "../project_b/env_b/local/bin/")
+    local list=$(envie find -l "../project_b/env_b/bin/")
     [ "$list" == "../project_b/env_b" ]
 )
 

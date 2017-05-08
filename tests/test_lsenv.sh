@@ -8,6 +8,9 @@ setup() {
     tests_dir=$(dirname "$0")
     envie_bin=$(abspath "$tests_dir/../scripts/envie")
 
+    # normalize, in case it contains symlinks (OS X temp dirs do)
+    polygon_dir=$(abspath "$polygon_dir")
+
     cd "$polygon_dir"
     echo "(using envie from $envie_bin)"
     echo "(using polygon dir: $polygon_dir)"
