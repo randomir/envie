@@ -621,7 +621,7 @@ function lsenv() {
     {
         if (( force_find )); then
             _lsenv_find "${args[@]}"
-        elif (( force_locate )); then
+        elif (( force_locate )) && _envie_locate_exists; then
             _lsenv_locate "${args[@]}"
         elif (( ! _ENVIE_USE_DB )) || ! _is_subdir_of "${1:-.}" "$_ENVIE_INDEX_ROOT"; then
             _lsenv_find "${args[@]}"
