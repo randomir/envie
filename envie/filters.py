@@ -10,14 +10,12 @@ from difflib import SequenceMatcher
 # flags param is supported only in Python 2.7+
 try:
     re.split('x', 'y', flags=re.UNICODE)
-    default_sep = '\W+'
     split_flags = dict(flags=re.UNICODE)
 except TypeError:
-    default_sep = '\s'
     split_flags = dict()
 
 
-def tokenize(phrase, sep=default_sep, minlen=1, unique=False):
+def tokenize(phrase, sep='\W+', minlen=1, unique=False):
     """Split string ``phrase`` according to ``sep``, expunge all tokens longer
     than ``minlen`` and return a list of tokens (unique tokens if ``unique`` is 
     set).
