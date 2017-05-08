@@ -1080,7 +1080,7 @@ function __envie_main() {
             __envie_config "$@";;
         index)
             __envie_index "$@";;
-        help)
+        help|--help)
             __envie_usage;;
         -V|--version)
             __envie_version;;
@@ -1151,7 +1151,7 @@ function __envie_usage() {
 		    envie [OPTIONS] [DIR] [KEYWORDS]
 		    envie SCRIPT
 		    envie {create [ENV] | remove | list [DIR] [KEYWORDS] | find [DIR] [KEYWORDS] |
-		           python [SCRIPT] | run CMD | config | index | help | --version}
+		           python [SCRIPT] | run CMD | config | index | help | --help | --version}
 
 		Commands:
 		    python SCRIPT  run Python SCRIPT in the closest environment
@@ -1167,7 +1167,8 @@ function __envie_usage() {
 
 		    config         interactively configure Envie
 		    index          (re-)index virtualenvs under custom basedir (current: $_ENVIE_INDEX_ROOT)
-		    help           this help
+		    --help, help   this help
+		    --version      version info
 
 		The first form is basically an alias for 'chenv -v [DIR] [KEYWORDS]'. It interactively
 		activates the closest environment (relative to DIR, or cwd, filtered by KEYWORDS).

@@ -10,7 +10,7 @@ Commands Reference
     envie {create ... | remove |
            list [DIR] | find [DIR] |
            python [SCRIPT] | run CMD |
-           index | config | help}
+           index | config | help | --help | --version}
 
 
 

@@ -36,8 +36,8 @@ Start with ``envie help``
     Usage:
         envie [OPTIONS] [DIR] [KEYWORDS]
         envie SCRIPT
-        envie {create [ENV] | remove | list [DIR] | find [DIR] | go [KEYWORDS] |
-               python [SCRIPT] | run CMD | config | index | help | --version}
+        envie {create [ENV] | remove | list [DIR] [KEYWORDS] | find [DIR] [KEYWORDS] |
+               python [SCRIPT] | run CMD | config | index | help | --help | --version}
 
     Commands:
         python SCRIPT  run Python SCRIPT in the closest environment
@@ -53,7 +53,8 @@ Start with ``envie help``
 
         config         interactively configure Envie
         index          (re-)index virtualenvs under custom basedir (default: $HOME)
-        help           this help
+        --help, help   this help
+        --version      version info
 
     The first form is basically an alias for 'chenv -v [DIR] [KEYWORDS]'. It interactively
     activates the closest environment (relative to DIR, or cwd, filtered by KEYWORDS).
