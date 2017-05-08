@@ -618,8 +618,8 @@ function lsenv() {
         [ "$1" == "--" ] && shift
     fi
 
-    # fallback to find if locate is forced, but not supported
-    if (( force_locate )) && ! _envie_locate_exists; then
+    # use find if locate is unavailable
+    if ! _envie_locate_exists; then
         force_find=1
     fi
 
