@@ -53,7 +53,7 @@ mkenv_based_on_script_reqs() {
     # assert: started in script_dir (reqs are relative to script!)
     local path="$1"
     local reqs=$(sed -nre "s/^[ \t\v]*#.*?requirements[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ' -)
-    local req opts=(-t -q)
+    local req opts=(-t)
     for req in $reqs; do
         if [ "$req" == "auto" ]; then
             opts+=(-a)
@@ -94,5 +94,5 @@ script_dir=$(_readlink "$(dirname "$script_path")")
     cd "$script_dir"
     mkenv_based_on_script_reqs "$script_path" && created=1
     (( created )) && python "$script_path"
-    (( created )) && rmenv -f
+    (( created )) && rmenv -fv
 )

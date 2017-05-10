@@ -478,7 +478,7 @@ function rmenv() {
             Y|y)
                 _deactivate
                 rm -rf "$envpath"
-                echo "VirtualEnv removed: $envpath"
+                (( verbose )) && echo "VirtualEnv removed: $envpath"
                 ;;
             *) return 2;;
         esac
