@@ -38,5 +38,5 @@ setup(
         'Topic :: System :: Shells'
     ],
     keywords='virtualenv bash helper closest virtual environment create mkenv destroy rmenv change chenv activate discover find findenv list lsenv cdenv',
-    scripts=['scripts/envie', 'scripts/envie-oneoff', 'scripts/envie-tools']
+    scripts=['scripts/envie', 'scripts/envie-tmp', 'scripts/envie-tools']
 )

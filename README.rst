@@ -150,17 +150,17 @@ a local project in editable mode from ``/home/stevie/work/mypackage/``::
 
     $ mkenv -t -r dev-requirements.txt -p "-e /home/stevie/work/mypackage/"
 
-To automate the previous example, you can use ``envie-oneoff`` command in your hashbang,
+To automate the previous example, you can use ``envie-tmp`` command in your hashbang,
 like this::
 
-    #!/usr/bin/env envie-oneoff
+    #!/usr/bin/env envie-tmp
     # -*- requirements: ./path/to/my/requirements.txt -*-
 
     <your python code here>
 
 When executed, a throw-away virtualenv is created, requirements specified are
 installed inside, code is run, and the environment is destroyed afterwards.
-Other way to do it is directly: ``envie-oneoff SCRIPT``.
+Other way to do it is directly: ``envie-tmp SCRIPT``.
 
 
 Change/activate environment
