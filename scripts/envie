@@ -433,23 +433,26 @@ function mkenv3() {
 # Destroys the active environment.
 # Usage (while env active): rmenv
 function rmenv() {
-    local opt OPTIND force=0
-    while getopts ":hf" opt; do
+    local opt OPTIND force=0 verbose=0
+    while getopts ":hfv" opt; do
         case $opt in
             h)
                 echo "Remove (delete) the base directory of the active virtual environment."
                 echo
                 echo "Usage:"
-                echo "    $FUNCNAME [-f]"
+                echo "    $FUNCNAME [-f] [-v]"
                 echo "    envie remove ..."
                 echo
                 echo "Options:"
                 echo "    -f    force; don't ask for permission"
+                echo "    -v    be verbose"
                 echo
                 echo "For details on other Envie uses, see 'envie help'."
                 return;;
             f)
                 force=1;;
+            v)
+                verbose=1;;
             \?)
                 _errmsg "Invalid $FUNCNAME option: -$OPTARG. See '$FUNCNAME -h' for help on usage."
                 return 255;;
@@ -474,7 +477,9 @@ function rmenv() {
         case "$ans" in
             Y|y)
                 _deactivate
-                rm -rf "$envpath";;
+                rm -rf "$envpath"
+                echo "VirtualEnv removed: $envpath"
+                ;;
             *) return 2;;
         esac
     else

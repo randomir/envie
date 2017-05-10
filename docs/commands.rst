@@ -113,11 +113,12 @@ env, simply destroy it with ``rmenv -f``.
     Remove (delete) the base directory of the active virtual environment.
 
     Usage:
-        rmenv [-f]
+        rmenv [-f] [-v]
         envie remove ...
 
     Options:
         -f    force; don't ask for permission
+        -v    be verbose
 
     For details on other Envie uses, see 'envie help'.
 
