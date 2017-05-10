@@ -52,7 +52,7 @@ usage() {
 mkenv_based_on_script_reqs() {
     # assert: started in script_dir (reqs are relative to script!)
     local path="$1"
-    local reqs=$(sed -nre "s/^[ \t\v]*#.*?requirements[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ')
+    local reqs=$(sed -nre "s/^[ \t\v]*#.*?requirements[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ' -)
     local req opts=(-t -q)
     for req in $reqs; do
         if [ "$req" == "auto" ]; then
