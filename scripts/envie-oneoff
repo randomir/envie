@@ -78,13 +78,13 @@ user_script="$1"
 
 # source envie (we need _find_closest later on), don't pass-through our args
 set --
-. "$(which envie)"
+. envie
 
 if [ ! -r "$user_script" ]; then
     echo "Script not found or not readable: '$user_script'."
     exit 2
 fi
-script_dir=$(readlink -f "$(dirname "$user_script")")
+script_dir=$(_readlink "$(dirname "$user_script")")
 
 (
     cd "$script_dir"

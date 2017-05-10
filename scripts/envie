@@ -116,7 +116,7 @@ function _bootstrap_abspath() {
 #
 # Tries to be cross-platform compatible, using `readlink -f` from GNU tools 
 # or BSD, and falling back to our internal Python implementation if `readlink`
-# not available.
+# not available (like on macOS).
 #
 # Usage: _readlink path
 function _readlink() {
