@@ -624,7 +624,7 @@ function lsenv() {
     fi
 
     # use find whenever locate is unavailable
-    if (( ! force_find )) && ! _envie_locate_exists; then
+    if (( ! force_find )) && ! quiet=1 _envie_locate_exists; then
         force_find=1
     fi
 
