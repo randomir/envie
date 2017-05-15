@@ -175,38 +175,38 @@ To get all environments containing ``dev`` word:
 .. code-block:: bash
 
     $ lsenv dev
-    ./trusty-tahr/dev
-    ./zesty-zapus/dev
+    trusty-tahr/dev
+    zesty-zapus/dev
 
 To get all ``trusty`` envs, you can either filter by ``trusty`` (or ``tahr``, or ``hr``, or ``t``):
 
 .. code-block:: bash
 
     $ lsenv hr
-    ./trusty-tahr/dev
-    ./trusty-tahr/prod
+    trusty-tahr/dev
+    trusty-tahr/prod
 
 or, list envs in ``./trusty-tahr`` dir:
 
 .. code-block:: bash
 
     $ lsenv ./trusty-tahr
-    ./trusty-tahr/dev
-    ./trusty-tahr/prod
+    trusty-tahr/dev
+    trusty-tahr/prod
 
 Combine it:
 
 .. code-block:: bash
 
-    $ lsenv ./trusty-tahr pr
-    ./trusty-tahr/prod
+    $ lsenv trusty-tahr pr
+    trusty-tahr/prod
 
 or with several keywords:
 
 .. code-block:: bash
 
     $ lsenv z d
-    ./zesty-zapus/dev
+    zesty-zapus/dev
 
 
 

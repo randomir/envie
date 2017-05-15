@@ -201,9 +201,9 @@ something like ``source ../../../../../env/bin/activate``, just type ``envie`` (
 On the other hand, if there are multiple environments to choose from, you'll get a prompt::
 
     stevie@caracal:~/demo$ envie
-    1) ./project1/env
-    2) ./project2/env
-    3) ./projectx/env
+    1) project1/env
+    2) project2/env
+    3) projectx/env
     #? 2
     (env)stevie@caracal:~/demo$ which python
     /home/stevie/demo/project2/env/bin/python
@@ -228,14 +228,14 @@ And for both of them you keep ``dev`` and ``prod`` env::
 
     $ lsenv dev
 
-    ./work/trusty/dev
-    ./work/zesty/dev
+    work/trusty/dev
+    work/zesty/dev
 
 or to activate trusty dev, all you need to type is::
 
     $ envie t d
 
-    Activated virtual environment at './work/trusty/dev'.
+    Activated virtual environment at 'work/trusty/dev'.
 
 
 Enable faster search
