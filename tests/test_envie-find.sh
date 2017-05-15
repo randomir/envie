@@ -62,7 +62,7 @@ test_envie_find_inside_env_bin_from_relpath() (
 test_envie_find_single_level_down_from_cwd() (
     cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" find --find)
-    [ "$list" == "./env_a" ]
+    [ "$list" == "env_a" ]
 )
 
 test_envie_find_single_level_down_from_abspath() (
@@ -110,17 +110,17 @@ test_envie_find_multiple_envs_multiple_level_up_from_relpath() (
     local list=$("$envie_bin" find --find ".config/envie" | sort)
     local expected
     expected=$(cat <<-END
-		./project_a/env_a
-		./project_b/env_b
-		./project_c/sub_a/env_ca1
-		./project_c/sub_a/env_ca2
-		./project_c/sub_a/env_ca3
-		./project_c/sub_b/env_cb
-		./project_c/sub_c/env_cc
-		./trusty-tahr/dev
-		./trusty-tahr/prod
-		./zesty-zapus/dev
-		./zesty-zapus/prod
+		project_a/env_a
+		project_b/env_b
+		project_c/sub_a/env_ca1
+		project_c/sub_a/env_ca2
+		project_c/sub_a/env_ca3
+		project_c/sub_b/env_cb
+		project_c/sub_c/env_cc
+		trusty-tahr/dev
+		trusty-tahr/prod
+		zesty-zapus/dev
+		zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -169,7 +169,7 @@ test_envie_find_locate_inside_env_bin_from_relpath() (
 test_envie_find_locate_single_level_down_from_cwd() (
     cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" find --locate)
-    [ "$list" == "./env_a" ]
+    [ "$list" == "env_a" ]
 )
 
 test_envie_find_locate_single_level_down_from_abspath() (
@@ -216,17 +216,17 @@ test_envie_find_locate_multiple_envs_multiple_level_up_from_relpath() (
     local list=$("$envie_bin" find --locate ".config/envie" | sort)
     local expected
     expected=$(cat <<-END
-		./project_a/env_a
-		./project_b/env_b
-		./project_c/sub_a/env_ca1
-		./project_c/sub_a/env_ca2
-		./project_c/sub_a/env_ca3
-		./project_c/sub_b/env_cb
-		./project_c/sub_c/env_cc
-		./trusty-tahr/dev
-		./trusty-tahr/prod
-		./zesty-zapus/dev
-		./zesty-zapus/prod
+		project_a/env_a
+		project_b/env_b
+		project_c/sub_a/env_ca1
+		project_c/sub_a/env_ca2
+		project_c/sub_a/env_ca3
+		project_c/sub_b/env_cb
+		project_c/sub_c/env_cc
+		trusty-tahr/dev
+		trusty-tahr/prod
+		zesty-zapus/dev
+		zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -275,7 +275,7 @@ test_envie_find_race_inside_env_bin_from_relpath() (
 test_envie_find_race_single_level_down_from_cwd() (
     cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" find)
-    [ "$list" == "./env_a" ]
+    [ "$list" == "env_a" ]
 )
 
 test_envie_find_race_single_level_down_from_abspath() (
@@ -322,17 +322,17 @@ test_envie_find_race_multiple_envs_multiple_level_up_from_relpath() (
     local list=$("$envie_bin" find ".config/envie" | sort)
     local expected
     expected=$(cat <<-END
-		./project_a/env_a
-		./project_b/env_b
-		./project_c/sub_a/env_ca1
-		./project_c/sub_a/env_ca2
-		./project_c/sub_a/env_ca3
-		./project_c/sub_b/env_cb
-		./project_c/sub_c/env_cc
-		./trusty-tahr/dev
-		./trusty-tahr/prod
-		./zesty-zapus/dev
-		./zesty-zapus/prod
+		project_a/env_a
+		project_b/env_b
+		project_c/sub_a/env_ca1
+		project_c/sub_a/env_ca2
+		project_c/sub_a/env_ca3
+		project_c/sub_b/env_cb
+		project_c/sub_c/env_cc
+		trusty-tahr/dev
+		trusty-tahr/prod
+		zesty-zapus/dev
+		zesty-zapus/prod
 	END
     )
     echo "$list"

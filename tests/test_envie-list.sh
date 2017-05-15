@@ -39,7 +39,7 @@ test_envie_list_find_empty_from_path() (
 test_envie_list_find_single_py3_from_cwd() (
     cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" list --find)
-    [ "$list" == "./env_a" ]
+    [ "$list" == "env_a" ]
 )
 
 test_envie_list_find_single_py2_from_path() (
@@ -52,11 +52,11 @@ test_envie_list_find_multiple() (
     local list=$("$envie_bin" list --find | sort)
     local expected
     expected=$(cat <<-END
-		./sub_a/env_ca1
-		./sub_a/env_ca2
-		./sub_a/env_ca3
-		./sub_b/env_cb
-		./sub_c/env_cc
+		sub_a/env_ca1
+		sub_a/env_ca2
+		sub_a/env_ca3
+		sub_b/env_cb
+		sub_c/env_cc
 	END
     )
     echo "$list"
@@ -69,8 +69,8 @@ test_envie_list_find_multiple_avoid_some() (
     local list=$("$envie_bin" list --find . ./sub_a | sort)
     local expected
     expected=$(cat <<-END
-		./sub_b/env_cb
-		./sub_c/env_cc
+		sub_b/env_cb
+		sub_c/env_cc
 	END
     )
     echo "$list"
@@ -83,17 +83,17 @@ test_envie_list_find_multiple_levels() (
     local list=$("$envie_bin" list --find | sort)
     local expected
     expected=$(cat <<-END
-		./project_a/env_a
-		./project_b/env_b
-		./project_c/sub_a/env_ca1
-		./project_c/sub_a/env_ca2
-		./project_c/sub_a/env_ca3
-		./project_c/sub_b/env_cb
-		./project_c/sub_c/env_cc
-		./trusty-tahr/dev
-		./trusty-tahr/prod
-		./zesty-zapus/dev
-		./zesty-zapus/prod
+		project_a/env_a
+		project_b/env_b
+		project_c/sub_a/env_ca1
+		project_c/sub_a/env_ca2
+		project_c/sub_a/env_ca3
+		project_c/sub_b/env_cb
+		project_c/sub_c/env_cc
+		trusty-tahr/dev
+		trusty-tahr/prod
+		zesty-zapus/dev
+		zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -118,7 +118,7 @@ test_envie_list_locate_empty_from_path() (
 test_envie_list_locate_single_py3_from_cwd() (
     cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" list --locate)
-    [ "$list" == "./env_a" ]
+    [ "$list" == "env_a" ]
 )
 
 test_envie_list_locate_single_py2_from_path() (
@@ -131,11 +131,11 @@ test_envie_list_locate_multiple() (
     local list=$("$envie_bin" list --locate | sort)
     local expected
     expected=$(cat <<-END
-		./sub_a/env_ca1
-		./sub_a/env_ca2
-		./sub_a/env_ca3
-		./sub_b/env_cb
-		./sub_c/env_cc
+		sub_a/env_ca1
+		sub_a/env_ca2
+		sub_a/env_ca3
+		sub_b/env_cb
+		sub_c/env_cc
 	END
     )
     echo "$list"
@@ -148,17 +148,17 @@ test_envie_list_locate_multiple_levels() (
     local list=$("$envie_bin" list --locate | sort)
     local expected
     expected=$(cat <<-END
-		./project_a/env_a
-		./project_b/env_b
-		./project_c/sub_a/env_ca1
-		./project_c/sub_a/env_ca2
-		./project_c/sub_a/env_ca3
-		./project_c/sub_b/env_cb
-		./project_c/sub_c/env_cc
-		./trusty-tahr/dev
-		./trusty-tahr/prod
-		./zesty-zapus/dev
-		./zesty-zapus/prod
+		project_a/env_a
+		project_b/env_b
+		project_c/sub_a/env_ca1
+		project_c/sub_a/env_ca2
+		project_c/sub_a/env_ca3
+		project_c/sub_b/env_cb
+		project_c/sub_c/env_cc
+		trusty-tahr/dev
+		trusty-tahr/prod
+		zesty-zapus/dev
+		zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -183,7 +183,7 @@ test_envie_list_race_empty_from_path() (
 test_envie_list_race_single_py3_from_cwd() (
     cd "$sandbox_dir/project_a"
     local list=$("$envie_bin" list)
-    [ "$list" == "./env_a" ]
+    [ "$list" == "env_a" ]
 )
 
 test_envie_list_race_single_py2_from_path() (
@@ -196,11 +196,11 @@ test_envie_list_race_multiple() (
     local list=$("$envie_bin" list | sort)
     local expected
     expected=$(cat <<-END
-		./sub_a/env_ca1
-		./sub_a/env_ca2
-		./sub_a/env_ca3
-		./sub_b/env_cb
-		./sub_c/env_cc
+		sub_a/env_ca1
+		sub_a/env_ca2
+		sub_a/env_ca3
+		sub_b/env_cb
+		sub_c/env_cc
 	END
     )
     echo "$list"
@@ -213,8 +213,8 @@ test_envie_list_race_multiple_avoid_some() (
     local list=$("$envie_bin" list . ./sub_a | sort)
     local expected
     expected=$(cat <<-END
-		./sub_b/env_cb
-		./sub_c/env_cc
+		sub_b/env_cb
+		sub_c/env_cc
 	END
     )
     echo "$list"
@@ -227,17 +227,17 @@ test_envie_list_race_multiple_levels() (
     local list=$("$envie_bin" list | sort)
     local expected
     expected=$(cat <<-END
-		./project_a/env_a
-		./project_b/env_b
-		./project_c/sub_a/env_ca1
-		./project_c/sub_a/env_ca2
-		./project_c/sub_a/env_ca3
-		./project_c/sub_b/env_cb
-		./project_c/sub_c/env_cc
-		./trusty-tahr/dev
-		./trusty-tahr/prod
-		./zesty-zapus/dev
-		./zesty-zapus/prod
+		project_a/env_a
+		project_b/env_b
+		project_c/sub_a/env_ca1
+		project_c/sub_a/env_ca2
+		project_c/sub_a/env_ca3
+		project_c/sub_b/env_cb
+		project_c/sub_c/env_cc
+		trusty-tahr/dev
+		trusty-tahr/prod
+		zesty-zapus/dev
+		zesty-zapus/prod
 	END
     )
     echo "$list"
@@ -253,8 +253,8 @@ test_envie_list_filter_firstlevel() (
     local list=$("$envie_bin" list trusty | sort)
     local expected
     expected=$(cat <<-END
-		./trusty-tahr/dev
-		./trusty-tahr/prod
+		trusty-tahr/dev
+		trusty-tahr/prod
 	END
     )
     echo "$list"
@@ -267,8 +267,8 @@ test_envie_list_filter_secondlevel() (
     local list=$("$envie_bin" list dev | sort)
     local expected
     expected=$(cat <<-END
-		./trusty-tahr/dev
-		./zesty-zapus/dev
+		trusty-tahr/dev
+		zesty-zapus/dev
 	END
     )
     echo "$list"
