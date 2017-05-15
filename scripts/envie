@@ -497,7 +497,7 @@ function _lsenv_find() {
     local dir="${1:-.}" avoid="${2:-}"
     find "$dir" -path "$avoid" -prune -o \
         -name .git -o -name .hg -o -name .svn -prune -o -path '*/bin/activate_this.py' \
-        -print 2>/dev/null | sed -e 's#/bin/activate_this\.py$##'
+        -print 2>/dev/null | sed -e 's#/bin/activate_this\.py$##' -e 's#^./##'
 }
 
 # `lsenv` via `locate`
@@ -510,8 +510,8 @@ function _lsenv_locate() {
         __envie_index
     fi
     locate -d "$_ENVIE_DB_PATH" --existing "$absdir*/bin/activate_this.py" \
-        | sed -e 's#/bin/activate_this\.py$##' \
-        | _prefix_subs "$absdir" "$dir"
+        | _prefix_subs "$absdir" "$dir" \
+        | sed -e 's#/bin/activate_this\.py$##' -e 's#^./##'
 }
 
 # Run `lsenv` via both `find` and `locate` in parallel and:
@@ -612,8 +612,11 @@ function lsenv() {
     if [ "$1" == "--" ]; then
         shift;
     elif [ -d "$1" ]; then
-        # dir
-        args+=("$1")
+        # dir (default .) normalized
+        local dir="$1" relbase=.
+        [[ "$dir" =~ ^/ ]] && relbase=''
+        dir=$(_realpath "$dir" "$relbase")
+        args+=("$dir")
         shift
         if [ -d "$1" ]; then
             # avoid_subdir
@@ -711,10 +714,8 @@ function findenv() {
     (( verbose )) && lsargs+=(-v)
     (( quiet )) && lsargs+=(-q)
 
-    local list len=0 prevdir relbase="."
-    [[ "$dir" =~ ^/ ]] && relbase=''
+    local list len=0 prevdir
     while [ "$len" -eq 0 ] && [ "$(_readlink "$prevdir")" != / ]; do
-        dir=$(_realpath "$dir" "$relbase")
         list=$(lsenv "${lsargs[@]}" "$dir" "$prevdir" "$@")
         [ "$list" ] && len=$(wc -l <<<"$list") || len=0
         prevdir="$dir"
