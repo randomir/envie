@@ -210,8 +210,8 @@ or with several keywords:
 
 
 
-``envie find`` / ``findenv [DIR]`` - Find the closest virtual around ``DIR``
-----------------------------------------------------------------------------
+``envie find`` / ``findenv [DIR]`` - Find the closest virtual env around ``DIR``
+--------------------------------------------------------------------------------
 
 ::
 

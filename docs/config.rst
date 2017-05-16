@@ -7,17 +7,33 @@ quick-start script::
 
     envie config
 
-If not sure, to all questions answer with the default (press ``Enter``)::
+If you are installing/configuring Envie on a dev machine, you're probably safe
+to answer all  questions with the default (pressing ``Enter``)::
 
     Add to ~/.bashrc (strongly recommended) [Y/n]? 
     Use locate/updatedb for faster search [Y/n]? 
     Common ancestor dir of all environments to be indexed [/home/stevie]: 
     Update index periodically (every 15min) [Y/n]? 
     Refresh stale index before each search [Y/n]? 
-    Envie already registered in /home/stevie/.bashrc.
+
+    Envie added to /home/stevie/.bashrc.
     Config file written to /home/stevie/.config/envie/envierc.
     Crontab updated.
     Indexing environments in '/home/stevie'...Done.
+
+.. note::
+
+  In production/server environments, you maybe do not want to use *locate*
+  method and run cron updatedb jobs every 15min.
+
+  The simplest fully functional (w/ bash completions) and
+  minimal-performance-overhead configuration is achieved with::
+
+    envie config --register
+
+
+For different methods of installation refer to :doc:`Install`.
+
 
 
 The defaults
@@ -37,6 +53,7 @@ The defaults
     _ENVIE_FIND_LIMIT_SEC="0.4"
     _ENVIE_LOCATE_LIMIT_SEC="4"
     _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
+
 
 
 Config variables
