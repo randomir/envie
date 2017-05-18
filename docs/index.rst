@@ -11,8 +11,8 @@ Welcome to Envie's documentation!
    :caption: Contents:
 
    intro
+   setup
    commands
-   config
 
 
 Indices and tables

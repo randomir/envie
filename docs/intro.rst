@@ -16,7 +16,7 @@ Configuration
 
     envie config
 
-For details, see :doc:`config`.
+For details, see :ref:`setup-config`.
 
 After envie is configured, source your ``.bashrc``, or start a fresh shell:
 

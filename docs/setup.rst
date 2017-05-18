@@ -1,5 +1,36 @@
-Configuration
-=============
+Setup
+=====
+
+
+.. _setup-install:
+
+Install
+-------
+
+For convenience, Envie is packaged and distributed via `PyPI <https://pypi.python.org/pypi/envie>`_
+as a Python package named ``envie``. Full source code is available on `GitHub <https://github.com/randomir/envie>`_.
+
+You can install Envie in several ways.
+
+1. The simplest one is to **install** it system-global (for all users), **via pip**::
+
+      sudo pip install envie
+
+   This is the recommended way. All executable Envie scripts (``envie``,
+   ``envie-tmp`` and ``envie-tools``) will be installed in your
+   ``/usr/local/bin/`` directory.
+
+   You can check if Envie is properly installed with::
+
+      $ envie --version
+      Envie 0.4.33 command from /usr/local/bin/envie
+
+
+
+.. _setup-config:
+
+Configure
+---------
 
 Envie configuration is stored in a config file: ``$HOME/.config/envie/envierc``
 as a series of shell variables. The file can be (re-)generated with a guided
@@ -32,12 +63,12 @@ to answer all  questions with the default (pressing ``Enter``)::
     envie config --register
 
 
-For different methods of installation refer to :doc:`Install`.
+For different methods of installation refer to :ref:`setup-install`.
 
 
 
 The defaults
-------------
+~~~~~~~~~~~~
 
 ``cat $HOME/.config/envie/envierc``::
 
@@ -57,7 +88,7 @@ The defaults
 
 
 Config variables
-----------------
+~~~~~~~~~~~~~~~~
 
 * ``_ENVIE_DEFAULT_ENVNAME`` - name of the virtual environment base directory. 
   The usual values are: ``env``, ``.env``, and ``.venv``.

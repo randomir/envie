@@ -73,7 +73,8 @@ Commands Reference
 
 This command creates a new Python virtual environment with the ``virtualenv``
 tool in a destination directory ``DEST_DIR`` (defaults to: ``env`` in current
-directory, but it can be overriden with :doc:`config` variable ``_ENVIE_DEFAULT_ENVNAME``).
+directory, but it can be overriden with :ref:`setup-config` variable
+``_ENVIE_DEFAULT_ENVNAME``).
 
 The default Python interpreter version (executable) is defined with the config
 variable ``_ENVIE_DEFAULT_PYTHON`` and it will use system's default ``python``
