@@ -61,7 +61,8 @@ function _envie_load_config() {
         _ENVIE_TOOL_PATH=$(which envie-tools)
     else
         # assume running from source, possibly symlinked to bin/
-        _ENVIE_TOOL_PATH=$(_bootstrap_abspath "$(dirname "${BASH_SOURCE[0]}")/../scripts/envie-tools")
+        local scripts_dir=$(dirname "$(_bootstrap_abspath "${BASH_SOURCE[0]}")")
+        _ENVIE_TOOL_PATH="$scripts_dir/envie-tools"
     fi
     _ENVIE_SOURCE=$(_readlink "${BASH_SOURCE[0]}")
 }
