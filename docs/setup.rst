@@ -12,6 +12,7 @@ as a Python package named ``envie``. Full source code is available on `GitHub <h
 
 You can install Envie in several ways.
 
+
 1. The simplest one is to **install** it system-global (for all users), **via pip**::
 
       sudo pip install envie
@@ -24,6 +25,34 @@ You can install Envie in several ways.
 
       $ envie --version
       Envie 0.4.33 command from /usr/local/bin/envie
+
+
+2. Install to the Python **user install** directory (typically ``~/.local``)::
+
+      pip install --user envie
+
+   This is as a good option if you do not wish to (or can not) install Envie for
+   all users. Executable scripts will be located in your ``$HOME/.local/bin/``
+   directory.
+
+   If you're not already using other CLI tools installed this way, you'll have
+   to configure your ``PATH`` to make ``envie`` executable accessible. Add this
+   to your ``~/.bashrc``::
+
+      export PATH="$PATH:$HOME/.local/bin"
+
+
+3. Manual install from source.
+
+   Clone it with git::
+
+      git clone https://github.com/randomir/envie.git ~/Downloads/envie-master
+
+   or download as a `zip archive <https://github.com/randomir/envie/archive/master.zip>`_.
+
+   Symlink *at least* ``scripts/envie`` executable to your (local) bin directory, for example::
+
+      ln -s ~/Downloads/envie-master/scripts/envie ~/bin/envie
 
 
 
