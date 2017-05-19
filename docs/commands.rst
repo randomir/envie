@@ -150,6 +150,8 @@ env, simply destroy it with ``rmenv -f``.
 The search method is defined with config, but it can be overriden with ``-f``
 and ``-l`` to force ``find`` or ``locate`` methods respectively.
 
+.. _fuzzy-filtering:
+
 To narrow down the list of virtualenv paths, you can filter it by supplying ``KEYWORDS``.
 Filtering algorithm is not strict and exclusive (like grep), but fuzzy and typo- forgiving.
 

@@ -13,46 +13,104 @@ as a Python package named ``envie``. Full source code is available on `GitHub <h
 You can install Envie in several ways.
 
 
-1. The simplest one is to **install** it system-global (for all users), **via pip**::
+1. System-wide install via pip
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      sudo pip install envie
+The simplest and in most cases the recommended way of installing Envie is via
+pip global install::
 
-   This is the recommended way. All executable Envie scripts (``envie``,
-   ``envie-tmp`` and ``envie-tools``) will be installed in your
-   ``/usr/local/bin/`` directory.
+    sudo pip install envie
 
-   You can check if Envie is properly installed with::
+All executable Envie scripts (``envie``, ``envie-tmp`` and ``envie-tools``) will
+be installed in system ``/usr/local/bin/`` directory and will be available to
+all users of the system.
 
-      $ envie --version
-      Envie 0.4.33 command from /usr/local/bin/envie
+.. note::
 
+    You can check if Envie is properly installed with::
 
-2. Install to the Python **user install** directory (typically ``~/.local``)::
+        $ envie --version
+        Envie 0.4.33 command from /usr/local/bin/envie
 
-      pip install --user envie
-
-   This is as a good option if you do not wish to (or can not) install Envie for
-   all users. Executable scripts will be located in your ``$HOME/.local/bin/``
-   directory.
-
-   If you're not already using other CLI tools installed this way, you'll have
-   to configure your ``PATH`` to make ``envie`` executable accessible. Add this
-   to your ``~/.bashrc``::
-
-      export PATH="$PATH:$HOME/.local/bin"
+    Actually, with this command you can also check if Envie is being run as a
+    **command**, or as a **function**. Almost always you want ``envie`` to be a
+    function -- otherwise you won't be able to easily activate virtual
+    environments discovered. See :ref:`setup-config`.
 
 
-3. Manual install from source.
+2. User-local install via pip
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   Clone it with git::
+To install to the Python **user install** directory (typically ``~/.local``)::
 
-      git clone https://github.com/randomir/envie.git ~/Downloads/envie-master
+    pip install --user envie
 
-   or download as a `zip archive <https://github.com/randomir/envie/archive/master.zip>`_.
+This is as a good option if you do not wish to (or can not) install Envie for
+all users. Executable scripts will be located in your ``$HOME/.local/bin/``
+directory.
 
-   Symlink *at least* ``scripts/envie`` executable to your (local) bin directory, for example::
+If you're not already using other CLI tools installed this way, you'll have
+to configure your ``PATH`` to make ``envie`` executable accessible. Add this
+to your ``~/.bashrc``::
 
-      ln -s ~/Downloads/envie-master/scripts/envie ~/bin/envie
+    export PATH="$PATH:$HOME/.local/bin"
+
+
+3. Manual install from source
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Clone with ``git``::
+
+    git clone https://github.com/randomir/envie.git ~/Downloads/envie-master
+
+or download a `zip archive <https://github.com/randomir/envie/archive/master.zip>`_.
+
+After cloning/downloading, you have to either:
+
+  (a) **Source** ``scripts/envie``, like this::
+
+          . ~/Downloads/envie-master/scripts/envie
+
+      Now you'll be running Envie **as a function**, check it out::
+
+          $ envie --version
+          Envie 0.4.33 function from /home/stevie/Downloads/envie-master/scripts/envie
+
+      To ensure ``envie`` function is always available, add the sourcing statement to
+      your ``.bashrc``, or simply run::
+
+          envie config --register
+
+      Also, be sure to check how to :ref:`setup-config` other aspects of Envie.
+
+or
+
+  (b) **Symlink** ``scripts/envie`` executable to your (local) bin directory, for example::
+
+          ln -s ~/Downloads/envie-master/scripts/envie ~/bin/envie
+
+      This assumes your ``PATH`` already includes ``~/bin/``. If not, add it just like
+      above, by appending ``export PATH="$PATH:$HOME/bin"`` to your ``~/.bashrc``.
+
+.. note::
+
+    When manually installing Envie as a **command** -- and not a function,
+    symlinking ``envie`` executable to a ``PATH``-discoverable
+    location is a MUST. Otherwise Envie command **will not** function properly.
+
+    The reason you have to symlink, and not just copy is, ultimately,
+    cross-platform support and :ref:`fuzzy environment name filtering <fuzzy-filtering>`.
+    Namely, cross-platform implementation of some basic tools (GNU ``readlink``,
+    ``realpath``) and fuzzy-filtering is provided via Python package ``envie``
+    (module ``envie.filters``). When Envie is pip-installed, this package is
+    available -- but when running from source, Envie has to be able to locate it
+    (relative to the ``envie`` executable).
+
+.. note::
+
+    An important exception to the symlinking note above is when you know you'll be
+    running Envie **only as a function**, never as a command (*Hint: you probably
+    only want it as a function*).
 
 
 
@@ -68,7 +126,7 @@ quick-start script::
     envie config
 
 If you are installing/configuring Envie on a dev machine, you're probably safe
-to answer all  questions with the default (pressing ``Enter``)::
+to answer all questions with the default (pressing ``Enter``)::
 
     Add to ~/.bashrc (strongly recommended) [Y/n]? 
     Use locate/updatedb for faster search [Y/n]? 
@@ -97,7 +155,7 @@ For different methods of installation refer to :ref:`setup-install`.
 
 
 The defaults
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 ``cat $HOME/.config/envie/envierc``::
 
@@ -117,7 +175,7 @@ The defaults
 
 
 Config variables
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 * ``_ENVIE_DEFAULT_ENVNAME`` - name of the virtual environment base directory. 
   The usual values are: ``env``, ``.env``, and ``.venv``.
