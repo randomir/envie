@@ -8,6 +8,8 @@ Install
 
     sudo pip install envie
 
+For other methods of installation (user-local, or from source), refer to :ref:`setup-install`.
+
 
 Configuration
 -------------
@@ -18,11 +20,12 @@ Configuration
 
 For details, see :ref:`setup-config`.
 
-After envie is configured, source your ``.bashrc``, or start a fresh shell:
+After Envie is configured, open a new shell, or simply source your ``.bashrc``:
 
 .. code-block:: bash
 
     . ~/.bashrc
+
 
 
 Start with ``envie help``
@@ -78,3 +81,6 @@ Start with ``envie help``
                                    # residing somewhere under your home dir (~)
         mkenv -tr req.txt && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
         envie tmp -r req.txt && ./setup.py test && envie remove -f   # more verbose version of the above
+
+
+Detailed :doc:`commands reference <commands>` is available.
