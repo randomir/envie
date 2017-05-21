@@ -49,7 +49,6 @@ Start with ``envie help``
 
         create [ENV]   create a new virtual environment (alias for mkenv)
         remove         destroy the active environment (alias for rmenv)
-        tmp            create a throw-away env in /tmp (alias for mkenv -t)
 
         list [DIR]     list virtual envs under DIR (alias for lsenv)
         find [DIR]     like 'list', but also look above, until env found (alias for findenv)
@@ -71,7 +70,7 @@ Start with ``envie help``
 
     The third form exposes explicit commands for virtual env creation, removal, discovery, etc.
     For more details on a specific command, see its help with '-h', e.g. 'envie find -h'.
-    Each of these commands has a shorter alias (mkenv, lsenv, chenv, rmenv, etc).
+    Each of these commands has a shorter alias (mkenv, lsenv, findenv, chenv, rmenv, etc).
 
     Examples:
         envie python               # run interactive Python shell in the closest env
@@ -79,8 +78,10 @@ Start with ``envie help``
         envie run /path/to/exec    # execute an executable in the closest env
         envie ~ my cool project    # activate the env with words my,cool,project in its path,
                                    # residing somewhere under your home dir (~)
-        mkenv -tr req.txt && ./setup.py test && rmenv -f     # run tests in a throw-away env (with reqs)
-        envie tmp -r req.txt && ./setup.py test && envie remove -f   # more verbose version of the above
+        mkenv -3r dev-requirements.txt devenv    # create Python 3 virtual env in ./devenv and
+                                                 # install pip packages from dev-requirements.txt
+        mkenv -ta && pytest && rmenv -f          # run tests in a throw-away env with packages
+                                                 # from the closest 'requirements.txt' file
 
 
 Detailed :doc:`commands reference <commands>` is available.
