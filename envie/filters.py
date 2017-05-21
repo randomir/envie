@@ -30,10 +30,8 @@ def similarity(w, word):
     """Modified SequenceMatcher similarity: strongly prefer full word matches
     and prefix matches.
     """
-    if w == word:
-        return 1
-    elif word.startswith(w):
-        return 0.5
+    if word.startswith(w):
+        return 0.5 + 0.5 * len(w) / len(word)
     else:
         return SequenceMatcher(None, w, word).ratio() / 2.0
 
