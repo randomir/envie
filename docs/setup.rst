@@ -120,8 +120,11 @@ Configure
 ---------
 
 Envie configuration is stored in a config file: ``$HOME/.config/envie/envierc``
-as a series of shell variables. The file can be (re-)generated with a guided
-quick-start script::
+as a series of shell variables. It is read once per sourcing or execution. In
+the default configuration (when Envie is sourced from ``.bashrc``), that means
+the configuration is read once per Bash session.
+
+Configuration file can be (re-)generated with a guided quick-start script::
 
     envie config
 
@@ -144,15 +147,37 @@ to answer all questions with the default (pressing ``Enter``)::
   In production/server environments, you maybe do not want to use *locate*
   method and run cron updatedb jobs every 15min.
 
-  The simplest fully functional (w/ bash completions) and
-  minimal-performance-overhead configuration is achieved with::
+  Actually, you **can** still use *locate*, but rebuild the index manually with
+  ``envie index`` (when deemed necessary), or instruct Envie to *"refresh stale
+  index before each search"*.
+
+
+
+The unconfigured mode
+^^^^^^^^^^^^^^^^^^^^^
+
+When you run Envie without explicitly configuration, it falls-back to the safe
+:ref:`defaults <default-config>`. Most notably, only ``find`` is used for
+environments discovery.
+
+
+
+A reasonable minimum
+^^^^^^^^^^^^^^^^^^^^
+
+However you decide on *locate* and crontab index updating, the simplest fully
+functional (bash completions included) and minimal-performance-overhead
+configuration is achieved with::
 
     envie config --register
 
+This will add Envie sourcing statement to your ``.bashrc`` and ensure you have
+a working ``envie`` function, along with the accompanying shorthand aliases like
+``mkenv``, ``lsenv``, etc.
 
-For different methods of installation refer to :ref:`setup-install`.
 
 
+.. _default-config:
 
 The defaults
 ^^^^^^^^^^^^
