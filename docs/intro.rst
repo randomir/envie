@@ -1,21 +1,23 @@
 Quick start
 ===========
 
-Install
--------
+Start by installing Envie. You can install it system-wide (for all users) with:
 
-::
+.. code-block:: bash
 
+    # system-wide install
     sudo pip install envie
 
-For other methods of installation (user-local, or from source), refer to :ref:`setup-install`.
+or, if you prefer keeping it user-local, or just trying it out from the source
+without installing, please take a look at :ref:`setup-install` instructions.
 
+After installing, configuration is recommended, but *not* required. At bare
+minimum, grant yourself at least the bash completion and better experience by
+registering Envie (sourcing in your ``.bashrc``).
 
-Configuration
--------------
+.. code-block:: bash
 
-::
-
+    # short step-by-step interactive configuration
     envie config
 
 For details, see :ref:`setup-config`.
