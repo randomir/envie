@@ -164,6 +164,33 @@ method will be used for environments discovery.
 
 
 
+.. _source-vs-exec:
+
+Sourcing vs. Executing
+^^^^^^^^^^^^^^^^^^^^^^
+
+Envie can be run directly (by executing ``envie`` script), or as a shell
+function (which is defined when ``envie`` script is sourced).
+
+Either way you chose to run Envie, it will behave the same -- with one notable
+exception:
+
+.. note::
+  If Envie is **not run as a function**, it will **not be able to activate a
+  virtual environment**.
+
+The effects of this will be visible in two scenarios:
+
+``envie create``/``mkenv``
+  Environment will be created, and requirements/packages will be installed, but
+  virtualenv will not be activated in your current shell.
+
+``envie``/``chenv``
+  Environments will be listed/selected, but it will not be activated in the
+  current shell.
+
+
+
 .. _minimum-config:
 
 A reasonable minimum
