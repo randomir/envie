@@ -37,6 +37,17 @@ Commands Reference
     For details on other Envie uses, see 'envie help'.
 
 
+.. code-block:: bash
+
+    chenv [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]
+
+-1            activate only if a single closest env found, abort otherwise
+-f, --find    use only 'find' for search
+-l, --locate  use only 'locate' for search
+-v            be verbose: show info messages (path to activated env)
+-q            be quiet: suppress error messages
+
+
 .. note:: TODO description, examples
 
 

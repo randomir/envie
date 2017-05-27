@@ -11,15 +11,16 @@ Start by installing Envie. You can install it system-wide (for all users) with:
 or, if you prefer keeping it user-local, or just trying it out from the source
 without installing, please take a look at :ref:`setup-install` instructions.
 
-After installing, configuration is recommended, but *not* required. At bare
-minimum, grant yourself at least the bash completion and better experience by
-registering Envie (sourcing in your ``.bashrc``).
+After installing, configuring is recommended, *but not required*. You can run a
+quick interactive config with:
 
 .. code-block:: bash
 
     # short step-by-step interactive configuration
     envie config
 
+At bare minimum, grant yourself at least bash completions and better experience
+by :ref:`registering Envie <minimum-config>` (sourcing it in your ``.bashrc``).
 For details, see :ref:`setup-config`.
 
 After Envie is configured, open a new shell, or simply source your ``.bashrc``:

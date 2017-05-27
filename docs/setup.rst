@@ -119,10 +119,10 @@ or
 Configure
 ---------
 
-Envie configuration is stored in a config file: ``$HOME/.config/envie/envierc``
-as a series of shell variables. It is read once per sourcing or execution. In
-the default configuration (when Envie is sourced from ``.bashrc``), that means
-the configuration is read once per Bash session.
+Envie configuration is stored in a config file: ``$HOME/.config/envie/envierc``,
+as a series of shell variables assignments. It is read once per sourcing or
+execution. In the default setup (when Envie is sourced from ``.bashrc``), that
+means the configuration is read once per Bash session.
 
 Configuration file can be (re-)generated with a guided quick-start script::
 
@@ -144,7 +144,7 @@ to answer all questions with the default (pressing ``Enter``)::
 
 .. note::
 
-  In production/server environments, you maybe do not want to use *locate*
+  In a production/server environment, you maybe do not want to use *locate*
   method and run cron updatedb jobs every 15min.
 
   Actually, you **can** still use *locate*, but rebuild the index manually with
@@ -153,14 +153,18 @@ to answer all questions with the default (pressing ``Enter``)::
 
 
 
+.. _no-config:
+
 The unconfigured mode
 ^^^^^^^^^^^^^^^^^^^^^
 
-When you run Envie without explicitly configuration, it falls-back to the safe
-:ref:`defaults <default-config>`. Most notably, only ``find`` is used for
-environments discovery.
+When you run Envie without explicitly configuring it, a set of safe
+:ref:`defaults <default-config>` will be used. Most notably, only ``find``
+method will be used for environments discovery.
 
 
+
+.. _minimum-config:
 
 A reasonable minimum
 ^^^^^^^^^^^^^^^^^^^^
