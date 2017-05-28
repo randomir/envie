@@ -1,18 +1,43 @@
 Commands Reference
 ==================
 
+The ``envie`` script (or a :ref:`shell function <source-vs-exec>`) has three
+calling forms:
+
 .. code-block:: bash
 
-    envie [DIR] [KEYWORDS]
+    envie [OPTIONS] [DIR] [KEYWORDS]
 
     envie SCRIPT
 
-    envie {create ... | remove |
-           list [DIR] | find [DIR] |
+    envie {create [ENV] | remove |
+           list [DIR] [KEYWORDS] | find [DIR] [KEYWORDS] |
            python [SCRIPT] | run CMD |
            index | config | help | --help | --version}
 
+The first form interactively activates the closest environment (relative to
+``DIR``, or the current working directory, filtered by ``KEYWORDS``). If a
+single closest environment is detected, it is auto-activated. This calling form
+is basically an alias for ``chenv -v [DIR] [KEYWORDS]`` (see :ref:`chenv <chenv>` below).
 
+The second form is a shorthand for executing python scripts in the closest
+virtual environment, without the need for a manual env activation. It's
+identical in behaviour to ``envie python SCRIPT``, but more convenient for a
+hash bang use:
+
+    .. code-block:: python
+
+        #!/usr/bin/env envie
+        # Python script here will be executed in the closest virtual env
+
+The third form is the canonical form as it explicitly exposes all commands (for
+virtual env creation, removal, discovery, etc.) Most of these commands have a
+shorter alias you'll probably prefer in everyday use (like ``mkenv``, ``lsenv``,
+``findenv``, ``chenv``, ``rmenv``, etc).
+
+
+
+.. _chenv:
 
 ``envie`` / ``chenv`` - Interactively activate the closest virtual environment
 ------------------------------------------------------------------------------
@@ -35,17 +60,6 @@ Commands Reference
         -q            be quiet: suppress error messages
 
     For details on other Envie uses, see 'envie help'.
-
-
-.. code-block:: bash
-
-    chenv [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]
-
--1            activate only if a single closest env found, abort otherwise
--f, --find    use only 'find' for search
--l, --locate  use only 'locate' for search
--v            be verbose: show info messages (path to activated env)
--q            be quiet: suppress error messages
 
 
 .. note:: TODO description, examples
