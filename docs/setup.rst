@@ -25,7 +25,7 @@ All executable Envie scripts (``envie``, ``envie-tmp`` and ``envie-tools``) will
 be installed in system ``/usr/local/bin/`` directory and will be available to
 all users of the system.
 
-.. note::
+.. tip::
 
     You can check if Envie is properly installed with::
 
@@ -92,7 +92,7 @@ or
       This assumes your ``PATH`` already includes ``~/bin/``. If not, add it just like
       above, by appending ``export PATH="$PATH:$HOME/bin"`` to your ``~/.bashrc``.
 
-.. note::
+.. important::
 
     When manually installing Envie as a **command** -- and not a function,
     symlinking ``envie`` executable to a ``PATH``-discoverable
@@ -106,7 +106,7 @@ or
     available -- but when running from source, Envie has to be able to locate it
     (relative to the ``envie`` executable).
 
-.. note::
+.. hint::
 
     An important exception to the symlinking note above is when you know you'll be
     running Envie **only as a function**, never as a command (*Hint: you probably
@@ -142,8 +142,7 @@ to answer all questions with the default (pressing ``Enter``)::
     Crontab updated.
     Indexing environments in '/home/stevie'...Done.
 
-.. note::
-
+.. tip::
   In a production/server environment, you maybe do not want to use *locate*
   method and run cron updatedb jobs every 15min.
 
@@ -175,7 +174,7 @@ function (which is defined when ``envie`` script is sourced).
 Either way you chose to run Envie, it will behave the same -- with one notable
 exception:
 
-.. note::
+.. warning::
   If Envie is **not run as a function**, it will **not be able to activate a
   virtual environment**.
 
