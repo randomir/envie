@@ -1,39 +1,59 @@
 Commands Reference
 ==================
 
+Calling Envie
+-------------
+
 The ``envie`` script (or a :ref:`shell function <source-vs-exec>`) has three
-calling forms:
+calling forms -- two "shortcut" forms, and general/all-purpose form:
 
-.. code-block:: bash
+1. **find & activate**
+^^^^^^^^^^^^^^^^^^^^^^
 
-    envie [OPTIONS] [DIR] [KEYWORDS]
+    ::
 
-    envie SCRIPT
+        envie [OPTIONS] [DIR] [KEYWORDS]
 
-    envie {create [ENV] | remove |
-           list [DIR] [KEYWORDS] | find [DIR] [KEYWORDS] |
-           python [SCRIPT] | run CMD |
-           index | config | help | --help | --version}
+    The first form interactively activates the closest environment (relative to
+    ``DIR``, or the current working directory, filtered by ``KEYWORDS``). If a
+    single closest environment is detected, it is auto-activated. This calling
+    form is basically an alias for ``chenv -v [DIR] [KEYWORDS]``. For options
+    and details on environments discovery/selection, see :ref:`chenv <chenv>`
+    below.
 
-The first form interactively activates the closest environment (relative to
-``DIR``, or the current working directory, filtered by ``KEYWORDS``). If a
-single closest environment is detected, it is auto-activated. This calling form
-is basically an alias for ``chenv -v [DIR] [KEYWORDS]`` (see :ref:`chenv <chenv>` below).
 
-The second form is a shorthand for executing python scripts in the closest
-virtual environment, without the need for a manual env activation. It's
-identical in behaviour to ``envie python SCRIPT``, but more convenient for a
-hash bang use:
+2. **run python script**
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-    .. code-block:: python
+    ::
 
-        #!/usr/bin/env envie
-        # Python script here will be executed in the closest virtual env
+        envie SCRIPT
 
-The third form is the canonical form as it explicitly exposes all commands (for
-virtual env creation, removal, discovery, etc.) Most of these commands have a
-shorter alias you'll probably prefer in everyday use (like ``mkenv``, ``lsenv``,
-``findenv``, ``chenv``, ``rmenv``, etc).
+    The second form is a shorthand for executing python scripts in the closest
+    virtual environment, without the need for a manual env activation. It's
+    identical in behaviour to ``envie python SCRIPT``
+    (see :ref:`below <envie-python>`), but more convenient for a hash bang use:
+
+        .. code-block:: python
+
+            #!/usr/bin/env envie
+            # Python script here will be executed in the closest virtual env
+
+
+3. **general**
+^^^^^^^^^^^^^^
+
+    ::
+
+        envie {create [ENV] | remove |
+               list [DIR] [KEYWORDS] | find [DIR] [KEYWORDS] |
+               python [SCRIPT] | run CMD |
+               index | config | help | --help | --version}
+
+    The third is a general form as it explicitly exposes all commands (for
+    virtual env creation, removal, discovery, etc.) Most of these commands have a
+    shorter alias you'll probably prefer in everyday use (like ``mkenv``, ``lsenv``,
+    ``findenv``, ``chenv``, ``rmenv``, etc).
 
 
 
@@ -266,3 +286,29 @@ up -- until at least one virtual environment is found.
 
 Description of discovery methods (``--find``/``--locate``), as well as keywords
 filtering behaviour given for ``envie list``/``lsenv`` apply here also.
+
+
+
+.. _envie-python:
+
+``envie python`` / ``envie SCRIPT`` - Run Python SCRIPT in its closest environment
+----------------------------------------------------------------------------------
+
+
+.. _envie-run:
+
+``envie run COMMAND`` - Run COMMAND in the closest environment
+--------------------------------------------------------------
+
+
+.. _envie-config:
+
+``envie config`` - Configure Envie
+-----------------------------------
+
+
+.. _envie-index:
+
+``envie index`` - (Re-)Index Environments
+-----------------------------------------
+
