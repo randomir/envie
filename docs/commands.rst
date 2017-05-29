@@ -7,6 +7,7 @@ Calling Envie
 The ``envie`` script (or a :ref:`shell function <source-vs-exec>`) has three
 calling forms -- two "shortcut" forms, and general/all-purpose form:
 
+
 1. **find & activate**
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -86,6 +87,8 @@ calling forms -- two "shortcut" forms, and general/all-purpose form:
 
 
 
+.. _mkenv:
+
 ``envie create`` / ``mkenv`` - Create a new virtual environment
 ---------------------------------------------------------------
 
@@ -113,43 +116,73 @@ calling forms -- two "shortcut" forms, and general/all-purpose form:
         -v[v]       be verbose: show virtualenv&pip info/debug messages
         -q[q]       be quiet: suppress info/error messages
 
-    For details on other Envie uses, see 'envie help'.
 
+This command creates a new Python virtual environment (using the ``virtualenv``
+tool) in the optionally supplied destination directory ``DEST_DIR``. Default
+destination is ``env`` in the current directory, but that default can be
+overriden via :ref:`config variable <config-vars>` ``_ENVIE_DEFAULT_ENVNAME``).
 
-This command creates a new Python virtual environment with the ``virtualenv``
-tool in a destination directory ``DEST_DIR`` (defaults to: ``env`` in current
-directory, but it can be overriden with :ref:`setup-config` variable
-``_ENVIE_DEFAULT_ENVNAME``).
+The default Python interpreter (executable used in a new virtual env) is defined
+with the config variable ``_ENVIE_DEFAULT_PYTHON`` and if not specified
+otherwise, it defaults to system ``python``. Python executable can always be
+explicitly specified with ``-e`` parameter, e.g: ``-e /path/to/python``, or ``-e
+python3.5``. The shorthand flags ``-2`` and ``-3`` will select the default
+Python 2 and Python 3 interpreters available, respectively.
 
-The default Python interpreter version (executable) is defined with the config
-variable ``_ENVIE_DEFAULT_PYTHON`` and it will use system's default ``python``
-if otherwise unspecified. Python executable can be specified with ``-e``
-parameter like this: ``-e /path/to/python``, or ``-e python3.5``. The shorthand
-flags ``-2`` and ``-3`` will select the default Python 2 and Python 3
-interpreters available, respectively.
+.. tip::
+    You can use aliases ``mkenv2`` and ``mkenv3`` instead of ``mkenv -2`` and
+    ``mkenv -3``, respectively.
 
-To combine with ``pip`` and pre-install a set of Pip packages (requirements),
-you can use ``-r requirements-file.txt`` or  ``-p package/archive/url``. The
-first form will install requirements from a given file (or files, if option is
-repeated). You can combine it with ``-a`` flag which performs "requirements
-autodetection and install" (all files named ``requirements.txt`` below the
-current directory are installed).
+To (pre-)install a set of Pip packages (requirements) in the virtual env
+created, you can use ``-r`` and ``-p`` options, like: ``-r requirements.txt``
+and ``-p package/archive/url``. The former will install requirements from a
+given file (or files, if option is repeated), and the latter will install a
+specific Pip package (or packages, if option repeated). The ``-p`` option
+supports all pip-supported formats: requirement specifier, VCS package URL,
+local package path, or archive path/URL:
 
-The second form will accept any package specification recognized by
-pip and pass-through to pip -- for example:
+    - ``-p requests``, ``-p "jsonplus>=0.6"``,
+    - ``-p /path/to/my/local/package``,
+    - ``-p "-e git+https://github.com/randomir/plucky.git#egg=plucky"``.
 
-- ``-p requests``, ``-p "jsonplus>=0.6"``,
-- ``-p /path/to/my/local/package``,
-- ``-p "-e git+https://github.com/randomir/plucky.git#egg=plucky"``.
+If a standard name for requirements file is used in your project
+(``requirements.txt``), you can use the ``-a`` flag to find and auto-install the
+closest requirements below the CWD.
 
 Throw-away or temporary environment is created with ``-t`` flag. The location
 and name of the virtual environment are chosen randomly with the ``mktemp``
 (something like ``/tmp/tmp.4Be8JJ8OJb``). When done with hacking in a throw-away
 env, simply destroy it with ``rmenv -f``.
 
-.. note:: TODO examples
+.. tip::
+    Throw-away environments are great for short-lived experiments, for example:
+
+    .. code-block:: bash
+
+        $ mkenv3 -t -p requests -p plucky && python && rmenv -fv
+        Creating Python virtual environment in '/tmp/tmp.ial0H5kZvu'.
+        Using Python 3.5.2+ (/usr/bin/python3).
+        Virtual environment ready.
+        Installing Pip requirements: requests plucky
+        Pip requirements installed.
+        Python 3.5.2+ (default, Sep 22 2016, 12:18:14) 
+        [GCC 6.2.0 20160927] on linux
+        Type "help", "copyright", "credits" or "license" for more information.
+        >>> import requests, plucky
+        >>> plucky.pluck(requests.get('https://api.github.com/users/randomir/repos').json(), 'name')
+        ['blobber', 'dendritic-growth-model', 'envie', 'joe', 'jsonplus', 'python-digitalocean', ...]
+        >>> exit()
+        VirtualEnv removed: /tmp/tmp.ial0H5kZvu
 
 
+Examples
+^^^^^^^^
+
+(todo)
+
+
+
+.. _rmenv:
 
 ``envie remove`` / ``rmenv`` - Delete an existing virtual environment
 ---------------------------------------------------------------------
@@ -169,6 +202,8 @@ env, simply destroy it with ``rmenv -f``.
     For details on other Envie uses, see 'envie help'.
 
 
+
+.. _lsenv:
 
 ``envie list`` / ``lsenv [DIR]`` - List virtual environments below ``DIR``
 --------------------------------------------------------------------------
@@ -258,6 +293,8 @@ or with several keywords:
 
 
 
+.. _findenv:
+
 ``envie find`` / ``findenv [DIR]`` - Find the closest virtual env around ``DIR``
 --------------------------------------------------------------------------------
 
@@ -291,20 +328,23 @@ filtering behaviour given for ``envie list``/``lsenv`` apply here also.
 
 .. _envie-python:
 
-``envie python`` / ``envie SCRIPT`` - Run Python SCRIPT in its closest environment
-----------------------------------------------------------------------------------
+``envie python`` / ``envie SCRIPT`` - Run Python SCRIPT in its closest virtual environment
+------------------------------------------------------------------------------------------
+
 
 
 .. _envie-run:
 
-``envie run COMMAND`` - Run COMMAND in the closest environment
---------------------------------------------------------------
+``envie run CMD`` - Run CMD in the closest virtual env
+------------------------------------------------------
+
 
 
 .. _envie-config:
 
 ``envie config`` - Configure Envie
 -----------------------------------
+
 
 
 .. _envie-index:

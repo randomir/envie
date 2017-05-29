@@ -229,6 +229,8 @@ The defaults
 
 
 
+.. _config-vars:
+
 Config variables
 ^^^^^^^^^^^^^^^^
 
