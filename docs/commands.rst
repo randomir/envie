@@ -229,14 +229,39 @@ env, simply destroy it with ``rmenv -f``.
 Examples
 ^^^^^^^^
 
-(todo)
+Starting from a base directory ``~/work``, let's create Python 2 & 3 virtual
+environments for our new project ``yakkety``:
+
+.. code-block:: bash
+
+    ~/work$ mkenv3 yakkety/env/dev
+    Creating Python virtual environment in 'yakkety/env/dev'.
+    Using Python 3.5.2+ (/usr/bin/python3).
+    Virtual environment ready.
+    (dev) ~/work$
+
+    (dev) ~/work$ mkenv2 yakkety/env/dev
+    Creating Python virtual environment in 'yakkety/env/prod'.
+    Using Python 2.7.12+ (/usr/bin/python2).
+    Virtual environment ready.
+    (prod) ~/work$
+
+Note here (1) directory structure is recursively created, and (2) active
+environment does not interfere with Python interpreter discovery.
+
+We can create a temporary environment with dev version of package installed from
+GitHub source:
+
+.. code-block:: bash
+
+    $ mkenv -tp "-e git+https://github.com/randomir/plucky.git#egg=plucky"
 
 
 
 .. _rmenv:
 
-``envie remove`` / ``rmenv`` - Delete an existing virtual environment
----------------------------------------------------------------------
+``envie remove`` / ``rmenv`` - Delete the active virtual environment
+--------------------------------------------------------------------
 
 ::
 
@@ -250,7 +275,10 @@ Examples
         -f    force; don't ask for permission
         -v    be verbose
 
-    For details on other Envie uses, see 'envie help'.
+``rmenv`` will remove a complete virtual env directory tree of the active
+environment (defined with shell variable ``$VIRTUAL_ENV``), or fail otherwise.
+To avoid prompting for confirmation, supply the ``-f`` flag, and to print the
+directory removed, use the ``-v`` switch.
 
 
 
@@ -273,8 +301,6 @@ Examples
                       (by default, try find for 0.4s, then failback to locate)
         -v            be verbose: show info messages
         -q            be quiet: suppress error messages
-
-    For details on other Envie uses, see 'envie help'.
 
 
 ``envie list`` searches down only, starting in ``DIR`` (defaults to ``.``).
@@ -364,8 +390,6 @@ or with several keywords:
                       (by default, try find for 0.4s, then failback to locate)
         -v            be verbose: show info messages
         -q            be quiet: suppress error messages
-
-    For details on other Envie uses, see 'envie help'.
 
 
 Similar to ``envie list``, but with a key distinction: if no environments are

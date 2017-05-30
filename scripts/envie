@@ -346,7 +346,7 @@ function mkenv() {
             pip_valid_reqs+=("$req")
             pip_opts+=(-r "$req")
         else
-            (( quietness < 2 )) && _errmsg "Pip requirement file not found: '$req'."
+            (( quietness < 2 )) && _errmsg "Pip requirements file not found: '$req'."
         fi
     done
     for req in "${pip_packages[@]}"; do
