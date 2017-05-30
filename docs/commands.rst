@@ -80,10 +80,61 @@ calling forms -- two "shortcut" forms, and general/all-purpose form:
         -v            be verbose: show info messages (path to activated env)
         -q            be quiet: suppress error messages
 
-    For details on other Envie uses, see 'envie help'.
+``chenv`` command uses :ref:`findenv <findenv>` to discover all virtual
+environments in ``DIR``'s vicinity (searching below ``DIR``, then dir-by-dir up
+until at least one virtual env is found), and then
+:ref:`fuzzy-filters <fuzzy-filtering>` that list with a list of ``KEYWORDS``
+given. If a single virtual environment is found, it's automatically activated.
+If multiple environments are found, user chooses the environment from a list.
 
+Examples
+^^^^^^^^
 
-.. note:: TODO description, examples
+Suppose you have a directory structure like this::
+
+    work
+    ├── plucky
+    │   ├── env
+    │   │   ├── dev
+    │   │   └── prod
+    │   └── src
+    ├── jsonplus
+    │   ├── pythonenv
+    │   ├── src
+    │   └── var
+
+Starting from base directory ``work``, we can activate ``jsonplus`` environment with:
+
+.. code-block:: bash
+
+    ~/work$ envie js
+    Activated virtual environment at 'jsonplus/pythonenv'.
+
+Or, starting from a project root at ``work/jsonplus/src``, just type:
+
+.. code-block:: bash
+
+    ~/work/jsonplus/src$ envie
+    Activated virtual environment at '../pythonenv'.
+
+When your query matches multiple environments, you'll get a prompt:
+
+.. code-block:: bash
+
+    ~/work$ envie plucky
+    1) plucky/env/dev
+    2) plucky/env/prod
+    #? 2
+    Activated virtual environment at 'plucky/env/prod'.
+
+But you can avoid it by being a bit more specific:
+
+.. code-block:: bash
+
+    ~/work$ envie prrrod
+    Activated virtual environment at 'plucky/env/prod'.
+
+(Notice we had a typo here, ``prrrod``.)
 
 
 
@@ -232,12 +283,12 @@ and ``-l`` to force ``find`` or ``locate`` methods respectively.
 
 .. _fuzzy-filtering:
 
-To narrow down the list of virtualenv paths, you can filter it by supplying ``KEYWORDS``.
-Filtering algorithm is not strict and exclusive (like grep), but fuzzy and typo- forgiving.
+**Fuzzy filtering.** To narrow down the list of virtualenv paths, you can filter it by supplying ``KEYWORDS``.
+Filtering algorithm is not strict and exclusive (like grep), but fuzzy and typo-forgiving.
 
 It works like this: (1) all virtualenv paths discovered are split into directory components;
 (2) we try to greedily match all keywords to components by maximum similarity score;
-(3) paths are sorted by total similarity score; (4) the best matches are passed-thru - if
+(3) paths are sorted by total similarity score; (4) the best matches are passed-thru -- if
 there's a tie, all best matches are printed.
 
 When calculating similarity between directory name (path component) and a keyword, we
