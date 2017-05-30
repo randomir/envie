@@ -437,6 +437,36 @@ Three calling forms are supported:
 ``envie run CMD`` - Run CMD in the closest virtual env
 ------------------------------------------------------
 
+As a generalization of the ``envie python`` command above, this command will run
+*anything that can be run*, in the closest virtual environment. The ``CMD`` can
+be an **executable** (script) file, shell **command**, shell **builtin**,
+**alias**, or a shell **function**.
+
+``envie run CMD [ARGS]``
+    Runs any executable construct ``CMD``, optionally passing-thru arguments
+    ``ARGS``, inside the closest virtual environment. Fails when multiple
+    environments are found in the vicinity.
+
+.. hint::
+    Similarly to ``envie python``, this command is basically a shortcut for::
+
+        chenv -1v && exec CMD [ARGS]
+
+Examples
+^^^^^^^^
+
+We can emulate the ``envie python`` command with::
+
+    envie run python /path/to/my/script
+
+but also run shell functions which are sensitive to the Python virtual env::
+
+    envie run my_function
+
+Moreover, we can run the apropriate ``python`` in the command mode::
+
+    envie run python -c 'import os; print(os.getenv("VIRTUAL_ENV"))'
+
 
 
 .. _envie-config:
