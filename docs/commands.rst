@@ -321,7 +321,11 @@ When calculating similarity between directory name (path component) and a keywor
 assign: (1) maximum weight to a complete match (identity), (2) smaller, but still high, weight
 to a prefix match, and (3) the smallest (and variable) weight to a diff-metric similarity.
 
-For example, suppose you have a directory tree like this one::
+
+Examples
+^^^^^^^^
+
+For an example, suppose you have a directory tree like this one::
 
     ├── trusty-tahr
     │   ├── dev
@@ -372,8 +376,8 @@ or with several keywords:
 
 .. _findenv:
 
-``envie find`` / ``findenv [DIR]`` - Find the closest virtual env around ``DIR``
---------------------------------------------------------------------------------
+``envie find`` / ``findenv [DIR]`` - Find the closest virtual environment around ``DIR``
+----------------------------------------------------------------------------------------
 
 ::
 
@@ -403,8 +407,28 @@ filtering behaviour given for ``envie list``/``lsenv`` apply here also.
 
 .. _envie-python:
 
-``envie python`` / ``envie SCRIPT`` - Run Python SCRIPT in its closest virtual environment
+``envie python`` / ``envie SCRIPT`` - Run Python SCRIPT in the closest virtual environment
 ------------------------------------------------------------------------------------------
+
+Run a Python SCRIPT, or an interactive Python interpreter session in the
+closest virtual environment.
+Three calling forms are supported:
+
+``envie SCRIPT [ARGS]``
+    The ``SCRIPT`` is explicitly executed with ``python`` from the closest
+    environment. If multiple environments are found in the vicinity, operation is
+    aborted.
+
+``envie python SCRIPT [ARGS]``
+    Identical in behaviour to the above, but more explict.
+
+``envie python``
+    A special no-script case, where an interactive Python session is started instead.
+
+.. hint::
+    This command is basically a shortcut for::
+
+        chenv -1v && exec python [SCRIPT [ARGS]]
 
 
 
