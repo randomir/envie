@@ -474,10 +474,47 @@ Moreover, we can run the apropriate ``python`` in the command mode::
 ``envie config`` - Configure Envie
 -----------------------------------
 
+Listed here for completeness, configuration is described in detail under the
+:ref:`setup-config` section.
+
 
 
 .. _envie-index:
 
 ``envie index`` - (Re-)Index Environments
 -----------------------------------------
+
+(todo)
+
+
+
+.. _envie-tmp:
+
+``envie-tmp SCRIPT`` - Run SCRIPT in a temporary environment
+------------------------------------------------------------
+
+::
+
+    Create a new temporary (throw-away) virtual environment, install requirements
+    specified, run the SCRIPT, and destroy the environment afterwards.
+
+    Usage:
+        envie-tmp SCRIPT
+
+    Hashbang examples:
+
+     1) no requirements (mkenv -t)
+
+        #!/usr/bin/env envie-tmp
+
+     2) installs reqs from the closest "requirements.txt" (mkenv -ta):
+
+        #!/usr/bin/env envie-tmp
+        # -*- requirements: auto -*-
+
+     3) installs reqs from the specific Pip requirements files (relative to SCRIPT's dir)
+        (mkenv -ta -r REQ ...):
+
+        #!/usr/bin/env envie-tmp
+        # -*- requirements: ../base-requirements.txt ./dev-requirements.txt -*-
 
