@@ -27,7 +27,8 @@ virtual envs relevant to your project (or executable). It holds no assumptions o
 virtual env dir location in relation to code, but works best if they're near
 (nested or in level).
 
-To run you code in the closest virtual environment (in relation to script, or working dir), just say:
+For example, to run your code in the closest virtual environment
+(in relation to your script, or a working dir), just say:
 
 .. code-block:: bash
 
@@ -37,13 +38,13 @@ To run you code in the closest virtual environment (in relation to script, or wo
 
     ~$ envie run python -c 'import os; print(os.getenv("VIRTUAL_ENV"))'
 
-or use it in a hash bang:
+use it in a hash bang:
 
 .. code-block:: python
 
     #!/usr/bin/env envie
 
-or, just import it at the beginning of your Python program:
+or, import it at the beginning of your Python program:
 
 .. code-block:: python
 
@@ -62,12 +63,13 @@ or even:
 
     $ envie mouse
 
-(keywords filter all virtual envs in vicinity and activate the best match - if unique;
-if not unique you're prompted to select the exact environment you wish to activate)
+in which case the keywords listed (``mouse`` above) will fuzzy-filter all virtual envs in vicinity
+and activate the best match - if unique. If multiple matches are found, you're prompted to select the
+exact environment you wish to activate.
 
 
-Summary
--------
+Usage Summary
+-------------
 
 ``envie [-1] [-f|-l] [<basedir>] [<keywords>]`` (alias ``chenv``)
     Interactively activate the closest environment (looking down, then up, with ``findenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
