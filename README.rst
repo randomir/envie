@@ -18,19 +18,22 @@ Navigate and manage Python VirtualEnvs
 
 ----
 
-At its core, ``envie`` is a set of Bash functions aiming to increase your
-productivity when dealing with mundane VirtualEnv tasks, like: creating,
-destroying, listing, switching and activating environments.
+*Envie* is a set of Bash functions aiming to increase your productivity when dealing 
+with mundane Python virtual environment tasks, like creating, destroying, 
+listing/discovery, and switching/activating environments.
 
-But ``envie`` really shines when it comes to auto-discovery, auto-activation
-and auto-creation of VirtualEnvs relevant to your project (or executable).
-Just say:
+Where Envie really shines is auto-discovery, auto-activation and auto-creation of
+virtual envs relevant to your project (or executable). It holds no assumptions on
+virtual env dir location in relation to code, but works best if they're near
+(nested or in level).
+
+To run you code in the closest virtual environment (in relation to script, or working dir), just say:
 
 .. code-block:: bash
 
-    ~/work/projectA$ envie python tests.py
+    ~/work/less$ envie python tests.py
     
-    ~/work/projectB$ envie manage.py migrate
+    ~/work/do-more$ envie manage.py migrate
 
     ~$ envie run python -c 'import os; print(os.getenv("VIRTUAL_ENV"))'
 
@@ -47,21 +50,17 @@ or, just import it at the beginning of your Python program:
     #!/usr/bin/python
     import envie.activate_closest
 
-and in each of these cases the Python script will be executed in the closest
-virtual environment (for the definition of the *closest environment* see below,
-section `Change/activate environment`).
-
-To just activate the closest virtual env, just type ``envie``:
+To simply activate the closest virtual env, just type ``envie``:
 
 .. code-block:: bash
 
-    ~/work/my-project-awesome-cattoy$ envie
+    ~/work/project-mickeymouse$ envie
 
 or even:
 
 .. code-block:: bash
 
-    $ envie awesome toy
+    $ envie mouse
 
 (keywords filter all virtual envs in vicinity and activate the best match - if unique;
 if not unique you're prompted to select the exact environment you wish to activate)
@@ -90,6 +89,9 @@ Summary
 
 ``envie run <command>``
     Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
+
+``envie-tmp <script>``
+    Create a new temporary (throw-away) virtual environment, install requirements specified inside the ``<script>`` file, run the ``<script>``, and destroy the environment afterwards.
 
 ``envie config``
     Interactively configure envie.
@@ -172,7 +174,7 @@ To automate the previous example, you can use ``envie-tmp`` command in your hash
 like this::
 
     #!/usr/bin/env envie-tmp
-    # -*- requirements: ./path/to/my/requirements.txt -*-
+    # -*- requirements: ./path/to/your/requirements.txt -*-
 
     <your python code here>
 
