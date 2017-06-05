@@ -127,6 +127,39 @@ You can even activate the closest environment after the fact, from your Python p
     import envie.activate_closest
 
 
+Better create (terse & pip-infused)
+...................................
+
+Sure, you can use ``virtualenv --python=python3 --no-site-packages env``, but isn't this simpler?
+
+.. code-block:: bash
+
+    $ envie create -3
+    
+    # or, shorter:
+    $ mkenv3
+
+And how about also **installing** your **pip requirements** in one go?
+
+.. code-block:: bash
+
+    $ mkenv -r dev-requirements.txt env/dev
+
+Or, creating a **temporary/throw-away** environment **with** some **packages** installed, then
+hacking in an interactive Python session, and finally destroying the complete environment upon exit:
+
+.. code-block:: bash
+
+    $ mkenv -t -p requests -p 'plucky>=0.4' && python && rmenv -f
+
+Details and more examples are available in `envie create`_, `envie remove`_, and `envie-tmp`_ docs.
+
+.. _`envie create`: http://envie.readthedocs.io/en/latest/commands.html#mkenv
+.. _`envie remove`: http://envie.readthedocs.io/en/latest/commands.html#rmenv
+.. _`envie-tmp`: http://envie.readthedocs.io/en/latest/commands.html#envie-tmp
+
+
+
 Usage Summary
 -------------
 
@@ -198,104 +231,6 @@ Run all test suites locally with::
 
 Examples
 --------
-
-Create/destroy
-..............
-
-To create a new VirtualEnv in the current directory, just type ``mkenv <envname>``. 
-This results with new environment created and activated in ``./<envname>``.
-When done with this environment, just type ``rmenv`` to destroy the active env.
-
-::
-
-    stevie@caracal:~/demo$ ls
-    stevie@caracal:~/demo$ mkenv env
-    Creating python environment in 'env'.
-    Using Python 2.7.9 (/usr/bin/python).
-    (env)stevie@caracal:~/demo$ ls
-    env
-    (env)stevie@caracal:~/demo$ pip freeze
-    argparse==1.2.1
-    wsgiref==0.1.2
-    (env)stevie@caracal:~/demo$ rmenv
-    stevie@caracal:~/demo$ ls
-    stevie@caracal:~/demo$
-
-Create Python 3 environment in ``env`` and install pip packages from
-``requirements.txt``::
-
-    $ mkenv3 -r requirements.txt
-
-Create a throw-away environment with a pre-installed ``dev-requirements.txt`` and
-a local project in editable mode from ``/home/stevie/work/mypackage/``::
-
-    $ mkenv -t -r dev-requirements.txt -p "-e /home/stevie/work/mypackage/"
-
-To automate the previous example, you can use ``envie-tmp`` command in your hashbang,
-like this::
-
-    #!/usr/bin/env envie-tmp
-    # -*- requirements: ./path/to/your/requirements.txt -*-
-
-    <your python code here>
-
-When executed, a throw-away virtualenv is created, requirements specified are
-installed inside, code is run, and the environment is destroyed afterwards.
-Other way to do it is directly: ``envie-tmp SCRIPT``.
-
-
-Change/activate environment
-...........................
-
-Use ``envie`` (base command), or the explicit ``chenv`` to activate the closest 
-environment, tree-wise. We first look down the tree, then up the tree. 
-If a single Python environment is found, it's automatically activated. 
-In case the multiple environments are found, a choice is presented to user.
-
-::
-
-    stevie@caracal:~/demo$ ls -F
-    env/ project/ file1 file2 ...
-    stevie@caracal:~/demo$ envie
-    (env)stevie@caracal:~/demo$
-
-Assume the following tree exists::
-
-    ~/demo
-      |_ project1
-      |  |_ env
-      |  |  |_ ...
-      |  |_ src
-      |     |_ ...
-      |_ project2
-      |  |_ env
-      |     |_ ...
-
-Now, consider you work in ``~/demo/project1/src/deep/path/to/module``, but keep the environment
-in the ``env`` parallel to ``src``. Instead of manually switching to ``env`` and activating it with 
-something like ``source ../../../../../env/bin/activate``, just type ``envie`` (or ``chenv``)::
-
-    stevie@caracal:~/demo/project1/src/deep/path/to/module$ envie
-    (env)stevie@caracal:~/demo/project1/src/deep/path/to/module$ which python
-    /home/stevie/demo/project1/env/bin/python
-
-On the other hand, if there are multiple environments to choose from, you'll get a prompt::
-
-    stevie@caracal:~/demo$ envie
-    1) project1/env
-    2) project2/env
-    3) projectx/env
-    #? 2
-    (env)stevie@caracal:~/demo$ which python
-    /home/stevie/demo/project2/env/bin/python
-
-If you know the name of your project (some specific path components -- `keywords`), you can
-preemptively filter, and auto-activate the project environment with::
-
-    stevie@caracal:~/demo$ envie x
-    (env)stevie@caracal:~/demo$ which python
-    /home/stevie/demo/projectx/env/bin/python
-
 
 Search/list environments
 ........................
