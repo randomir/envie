@@ -88,9 +88,6 @@ Discovery and filtering have no limits on depth, so you can activate your projec
     ~$ envie jsonplus dev
     Activated virtual environment at 'work/jsonplus/django/env/dev'.
 
-.. _chenv: http://envie.readthedocs.io/en/latest/commands.html#chenv
-.. _fuzzy-filtering: http://envie.readthedocs.io/en/latest/commands.html#fuzzy-filtering
-
 
 Implicit activation
 ...................
@@ -127,8 +124,8 @@ You can even activate the closest environment after the fact, from your Python p
     import envie.activate_closest
 
 
-Better create (terse & pip-infused)
-...................................
+Terse & pip-infused create
+..........................
 
 Sure, you can use ``virtualenv --python=python3 --no-site-packages env``, but isn't this simpler?
 
@@ -154,10 +151,30 @@ hacking in an interactive Python session, and finally destroying the complete en
 
 Details and more examples are available in `envie create`_, `envie remove`_, and `envie-tmp`_ docs.
 
+
+Discovery
+.........
+
+Activation of the closest environment is predicated on the discovery of the existing virtual
+environments below a certain directory with ``lsenv`` (`envie list`_), and on the up-the-tree
+search with ``findenv`` (`envie find`_):
+
+.. code-block:: bash
+
+    ~/work$ lsenv
+    plucky/env
+    blog/.env
+    jsonplus/django/env/dev
+    ...
+
+
+.. _chenv: http://envie.readthedocs.io/en/latest/commands.html#chenv
+.. _fuzzy-filtering: http://envie.readthedocs.io/en/latest/commands.html#fuzzy-filtering
 .. _`envie create`: http://envie.readthedocs.io/en/latest/commands.html#mkenv
 .. _`envie remove`: http://envie.readthedocs.io/en/latest/commands.html#rmenv
 .. _`envie-tmp`: http://envie.readthedocs.io/en/latest/commands.html#envie-tmp
-
+.. _`envie list`: http://envie.readthedocs.io/en/latest/commands.html#lsenv
+.. _`envie find`: http://envie.readthedocs.io/en/latest/commands.html#findenv
 
 
 Usage Summary
@@ -212,11 +229,24 @@ install, simply type::
     # or, open a new shell
 
 After install, be sure to run a (short and interactive) configuration procedure with ``envie config``.
-If in doubt, go with the defaults.
+If in doubt, go with the defaults. Running config is optional, but it will, allow you
+to add Envie sourcing statement to ``.bashrc`` (enabling Bash completion and alias
+functions), and to enable environments indexing and faster search with ``locate``.
 
-By default, ``envie`` sourcing statement is added to your ``.bashrc`` file, ``locate`` 
-index is set as a preferred source (it's set to be rebuilt every 15m, or on demand),
-with all relevant environments' ancestor dir set to your ``$HOME`` directory.
+
+Enable index
+............
+
+By default, ``envie`` uses the ``find`` command to search for environments. That
+approach is pretty fast when searching shallow trees. However, if you have a
+deeper directory trees, it's often faster to use a pre-built directory index
+(i.e. the ``locate`` command). To enable a combined ``locate/find`` approach to
+search, run ``envie config``.
+
+When index is enabled, the combined approach is used by default (if not overriden with
+``-f`` or ``-l`` switches). In the combined approach, if ``find`` doesn't finish
+within 400ms, search via ``find`` is aborted and ``locate`` is allowed to finish
+(faster).
 
 
 Testing
@@ -227,55 +257,3 @@ Run all test suites locally with::
     $ make test
 
 (after cloning the repo.)
-
-
-Examples
---------
-
-Search/list environments
-........................
-
-To search down the tree for valid Python VirtualEnvs, use ``lsenv``.
-Likewise, to search up the tree, level by level, use ``findenv``.
-``chenv`` uses ``findenv`` when searching for environment to activate.
-
-Suppose in your ``work`` directory you have projects named ``trusty`` and ``zesty``.
-And for both of them you keep ``dev`` and ``prod`` env::
-
-    $ lsenv dev
-
-    work/trusty/dev
-    work/zesty/dev
-
-or to activate trusty dev, all you need to type is::
-
-    $ envie t d
-
-    Activated virtual environment at 'work/trusty/dev'.
-
-
-Enable faster search
---------------------
-
-By default, ``envie`` uses the ``find`` command to search for environments. That
-approach is pretty fast when searching shallow trees. However, if you have a
-deeper directory trees, it's often faster to use a pre-built directory index
-(i.e. the ``locate`` command). To enable a combined ``locate/find`` approach to
-search, run ``envie config``::
-
-    $ envie config
-
-    Add to ~/.bashrc (strongly recommended) [Y/n]?
-    Use locate/updatedb for faster search [Y/n]?
-    Common ancestor dir of all environments to be indexed [/]:
-    Update index periodically (every 15min) [Y/n]?
-    Refresh stale index before each search [Y/n]?
-    Envie already registered in /home/stevie/.bashrc.
-    Config file written to /home/stevie/.config/envie/envierc.
-    Crontab updated.
-    Indexing environments in '/'...Done.
-
-From now on, the combined approach is used by default (if not overriden with
-``-f`` or ``-l`` switches). In the combined approach, if `find` doesn't finish
-within 400ms, search via ``find`` is aborted and ``locate`` is allowed to finish
-(faster).
