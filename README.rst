@@ -18,14 +18,48 @@ Navigate and manage Python VirtualEnvs
 
 ----
 
-*Envie* is a set of Bash functions aiming to increase your productivity when dealing 
-with mundane Python virtual environment tasks, like creating, destroying, 
-listing/discovery, and switching/activating environments.
+*Envie* is a set of ``bash`` utilities aiming to increase your productivity
+when dealing with mundane Python virtual environment tasks, like creating, destroying,
+listing/discovering, and switching/activating environments.
 
 Where Envie really shines is auto-discovery, auto-activation and auto-creation of
 virtual envs relevant to your project (or executable). It holds no assumptions on
-virtual env dir location in relation to code, but works best if they're near
-(nested or in level).
+virtual env dir location in relation to your code, but works best if they're near
+(nested, in level, or one level up).
+
+
+Motivation
+----------
+
+I like to keep my virtual environments close to source (especially in production).
+With hundreds of projects on disk, this enables me to keep environment dir names short
+and relevant to project (since a project can sometimes have several environments,
+e.g. dev, prod, test), and environments easier to maintain in general.
+
+If you structure your files/projects in any of the ways depicted in Fig 1. below, you'll
+find Envie particularly helpful.
+
+::
+
+    work                            work                                /srv
+    │                               │                                   │
+    ├── plucky                      ├── jsonplus                        ├── production
+    │   ├── env       <--           │   ├── .git                        │   ├── website
+    │   ├── plucky                  │   ├── django                      │   │   ├── pythonenv     <--
+    │   ├── tests                   │   │   ├── env                     │   │   ├── var
+    │   └── ...                     │   │   │   ├── dev      <--        │   │   └── src
+    │                               │   │   │   └── prod     <--        :   :       ├── .git
+    ├── blog                        │   │   ├── tests                   :   :       └── ...
+    │   ├── .env      <--           │   │   │   ├── env      <--        .   .
+    │   ├── .git                    :   :   :   ├── test_1.py
+    :   ├── _posts                  :   :   :   └── ...
+    :   └── ...                     .   .   .
+    .
+    
+    (a) env in level with src       (b) env nested under src           (c) env one level above src
+    
+    Figure 1. A several ways to keep your environments local to the code.
+
 
 For example, to run your code in the closest virtual environment
 (in relation to your script, or a working dir), just say:
@@ -64,8 +98,8 @@ or even:
     $ envie mouse
 
 in which case the keywords listed (``mouse`` above) will fuzzy-filter all virtual envs in vicinity
-and activate the best match - if unique. If multiple matches are found, you're prompted to select the
-exact environment you wish to activate.
+and activate the best match, if unique. If multiple (equally good) matches are found, you're prompted
+to select the exact environment you wish to activate.
 
 
 Usage Summary
