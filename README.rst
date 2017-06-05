@@ -63,7 +63,7 @@ find Envie particularly helpful.
 Easy activation
 ...............
 
-To activate the closest virtual environment in vicinity, just type ``envie`` (Fig 1.a and 1.c):
+To activate the closest virtual environment in vicinity, just type ``envie`` / chenv_ (Fig 1.a and 1.c):
 
 .. code-block:: bash
 
@@ -74,7 +74,7 @@ To activate the closest virtual environment in vicinity, just type ``envie`` (Fi
     Activated virtual environment at '../pythonenv'.
 
 If several equally close environments are found (Fig 1.b), you'll be prompted to select
-the exact env. But, you can avoid it with a cunning use of **fuzzy-filtering**, for example:
+the exact env. But, you can avoid it with a cunning use of fuzzy-filtering_, for example:
 
 .. code-block:: bash
 
@@ -87,6 +87,9 @@ Discovery and filtering have no limits on depth, so you can activate your projec
 
     ~$ envie jsonplus dev
     Activated virtual environment at 'work/jsonplus/django/env/dev'.
+
+.. _chenv: http://envie.readthedocs.io/en/latest/commands.html#chenv
+.. _fuzzy-filtering: http://envie.readthedocs.io/en/latest/commands.html#fuzzy-filtering
 
 
 Implicit activation
