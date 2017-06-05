@@ -18,7 +18,7 @@ Navigate and manage Python VirtualEnvs
 
 ----
 
-*Envie* is a set of ``bash`` utilities aiming to increase your productivity
+*Envie* is a set of ``bash`` shell utilities aiming to increase your productivity
 when dealing with mundane Python virtual environment tasks, like creating, destroying,
 listing/discovering, and switching/activating environments.
 
@@ -51,55 +51,77 @@ find Envie particularly helpful.
     │                               │   │   │   └── prod     <--        :   :       ├── .git
     ├── blog                        │   │   ├── tests                   :   :       └── ...
     │   ├── .env      <--           │   │   │   ├── env      <--        .   .
-    │   ├── .git                    :   :   :   ├── test_1.py
+    :   ├── .git                    :   :   :   ├── test_1.py
     :   ├── _posts                  :   :   :   └── ...
-    :   └── ...                     .   .   .
-    .
+    .   └── ...                     .   .   .
     
     (a) env in level with src       (b) env nested under src           (c) env one level above src
     
-    Figure 1. A several ways to keep your environments local to the code.
+    Figure 1. Several ways to keep your environments local to the code.
 
 
-For example, to run your code in the closest virtual environment
-(in relation to your script, or a working dir), just say:
+Easy activation
+...............
+
+To activate the closest virtual environment in vicinity, just type ``envie`` (Fig 1.a and 1.c):
 
 .. code-block:: bash
 
-    ~/work/less$ envie python tests.py
-    
-    ~/work/do-more$ envie manage.py migrate
+    ~/work/plucky$ envie
+    Activated virtual environment at 'env'.
 
-    ~$ envie run python -c 'import os; print(os.getenv("VIRTUAL_ENV"))'
+    /srv/production/website/src$ envie
+    Activated virtual environment at '../pythonenv'.
 
-use it in a hash bang:
+If several equally close environments are found (Fig 1.b), you'll be prompted to select
+the exact env. But, you can avoid it with a cunning use of **fuzzy-filtering**, for example:
+
+.. code-block:: bash
+
+    ~/work/jsonplus$ envie dev
+    Activated virtual environment at 'django/env/dev'.
+
+Discovery and filtering have no limits on depth, so you can activate your project environment like:
+
+.. code-block:: bash
+
+    ~$ envie jsonplus dev
+    Activated virtual environment at 'work/jsonplus/django/env/dev'.
+
+
+Implicit activation
+...................
+
+Sometimes you don't care about activating the relevant environment *in your shell*.
+You just want your script to run in the correct env. Easy peasy (ref. Fig 1.b):
+
+.. code-block:: bash
+
+    ~/work/jsonplus$ envie ./django/tests/test_1.py
+    Activated virtual environment at 'django/tests/env'.
+    # running test ...
+
+It doesn't have to be a Python script:
+
+.. code-block:: bash
+
+    ~/work/plucky$ envie run make test
+    Activated virtual environment at 'env'.
+    # running 'make' with python from env
+
+And it works from a hash bang too:
 
 .. code-block:: python
 
     #!/usr/bin/env envie
 
-or, import it at the beginning of your Python program:
+You can even activate the closest environment after the fact, from your Python program
+(changing the environment from global to closest):
 
 .. code-block:: python
 
     #!/usr/bin/python
     import envie.activate_closest
-
-To simply activate the closest virtual env, just type ``envie``:
-
-.. code-block:: bash
-
-    ~/work/project-mickeymouse$ envie
-
-or even:
-
-.. code-block:: bash
-
-    $ envie mouse
-
-in which case the keywords listed (``mouse`` above) will fuzzy-filter all virtual envs in vicinity
-and activate the best match, if unique. If multiple (equally good) matches are found, you're prompted
-to select the exact environment you wish to activate.
 
 
 Usage Summary
