@@ -142,6 +142,20 @@ to answer all questions with the default (pressing ``Enter``)::
     Crontab updated.
     Indexing environments in '/home/stevie'...Done.
 
+
+
+.. _find-vs-locate:
+
+Find vs. Locate (aka The faster search)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, ``envie`` uses the ``find`` command to search for environments. That
+approach is pretty fast when searching shallow trees. However, if you have a
+deeper directory trees, it's often faster to use a pre-built directory index
+(i.e. the ``locate`` command). To enable a combined ``locate/find`` approach to
+search, you must run ``envie config`` and answer *Yes* when asked about the
+``locate/updatedb`` usage.
+
 .. tip::
   In a production/server environment, you maybe do not want to use *locate*
   method and run cron updatedb jobs every 15min.
@@ -149,6 +163,12 @@ to answer all questions with the default (pressing ``Enter``)::
   Actually, you **can** still use *locate*, but rebuild the index manually with
   ``envie index`` (when deemed necessary), or instruct Envie to *"refresh stale
   index before each search"*.
+
+.. note::
+  When ``locate`` is enabled (and index built), the combined approach is used by
+  default (if not overriden with ``-f`` or ``-l`` switches). In the combined
+  approach, if ``find`` doesn't finish within 400ms, search via ``find`` is
+  aborted and ``locate`` is allowed to finish (faster).
 
 
 
