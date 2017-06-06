@@ -430,6 +430,15 @@ Three calling forms are supported:
 
         chenv -1v && exec python [SCRIPT [ARGS]]
 
+Examples
+^^^^^^^^
+
+::
+
+    envie manage.py migrate
+
+    envie python tests.py --fast
+
 
 
 .. _envie-run:
@@ -484,7 +493,9 @@ Listed here for completeness, configuration is described in detail under the
 ``envie index`` - (Re-)Index Environments
 -----------------------------------------
 
-(todo)
+If Envie is configured to use ``locate`` for environments discovery, index can
+be rebuilt (updated via ``updatedb``) with ``envie index``. For more on ``find``
+vs. ``locate`` methods, see :ref:`here <find-vs-locate>`.
 
 
 

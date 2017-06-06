@@ -1,5 +1,5 @@
-Navigate and manage Python VirtualEnvs
-======================================
+Navigate and manage Python virtual environments
+===============================================
 
 .. image:: https://img.shields.io/pypi/v/envie.svg
     :target: https://pypi.python.org/pypi/envie
