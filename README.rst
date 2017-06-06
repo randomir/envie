@@ -18,7 +18,7 @@ Navigate and manage Python VirtualEnvs
 
 ----
 
-*Envie* is a set of ``bash`` shell utilities aiming to increase your productivity
+*Envie* is a set of shell utilities (in ``bash``) aiming to increase your productivity
 when dealing with mundane Python virtual environment tasks, like creating, destroying,
 listing/discovering, and switching/activating environments.
 
@@ -63,7 +63,7 @@ find Envie particularly helpful.
 Easy activation
 ...............
 
-To activate the closest virtual environment in vicinity, just type ``envie`` / chenv_ (Fig 1.a and 1.c):
+To activate the closest virtual environment in vicinity, just type ``envie`` (Fig 1.a and 1.c):
 
 .. code-block:: bash
 
@@ -177,48 +177,13 @@ search with ``findenv`` (`envie find`_):
 .. _`envie find`: http://envie.readthedocs.io/en/latest/commands.html#findenv
 
 
-Usage Summary
--------------
-
-``envie [-1] [-f|-l] [<basedir>] [<keywords>]`` (alias ``chenv``)
-    Interactively activate the closest environment (looking down, then up, with ``findenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
-
-``envie create [-2|-3|-e <pyexec>] [-r <pip_req>] [-p <pip_pkg>] [-a] [<envdir> | -t]`` (alias ``mkenv``)
-    Create virtual environment in ``<envdir>`` (or in a temporary dir, ``-t``) based on a Python interpreter ``<pyexec>``, optionally installing Pip requirements from ``<pip_req>`` file, and/or ``<pip_pkg>`` requirement specifier(s).
-
-``envie remove`` (alias ``rmenv``)
-    Destroy the active environment.
-
-``envie list [-f|-l] [<dir>] [<keywords>]`` (alias ``lsenv``)
-    List all environments below ``<dir>`` directory, optionally filtered with a list of ``<keywords>``.
-
-``envie find [-f|-l] [<dir>] [<keywords>]`` (alias ``findenv``)
-    Find the closest environments by first looking down and then dir-by-dir up the tree, starting in ``<dir>``; optionally filtered with a list of ``<keywords>``.
-
-``envie <script>``, ``envie python <script>``
-    Run python ``script`` in the closest virtual environment.
-
-``envie run <command>``
-    Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
-
-``envie-tmp <script>``
-    Create a new temporary (throw-away) virtual environment, install requirements specified inside the ``<script>`` file, run the ``<script>``, and destroy the environment afterwards.
-
-``envie config``
-    Interactively configure envie.
-
-``envie index``
-    (Re-)index virtual environments (for faster searches with ``locate``).
-
-``envie help``
-    Print usage help. For details on a specific command use the '-h' switch (like ``envie find -h``, or ``mkenv -h``).
-
-
 Install & configure
 -------------------
 
-For convenience, ``envie`` is packaged and distributed as a Python package. To
-install, simply type::
+For convenience, ``envie`` is packaged and distributed as a Python package.
+You can install it system-wide with: (for user-local / source install, see `Install`_ in docs):
+
+.. code-block:: bash
 
     $ sudo pip install envie
     $ envie config
@@ -228,10 +193,13 @@ install, simply type::
     
     # or, open a new shell
 
-After install, be sure to run a (short and interactive) configuration procedure with ``envie config``.
-If in doubt, go with the defaults. Running config is optional, but it will, allow you
+After install, be sure to run a (short and interactive) `configuration`_ procedure with ``envie config``.
+If in doubt, go with the defaults. Running config is optional, but it will allow you
 to add Envie sourcing statement to ``.bashrc`` (enabling Bash completion and alias
-functions), and to enable environments indexing and faster search with ``locate``.
+functions), and to enable environments indexing (faster search with ``locate``).
+
+.. _Install: http://envie.readthedocs.io/en/latest/setup.html#install
+.. _configuration: http://envie.readthedocs.io/en/latest/setup.html#configure
 
 
 Enable index
@@ -257,3 +225,46 @@ Run all test suites locally with::
     $ make test
 
 (after cloning the repo.)
+
+
+Usage in short
+--------------
+
+``envie [-1] [-f|-l] [<basedir>] [<keywords>]`` (alias ``chenv``)
+    Interactively activate the closest environment (looking down, then up, with ``findenv``), optionally filtered by a list of ``<keywords>``. Start looking in ``<basedir>`` (defaults to ``.``).
+
+``envie create [-2|-3|-e <pyexec>] [-r <pip_req>] [-p <pip_pkg>] [-a] [<envdir> | -t]`` (alias ``mkenv``)
+    Create virtual environment in ``<envdir>`` (or in a temporary dir, ``-t``) based on a Python interpreter ``<pyexec>``, optionally installing Pip requirements from ``<pip_req>`` file, and/or ``<pip_pkg>`` requirement specifier(s).
+
+``envie remove`` (alias ``rmenv``)
+    Destroy the active environment.
+
+``envie list [-f|-l] [<dir>] [<keywords>]`` (alias ``lsenv``)
+    List all environments below ``<dir>`` directory, optionally filtered with a list of ``<keywords>``.
+
+``envie find [-f|-l] [<dir>] [<keywords>]`` (alias ``findenv``)
+    Find the closest environments by first looking down and then dir-by-dir up the tree, starting in ``<dir>``; optionally filtered with a list of ``<keywords>``.
+
+``envie <script>``, ``envie python <script>``
+    Run Python ``script`` in the closest virtual environment.
+
+``envie run <command>``
+    Execute arbitrary ``command/builtin/file/alias/function`` in the closest virtual environment.
+
+``envie-tmp <script>``
+    Create a new temporary (throw-away) virtual environment, install requirements specified inside the ``<script>`` file, run the ``<script>``, and destroy the environment afterwards.
+
+``envie config``
+    Interactively configure Envie.
+
+``envie index``
+    (Re-)index virtual environments (for faster searches with ``locate``).
+
+``envie help``
+    Print usage help. For details on a specific command use the ``-h`` switch (like ``envie find -h``, or ``mkenv -h``).
+
+
+Documentation
+-------------
+
+Documentation is hosted by ReadTheDocs, latest version being available at `envie.rtfd.io <http://envie.rtfd.io/>`_.
