@@ -24,8 +24,8 @@ listing/discovering, and switching/activating environments.
 
 Where Envie really shines is auto-discovery, auto-activation and auto-creation of
 virtual envs relevant to your project (or executable). It holds no assumptions on
-virtual env dir location in relation to your code, but works best if they're near
-(nested, in level, or a few levels up).
+virtual env dir location in relation to your code (or working directory),
+but works best if they're near (nested, in level, or a few levels up).
 
 
 Motivation
@@ -188,15 +188,16 @@ You can install it system-wide (or user-local, see `Install`_ docs):
     $ sudo pip install envie
     $ envie config
 
-    # now source envie
+    # don't forget to source envie:
     $ . ~/.bashrc
     
     # or just open a new shell
 
 After install, be sure to run a (short and interactive) `configuration`_ procedure with ``envie config``.
-If in doubt, go with the defaults. Running config is optional, but it will allow you
-to add Envie sourcing statement to ``.bashrc`` (enabling Bash completion and alias
-functions), and to enable environments indexing (faster search with ``locate``).
+If in doubt, go with the defaults. Running config is optional, but recommended.
+It'll, for example, allow to you easily add Envie sourcing statement to your ``.bashrc``
+(enabling Bash completion and alias functions), and to activate environments indexing
+(enabling faster search with ``locate``).
 
 .. _Install: http://envie.readthedocs.io/en/latest/setup.html#install
 .. _configuration: http://envie.readthedocs.io/en/latest/setup.html#configure
@@ -206,9 +207,9 @@ Enable index
 ............
 
 By default, ``envie`` uses the ``find`` command to search for environments. That
-approach is pretty fast when searching shallow trees. However, if you have a
+approach is pretty fast when searching shallow trees. However, if you have
 deeper directory trees, it's often faster to use a pre-built directory index
-(i.e. the ``locate`` command). To enable a combined ``locate/find`` approach to
+(i.e. the ``locate`` command). To configure a combined ``locate/find`` approach to
 search, run ``envie config``.
 
 When index is enabled, the combined approach is used by default (if not overriden with
