@@ -25,7 +25,7 @@ listing/discovering, and switching/activating environments.
 Where Envie really shines is auto-discovery, auto-activation and auto-creation of
 virtual envs relevant to your project (or executable). It holds no assumptions on
 virtual env dir location in relation to your code, but works best if they're near
-(nested, in level, or one level up).
+(nested, in level, or a few levels up).
 
 
 Motivation
@@ -33,8 +33,8 @@ Motivation
 
 I like to keep my virtual environments close to source (especially in production).
 With hundreds of projects on disk, this enables me to keep environment dir names short
-and relevant to project (since a project can sometimes have several environments,
-e.g. dev, prod, test), and environments easier to maintain in general.
+and project-relevant (since a project can have several environments, e.g. dev, prod, test).
+Also, environments are easy to locate, update, or rebuild (maintain in general).
 
 If you structure your files/projects in any of the ways depicted in Fig 1. below, you'll
 find Envie particularly helpful.
@@ -85,7 +85,7 @@ Discovery and filtering have no limits on depth, so you can activate your projec
 
 .. code-block:: bash
 
-    ~$ envie jsonplus dev
+    ~$ envie plus dev
     Activated virtual environment at 'work/jsonplus/django/env/dev'.
 
 
@@ -116,7 +116,7 @@ And it works from a hash bang too:
     #!/usr/bin/env envie
 
 You can even activate the closest environment after the fact, from your Python program
-(changing the environment from global to closest):
+(changing the environment from whatever was current — to the closest, relative to the script):
 
 .. code-block:: python
 
@@ -152,8 +152,8 @@ hacking in an interactive Python session, and finally destroying the complete en
 Details and more examples are available in `envie create`_, `envie remove`_, and `envie-tmp`_ docs.
 
 
-Discovery
-.........
+Existing environments discovery
+...............................
 
 Activation of the closest environment is predicated on the discovery of the existing virtual
 environments below a certain directory with ``lsenv`` (`envie list`_), and on the up-the-tree
@@ -181,17 +181,17 @@ Install & configure
 -------------------
 
 For convenience, ``envie`` is packaged and distributed as a Python package.
-You can install it system-wide with: (for user-local / source install, see `Install`_ in docs):
+You can install it system-wide (or user-local, see `Install`_ docs):
 
 .. code-block:: bash
 
     $ sudo pip install envie
     $ envie config
 
-    # start clean:
+    # now source envie
     $ . ~/.bashrc
     
-    # or, open a new shell
+    # or just open a new shell
 
 After install, be sure to run a (short and interactive) `configuration`_ procedure with ``envie config``.
 If in doubt, go with the defaults. Running config is optional, but it will allow you
@@ -212,9 +212,10 @@ deeper directory trees, it's often faster to use a pre-built directory index
 search, run ``envie config``.
 
 When index is enabled, the combined approach is used by default (if not overriden with
-``-f`` or ``-l`` switches). In the combined approach, if ``find`` doesn't finish
-within 400ms, search via ``find`` is aborted and ``locate`` is allowed to finish
-(faster).
+``-f`` or ``-l`` switches). In the combined approach, ``find`` and ``locate`` start searching
+in parallel and vie for producing results first. However, ``find`` is given only 400ms to finish
+before being terminated, thusly producing ``locate``-based results for deeper trees faster
+(but potentially incomplete if index was stale).
 
 
 Testing
