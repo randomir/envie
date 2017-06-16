@@ -524,8 +524,14 @@ vs. ``locate`` methods, see :ref:`here <find-vs-locate>`.
         # -*- requirements: auto -*-
 
      3) installs reqs from the specific Pip requirements files (relative to SCRIPT's dir)
-        (mkenv -ta -r REQ ...):
+        (mkenv -t -r REQ ...):
 
         #!/usr/bin/env envie-tmp
         # -*- requirements: ../base-requirements.txt ./dev-requirements.txt -*-
 
+     4) specify the Python version to use, and install some Pip packages
+        (mkenv -t -e PYTHON -p PKG ...):
+
+        #!/usr/bin/env envie-tmp
+        # -*- python-version: python3 -*-
+        # -*- packages: plucky requests>=2.0 flask==0.12 -e/path/to/pkg -e. -*-

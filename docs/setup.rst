@@ -150,14 +150,14 @@ Find vs. Locate (aka The faster search)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, ``envie`` uses the ``find`` command to search for environments. That
-approach is pretty fast when searching shallow trees. However, if you have a
+approach is pretty fast when searching shallow trees. However, if you have
 deeper directory trees, it's often faster to use a pre-built directory index
 (i.e. the ``locate`` command). To enable a combined ``locate/find`` approach to
 search, you must run ``envie config`` and answer *Yes* when asked about the
 ``locate/updatedb`` usage.
 
 .. tip::
-  In a production/server environment, you maybe do not want to use *locate*
+  In a production/server environment, you might not want to use *locate*
   method and run cron updatedb jobs every 15min.
 
   Actually, you **can** still use *locate*, but rebuild the index manually with
