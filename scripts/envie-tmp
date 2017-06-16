@@ -61,6 +61,7 @@ mkenv_based_on_script_reqs() {
     local path="$1"
     local pyname=$(sed -nre "s/^[ \t\v]*#.*?python-version[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ' -)
     local reqs=$(sed -nre "s/^[ \t\v]*#.*?requirements[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ' -)
+    local pkgs=$(sed -nre "s/^[ \t\v]*#.*?packages[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ' -)
     local req opts=(-t)
     if [ "$pyname" ]; then
         opts+=(-e "$pyname")
@@ -75,6 +76,9 @@ mkenv_based_on_script_reqs() {
             fi
             opts+=(-r "$req")
         fi
+    done
+    for pkg in $pkgs; do
+        opts+=(-p "$pkg")
     done
     mkenv "${opts[@]}"
 }
