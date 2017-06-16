@@ -46,12 +46,12 @@ usage() {
     echo "    #!/usr/bin/env envie-tmp"
     echo "    # -*- requirements: ../base-requirements.txt ./dev-requirements.txt -*-"
     echo
-    echo " 4) specify the Python version to use, in addition to example (2)"
-    echo "    (mkenv -ta -e PYTHON):"
+    echo " 4) specify the Python version to use, and install some Pip packages"
+    echo "    (mkenv -t -e PYTHON -p PKG ...):"
     echo
     echo "    #!/usr/bin/env envie-tmp"
     echo "    # -*- python-version: python3 -*-"
-    echo "    # -*- requirements: auto -*-"
+    echo "    # -*- packages: plucky requests>=2.0 flask==0.12 -e/path/to/pkg -e. -*-"
     echo
 }
 
