@@ -41,10 +41,17 @@ usage() {
     echo "    # -*- requirements: auto -*-"
     echo
     echo " 3) installs reqs from the specific Pip requirements files (relative to SCRIPT's dir)"
-    echo "    (mkenv -ta -r REQ ...):"
+    echo "    (mkenv -t -r REQ ...):"
     echo
     echo "    #!/usr/bin/env envie-tmp"
     echo "    # -*- requirements: ../base-requirements.txt ./dev-requirements.txt -*-"
+    echo
+    echo " 4) specify the Python version to use, in addition to example (2)"
+    echo "    (mkenv -ta -e PYTHON):"
+    echo
+    echo "    #!/usr/bin/env envie-tmp"
+    echo "    # -*- python-version: python3 -*-"
+    echo "    # -*- requirements: auto -*-"
     echo
 }
 
@@ -52,8 +59,12 @@ usage() {
 mkenv_based_on_script_reqs() {
     # assert: started in script_dir (reqs are relative to script!)
     local path="$1"
+    local pyname=$(sed -nre "s/^[ \t\v]*#.*?python-version[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ' -)
     local reqs=$(sed -nre "s/^[ \t\v]*#.*?requirements[:=][ \t]*(.+) -\*-[ \t\v]*$/\1/p" "$path" | paste -sd' ' -)
     local req opts=(-t)
+    if [ "$pyname" ]; then
+        opts+=(-e "$pyname")
+    fi
     for req in $reqs; do
         if [ "$req" == "auto" ]; then
             opts+=(-a)
