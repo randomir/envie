@@ -371,7 +371,7 @@ function mkenv() {
         pip_valid_reqs+=("${pip_auto_reqs[@]}")
     fi
 
-    local output virtualenv_opts=(--no-site-packages -p "$pypath")
+    local output virtualenv_opts=(-p "$pypath")
 
     (( quietness > 0 )) && virtualenv_opts+=(-q)
     (( verbosity > 1 )) && virtualenv_opts+=(-v)
