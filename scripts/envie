@@ -382,6 +382,8 @@ function mkenv() {
         # use py3's built-in venv which is faster than virtualenv
         virtualenv_cmd="${pypath}"
         # and it doesn't support (or need) our regular opts, so clear them.
+        # no need to specify python because the one we launch will be used
+        # also it does not produce much output and hence doesn't support or need -q/-v opts.
         virtualenv_opts=(-m venv)
     fi
 
