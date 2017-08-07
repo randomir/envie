@@ -1045,6 +1045,12 @@ function __envie_config() {
         _ENVIE_LS_INDEX=0
     fi
 
+    read -p "Use pyvenv rather than virtualenv for python3 (faster) [y/N]? " ans
+    case "$ans" in
+        Y|y) _ENVIE_USE_PYVENV_FOR_PY3=1;;
+        *) _ENVIE_USE_PYVENV_FOR_PY3=0;;
+    esac
+
     # add/remove source statement to/from .bashrc
     (( add_to_bashrc )) && __envie_register || __envie_unregister
 
