@@ -22,11 +22,12 @@ _ENVIE_USE_DB="0"
 _ENVIE_DB_PATH="$_ENVIE_CONFIG_DIR/locate.db"
 _ENVIE_CACHE_PATH="$_ENVIE_CONFIG_DIR/virtualenvs.list"
 _ENVIE_INDEX_ROOT="$HOME"
-_ENVIE_CRON_INDEX="0"        # having periodical updatedb?
-_ENVIE_CRON_PERIOD_MIN="15"  # update period in minutes
-_ENVIE_LS_INDEX="0"          # updatedb on each lsenv?
-_ENVIE_FIND_LIMIT_SEC="0.4"  # abort find search if takes longer this (in seconds)
-_ENVIE_LOCATE_LIMIT_SEC="4"  # warn if index older than this (in seconds)
+_ENVIE_CRON_INDEX="0"         # having periodical updatedb?
+_ENVIE_CRON_PERIOD_MIN="15"   # update period in minutes
+_ENVIE_LS_INDEX="0"           # updatedb on each lsenv?
+_ENVIE_FIND_LIMIT_SEC="0.4"   # abort find search if takes longer this (in seconds)
+_ENVIE_LOCATE_LIMIT_SEC="4"   # warn if index older than this (in seconds)
+_ENVIE_USE_PYVENV_FOR_PY3="0" # for py3, use pyvenv rather than slower virtualenv
 _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 _ENVIE_VERSION="0.4.36-dev"
 
@@ -43,6 +44,7 @@ function _envie_dump_config() {
 		_ENVIE_LS_INDEX="$_ENVIE_LS_INDEX"
 		_ENVIE_FIND_LIMIT_SEC="$_ENVIE_FIND_LIMIT_SEC"
 		_ENVIE_LOCATE_LIMIT_SEC="$_ENVIE_LOCATE_LIMIT_SEC"
+		_ENVIE_USE_PYVENV_FOR_PY3="$_ENVIE_USE_PYVENV_FOR_PY3"
 		_ENVIE_UUID="$_ENVIE_UUID"
 	END
 }
@@ -376,7 +378,7 @@ function mkenv() {
     (( quietness > 0 )) && virtualenv_opts+=(-q)
     (( verbosity > 1 )) && virtualenv_opts+=(-v)
 
-    if [[ "$pyver" == "Python 3"* ]]; then
+    if (( _ENVIE_USE_PYVENV_FOR_PY3 )) && [[ "$pyver" == "Python 3"* ]]; then
         # use py3's built-in venv which is faster than virtualenv
         virtualenv_cmd=("${pypath}" -m venv)
         # and it doesn't support (or need) our regular opts, so clear them
