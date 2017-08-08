@@ -89,7 +89,7 @@ function _activate() {
 }
 
 function _is_virtualenv() {
-    [ -e "$1/bin/activate_this.py" ] && [ -x "$1/bin/python" ]
+    [ -e "$1/bin/activate" ] && [ -x "$1/bin/python" ]
 }
 
 function _command_exists() {
@@ -497,8 +497,8 @@ function rmenv() {
 function _lsenv_find() {
     local dir="${1:-.}" avoid="${2:-}"
     find "$dir" -path "$avoid" -prune -o \
-        -name .git -o -name .hg -o -name .svn -prune -o -path '*/bin/activate_this.py' \
-        -print 2>/dev/null | sed -e 's#/bin/activate_this\.py$##' -e 's#^./##'
+        -name .git -o -name .hg -o -name .svn -prune -o -path '*/bin/activate' \
+        -print 2>/dev/null | sed -e 's#/bin/activate$##' -e 's#^./##'
 }
 
 # `lsenv` via `locate`
@@ -510,9 +510,9 @@ function _lsenv_locate() {
     if (( _ENVIE_LS_INDEX )) && _envie_db_too_old; then
         __envie_index
     fi
-    locate -d "$_ENVIE_DB_PATH" --existing "$absdir*/bin/activate_this.py" \
+    locate -d "$_ENVIE_DB_PATH" --existing "$absdir*/bin/activate" \
         | _prefix_subs "$absdir" "$dir" \
-        | sed -e 's#/bin/activate_this\.py$##' -e 's#^./##'
+        | sed -e 's#/bin/activate$##' -e 's#^./##'
 }
 
 # Run `lsenv` via both `find` and `locate` in parallel and:

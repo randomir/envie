@@ -55,6 +55,8 @@ def activate():
         raise EnvieError("Failed to look for the closest virtual "\
                          "environment via envie command.")
 
+    # TODO: `activate_this.py` is NOT available in Python3 `venv`-created envs
+    # XXX: how should we handle that when we enable `venv`?
     activate_this = os.path.join(envpath, 'bin/activate_this.py')
     if not os.path.isfile(activate_this):
         raise EnvieError(

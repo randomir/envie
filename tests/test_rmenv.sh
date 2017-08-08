@@ -18,7 +18,7 @@ teardown() {
 }
 
 virtualenv_exists() {
-    [ -e "$1/bin/activate_this.py" ] && [ -x "$1/bin/python" ]
+    [ -e "$1/bin/activate" ] && [ -x "$1/bin/python" ]
 }
 
 
