@@ -127,7 +127,7 @@ You can even activate the closest environment after the fact, from your Python p
 Terse & pip-infused create
 ..........................
 
-Sure, you can use ``virtualenv --python=python3 --no-site-packages env``, but isn't this simpler?
+Sure, you can use ``virtualenv --python=python3 env``, but isn't this simpler?
 
 .. code-block:: bash
 
