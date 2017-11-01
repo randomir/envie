@@ -520,7 +520,6 @@ function _lsenv_locate() {
 # - if it finishes on time, take those results, as they are the most current and accurate
 # - if find takes longer, kill it and wait for `locate` results
 function _lsenv_locate_vs_find_race() {
-    set +m
     local p_pid_find=$(_mkftemp) p_pid_locate=$(_mkftemp) p_pid_timer=$(_mkftemp)
     local p_ret_find=$(_mkftemp) p_ret_locate=$(_mkftemp)
     { __find_and_return "$@" & echo $! >"$p_pid_find"; } 2>/dev/null
@@ -538,7 +537,6 @@ function _lsenv_locate_vs_find_race() {
         fi
     fi
     rm -f "$p_pid_find" "$p_pid_locate" "$p_pid_timer" "$p_ret_find" "$p_ret_locate"
-    set -m
 }
 function __find_and_return() {
     _lsenv_find "$@" >"$p_ret_find"
