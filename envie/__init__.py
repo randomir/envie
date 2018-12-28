@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import sys
 import os.path
 import subprocess
@@ -17,17 +18,17 @@ def _guess_caller_path():
     """
 
     if len(sys.argv) < 1:
-        return '.'
-    argv = sys.argv[0]
-    if argv == '-c' or argv == '':
-        return '.'
-    return os.path.dirname(os.path.abspath(argv))
+        return os.path.curdir
+    argv0 = sys.argv[0]
+    if argv0 == '-c' or argv0 == '':
+        return os.path.curdir
+    return os.path.dirname(os.path.abspath(argv0))
 
 
 # execfile equivalent for python3
 try:
     _execfile = execfile
-except NameError as exc:
+except NameError:
     def _execfile(path):
         with open(path) as f:
             code = compile(f.read(), path, 'exec')
@@ -51,7 +52,7 @@ def activate():
             raise EnvieError("Found more than one virtual environment.")
         envpath = envs[0]
 
-    except subprocess.CalledProcessError as exc:
+    except subprocess.CalledProcessError:
         raise EnvieError("Failed to look for the closest virtual "\
                          "environment via envie command.")
 
