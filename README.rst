@@ -131,10 +131,10 @@ Sure, you can use ``virtualenv --python=python3 env``, but isn't this simpler?
 
 .. code-block:: bash
 
-    $ envie create -3
+    $ envie create
     
     # or, shorter:
-    $ mkenv3
+    $ mkenv
 
 And how about also **installing** your **pip requirements** in one go?
 
