@@ -997,15 +997,15 @@ function __envie_config() {
         *) add_to_bashrc=1;;
     esac
 
-    read -p "Use locate/updatedb for faster search [Y/n]? " ans
+    read -p "Use locate/updatedb for faster search [y/N]? " ans
     case "$ans" in
-        N|n) _ENVIE_USE_DB=0;;
-        *)
+        Y|y)
             if _envie_locate_exists; then
                 _ENVIE_USE_DB=1
             else
                 _ENVIE_USE_DB=0
             fi;;
+        *) _ENVIE_USE_DB=0;;
     esac
 
     if (( _ENVIE_USE_DB )); then
