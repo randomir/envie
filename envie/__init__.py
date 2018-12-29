@@ -47,7 +47,7 @@ def activate():
 
         envs = output.split('\n')
         if len(envs) < 1:
-            raise EnvieError("No virtual environments find in the vicinity.")
+            raise EnvieError("Virtual environment(s) not found in the vicinity.")
         elif len(envs) > 1:
             raise EnvieError("Found more than one virtual environment.")
         envpath = envs[0]
