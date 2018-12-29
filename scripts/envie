@@ -392,7 +392,7 @@ function mkenv() {
     _activate "$envpath"
 
     if (( ${#pip_valid_reqs[@]} )); then
-        (( quietness < 1 )) && echo "Installing Pip requirements: ${pip_valid_reqs[@]}"
+        (( quietness < 1 )) && echo "Installing Pip requirements: ${pip_valid_reqs[*]}"
 
         (( quietness > 0 )) && pip_opts+=(-q)
         (( verbosity > 1 )) && pip_opts+=(-v)
@@ -415,7 +415,7 @@ function mkenv() {
     # if run as script (`envie create`), we will not stay in the env created
     if (( ! _ENVIE_SOURCED )); then
         _errmsg "NOTE: Envie is not sourced; Virtualenv is created, but could not stay active in your current shell."
-        _errmsg "Source Envie manually with: '. `which envie`',"
+        _errmsg "Source Envie manually with: '. $(which envie)',"
         _errmsg "or add it to .bashrc with: 'envie config --register'."
     fi
 
@@ -786,7 +786,7 @@ function chenv() {
     # check if we are running as a function (otherwise unable to activate)
     if (( ! _ENVIE_SOURCED )); then
         _errmsg "NOTE: Envie is not sourced, so virtual env activation CAN NOT work!"
-        _errmsg "Source Envie manually with: '. `which envie`',"
+        _errmsg "Source Envie manually with: '. $(which envie)',"
         _errmsg "or add it to .bashrc with: 'envie config --register'."
         return 3
     fi
@@ -1035,7 +1035,11 @@ function __envie_config() {
     fi
 
     # add/remove source statement to/from .bashrc
-    (( add_to_bashrc )) && __envie_register || __envie_unregister
+    if (( add_to_bashrc )); then
+        __envie_register
+    else
+        __envie_unregister
+    fi
 
     # save config
     mkdir -p "$_ENVIE_CONFIG_DIR"
@@ -1072,7 +1076,7 @@ function _envie_exec() {
 # main -- handle direct call: ``envie <cmd> <args> | <script>``
 # AND act as an chenv alias
 function __envie_main() {
-    local cmd= script;
+    local cmd='' script;
 
     if [ $# -gt 0 ]; then
         if [ -f "$1" ]; then
@@ -1219,13 +1223,13 @@ function __envie_complete() {
 
     case "$prev" in
         run)
-            COMPREPLY=($(compgen -A alias -A builtin -A command -A file -A function -- $word))
+            COMPREPLY=($(compgen -A alias -A builtin -A command -A file -A function -- "$word"))
             ;;
         python)
-            COMPREPLY=($(compgen -A file -- $word))
+            COMPREPLY=($(compgen -A file -- "$word"))
             ;;
         *)
-            COMPREPLY=($(compgen -W "$cmds" -A file -- $word))
+            COMPREPLY=($(compgen -W "$cmds" -A file -- "$word"))
             ;;
     esac
 }
