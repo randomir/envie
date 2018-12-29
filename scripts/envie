@@ -208,7 +208,7 @@ function _is_subdir_of() {
 }
 
 function _humanized_age() {
-    local age="$1"
+    declare -i age="$1"
     if ((age < 60)); then
         echo "$age second(s)"
     elif ((age < 3600)); then
