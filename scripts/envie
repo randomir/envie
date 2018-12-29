@@ -30,7 +30,7 @@ _ENVIE_LOCATE_LIMIT_SEC="4"  # warn if index older than this (in seconds)
 _ENVIE_UUID="28d0b2c7bc5245d5b1278015abc3f0cd"
 _ENVIE_VERSION="0.4.37-dev"
 
-function _envie_dump_config() {
+_envie_dump_config() {
     cat <<-END
 		_ENVIE_DEFAULT_ENVNAME="$_ENVIE_DEFAULT_ENVNAME"
 		_ENVIE_DEFAULT_PYTHON="$_ENVIE_DEFAULT_PYTHON"
@@ -47,7 +47,7 @@ function _envie_dump_config() {
 	END
 }
 
-function _envie_load_config() {
+_envie_load_config() {
     [ -r "$_ENVIE_CONFIG_PATH" ] && . "$_ENVIE_CONFIG_PATH"
     # TODO: basic config options validity check (data types, ranges, etc.)
 
@@ -75,40 +75,40 @@ function _envie_load_config() {
 # BashLib: https://github.com/randomir/bashlib
 #
 
-function _errmsg() {
+_errmsg() {
     echo "$@" >&2
 }
 
-function _deactivate() {
+_deactivate() {
     [ "$VIRTUAL_ENV" ] && [ "$(type -t deactivate)" == "function" ] && deactivate || true
 }
 
-function _activate() {
+_activate() {
     _deactivate
     source "$1/bin/activate"
 }
 
-function _is_virtualenv() {
+_is_virtualenv() {
     [ -e "$1/bin/activate" ] && [ -x "$1/bin/python" ]
 }
 
-function _command_exists() {
+_command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-function _command_runs() {
+_command_runs() {
     "$@" >/dev/null 2>&1
 }
 
 # internal utils fallback
 
-function _envie_tool() {
+_envie_tool() {
     local name="$1"
     shift
     "$_ENVIE_GLOBAL_PYTHON" "$_ENVIE_TOOL_PATH" "$name" "$@"
 }
 
-function _bootstrap_abspath() {
+_bootstrap_abspath() {
     "$_ENVIE_GLOBAL_PYTHON" -c "import sys, os.path; sys.stdout.write(os.path.realpath(sys.argv[1]))" "$1"
 }
 
@@ -120,7 +120,7 @@ function _bootstrap_abspath() {
 # not available (like on macOS).
 #
 # Usage: _readlink path
-function _readlink() {
+_readlink() {
     local path="$1"
     _envie_tool readlink "$path"
 }
@@ -138,7 +138,7 @@ fi
 
 # Calculate relative path from `relativeto` to `path`.
 # Usage: _realpath path [relativeto]
-function _realpath() {
+_realpath() {
     local path="$1" relativeto="${2:-}"
     _envie_tool realpath "$path" "$relativeto"
 }
@@ -146,7 +146,7 @@ function _realpath() {
 # platform-specific native impl:
 if _command_exists realpath; then
     if _command_runs realpath -mLP --relative-to=. /; then
-        function _realpath() {
+        _realpath() {
             local path="$1" relativeto="${2:-}"
             local opts=(-mLP)
             [ "$relativeto" ] && opts+=(--relative-to="$relativeto")
@@ -157,7 +157,7 @@ fi
 
 # Prints all descendant of a process `ppid`, level-wise, bottom-up.
 # Usage: _get_proc_descendants ppid
-function _get_proc_descendants() {
+_get_proc_descendants() {
     local pid ppid="$1"
     local children=$(ps hopid --ppid "$ppid")
     for pid in $children; do
@@ -169,7 +169,7 @@ function _get_proc_descendants() {
 # Kills all process trees rooted at each of the `pid`s given,
 # along with all of their ancestors.
 # Usage: _killtree [pid1 pid2 ...]
-function _killtree() {
+_killtree() {
     while [ "$#" -gt 0 ]; do
         local pids=("$1" $(_get_proc_descendants "$1"))
         kill -TERM "${pids[@]}" &>/dev/null
@@ -180,7 +180,7 @@ function _killtree() {
 # Finds a file NAME closest to DIR (or .), similarly to ``findenv``: by
 # first looking down and then up dir-by-dir until a first match is found.
 # Usage: _find_closest NAME [DIR]
-function _find_closest() {
+_find_closest() {
     local name="$1"
     local list len=0 dir=${2:-.} prevdir
     while [ "$len" -eq 0 ] && [ "$(_readlink "$prevdir")" != / ]; do
@@ -195,19 +195,19 @@ function _find_closest() {
 
 # Makes fastest temporary file: like ``mktemp``, but tries
 # to create file in memory (/dev/shm) first.
-function _mkftemp() {
+_mkftemp() {
     mktemp --tmpdir=/dev/shm 2>/dev/null || mktemp
 }
 
 # Tests that `dir` is subdirectory of `basedir`.
 # Both `dir` and `basedir` have to exist.
 # Usage: _is_subdir_of DIR BASEDIR
-function _is_subdir_of() {
+_is_subdir_of() {
     local dir="$(_readlink "$1")" basedir="$(_readlink "$2")"
     [ -d "$basedir" ] && [ -d "$dir" ] && [[ $dir =~ ^$basedir ]]
 }
 
-function _humanized_age() {
+_humanized_age() {
     declare -i age="$1"
     if ((age < 60)); then
         echo "$age second(s)"
@@ -223,7 +223,7 @@ function _humanized_age() {
 # Operating on a stream of lines, substitutes each ^PREFIX match with SUBS.
 # The key difference from grep/sed: PREFIX is a fixed string (not regexp).
 # Usage: stream | _prefix_subs PREFIX SUBS -> stream'
-function _prefix_subs() {
+_prefix_subs() {
     declare -x prefix=${1:-} subs=${2:-}
     awk '{
         if (index($0, ENVIRON["prefix"]) == 1) {
@@ -241,7 +241,7 @@ function _prefix_subs() {
 
 # Creates a new environment in <path/to/env>, based on <python_exec>.
 # Usage: mkenv [-e <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
-function mkenv() {
+mkenv() {
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
     local opt OPTIND pyname verbosity=0 quietness=0 throwaway autodetect
     local pip_requirements=() pip_packages=()
@@ -422,18 +422,18 @@ function mkenv() {
     return 0
 }
 
-function mkenv2() {
+mkenv2() {
     mkenv -2 "$@"
 }
 
-function mkenv3() {
+mkenv3() {
     mkenv -3 "$@"
 }
 
 
 # Destroys the active environment.
 # Usage (while env active): rmenv
-function rmenv() {
+rmenv() {
     local opt OPTIND force=0 verbose=0
     while getopts ":hfv" opt; do
         case $opt in
@@ -494,7 +494,7 @@ function rmenv() {
 
 # Lists all environments below the <start_dir>.
 # Usage: _lsenv_find [<start_dir> [<avoid_subdir>]]
-function _lsenv_find() {
+_lsenv_find() {
     local dir="${1:-.}" avoid="${2:-}"
     find "$dir" -path "$avoid" -prune -o \
         -name .git -o -name .hg -o -name .svn -prune -o -path '*/bin/activate' \
@@ -503,7 +503,7 @@ function _lsenv_find() {
 
 # `lsenv` via `locate`
 # Usage: _lsenv_locate [<start_dir>]
-function _lsenv_locate() {
+_lsenv_locate() {
     local dir="${1:-.}"
     local absdir=$(_readlink "$dir")
     [ "$absdir" = / ] && dir=/
@@ -519,7 +519,7 @@ function _lsenv_locate() {
 # - wait `$_ENVIE_FIND_LIMIT_SEC` seconds for `find` to finish
 # - if it finishes on time, take those results, as they are the most current and accurate
 # - if find takes longer, kill it and wait for `locate` results
-function _lsenv_locate_vs_find_race() {
+_lsenv_locate_vs_find_race() {
     local p_pid_find=$(_mkftemp) p_pid_locate=$(_mkftemp) p_pid_timer=$(_mkftemp)
     local p_ret_find=$(_mkftemp) p_ret_locate=$(_mkftemp)
     { __find_and_return "$@" & echo $! >"$p_pid_find"; } 2>/dev/null
@@ -538,15 +538,15 @@ function _lsenv_locate_vs_find_race() {
     fi
     rm -f "$p_pid_find" "$p_pid_locate" "$p_pid_timer" "$p_ret_find" "$p_ret_locate"
 }
-function __find_and_return() {
+__find_and_return() {
     _lsenv_find "$@" >"$p_ret_find"
     _killtree $(<"$p_pid_locate") $(<"$p_pid_timer")
     rm -f "$p_ret_locate"
 }
-function __locate_and_return() {
+__locate_and_return() {
     _lsenv_locate "$@" >"$p_ret_locate"
 }
-function __find_fast_bailout() {
+__find_fast_bailout() {
     sleep "$_ENVIE_FIND_LIMIT_SEC"
     _killtree $(<"$p_pid_find")
     rm -f "$p_ret_find"
@@ -558,7 +558,7 @@ function __find_fast_bailout() {
 # `find vs locate race` where find is allowed to run for 400ms, and then aborted
 # favor of locate.
 # Usage: lsenv [-f|-l] [<start_dir> [<avoid_subdir>]] [--] [keywords]
-function lsenv() {
+lsenv() {
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
         case $opt in
@@ -648,7 +648,7 @@ function lsenv() {
 
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
 # Usage: findenv [-f|-l] [-v] [-q] [h] [<start_dir>] [--] [keywords]
-function findenv() {
+findenv() {
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
         case $opt in
@@ -729,7 +729,7 @@ function findenv() {
 # Changes virtual environment (activates the closest env if unique, or asks to
 # select among the closest envs, relative to DIR and filtered by KEYWORDS)
 # Usage: chenv [-1] [-v] [-q] [-h] [DIR] [--] [KEYWORDS]
-function chenv() {
+chenv() {
     local opt OPTIND verbose=0 quiet=0 force_single=0 force_find=0 force_locate=0
     while getopts ":1vhqfl-:" opt; do
         case $opt in
@@ -825,7 +825,7 @@ function chenv() {
 
 
 # `cd` to active env base dir, or fail if no env active
-function cdenv() {
+cdenv() {
     if [ "$VIRTUAL_ENV" ]; then
         cd "$VIRTUAL_ENV"
     else
@@ -838,19 +838,19 @@ function cdenv() {
 
 # faster envie, using locate
 
-function _envie_db_age() {
+_envie_db_age() {
     [ ! -e "$_ENVIE_DB_PATH" ] && return 1
     echo $(( $(date +%s) - $(date -r "$_ENVIE_DB_PATH" +%s) ))
 }
 
-function _envie_db_too_old() {
+_envie_db_too_old() {
     local age
     age=$(_envie_db_age)
     (( $? )) && return 0
     (( age > _ENVIE_LOCATE_LIMIT_SEC ))
 }
 
-function _envie_locate_exists() {
+_envie_locate_exists() {
     if ! _command_exists locate || ! _command_exists updatedb; then
         (( ! quiet )) && _errmsg "locate/updatedb not installed. Failing-back to find."
         return 1
@@ -865,7 +865,7 @@ function _envie_locate_exists() {
 # usage/help, etc.
 #
 
-function __envie_index() {
+__envie_index() {
     local opt OPTIND verbose=0 quiet=0 rebuild_cache=0
     while getopts ":cvhq" opt; do
         case $opt in
@@ -920,7 +920,7 @@ function __envie_index() {
 }
 
 # Add to .bashrc
-function __envie_register() {
+__envie_register() {
     local bashrc=~/.bashrc
     [ ! -w "$bashrc" ] && _errmsg "$bashrc not writeable." && return 1
 
@@ -939,7 +939,7 @@ function __envie_register() {
 }
 
 # Remove from .bashrc
-function __envie_unregister() {
+__envie_unregister() {
     local bashrc=~/.bashrc
     [ ! -w "$bashrc" ] && _errmsg "$bashrc not writeable." && return 1
 
@@ -953,7 +953,7 @@ function __envie_unregister() {
     fi
 }
 
-function __envie_config() {
+__envie_config() {
     local ans quiet=0 add_to_bashrc=0
 
     local opt OPTIND
@@ -1052,7 +1052,7 @@ function __envie_config() {
     (( _ENVIE_USE_DB )) && __envie_index -v
 }
 
-function _envie_update_crontab() {
+_envie_update_crontab() {
     if (( _ENVIE_USE_DB && _ENVIE_CRON_INDEX )); then
         # add
         (
@@ -1065,7 +1065,7 @@ function _envie_update_crontab() {
     fi
 }
 
-function _envie_exec() {
+_envie_exec() {
     if (( _ENVIE_SOURCED )); then
         eval "$@"
     else
@@ -1075,7 +1075,7 @@ function _envie_exec() {
 
 # main -- handle direct call: ``envie <cmd> <args> | <script>``
 # AND act as an chenv alias
-function __envie_main() {
+__envie_main() {
     local cmd='' script;
 
     if [ $# -gt 0 ]; then
@@ -1154,7 +1154,7 @@ function __envie_main() {
     esac
 }
 
-function __envie_usage() {
+__envie_usage() {
     cat <<-END
 		Your virtual environments wrangler. Holds no assumptions on virtual env dir
 		location in relation to code, but works best if they're near (nested or in level).
@@ -1208,7 +1208,7 @@ function __envie_usage() {
 	END
 }
 
-function __envie_version() {
+__envie_version() {
     local method="command"
     (( _ENVIE_SOURCED )) && method="function"
     echo "Envie ${_ENVIE_VERSION} ${method} from ${_ENVIE_SOURCE}"
@@ -1216,7 +1216,7 @@ function __envie_version() {
 
 
 # bash/readline completions
-function __envie_complete() {
+__envie_complete() {
     local word="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
     local cmds="python run create remove list find config index help --help --version"
@@ -1236,7 +1236,7 @@ function __envie_complete() {
 
 
 # mask executable envie with function to be able to activate envs
-function envie() {
+envie() {
     # always set 'sourced' flag when run as function
     local _ENVIE_SOURCED=1
     __envie_main "$@"

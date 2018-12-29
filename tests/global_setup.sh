@@ -2,7 +2,7 @@
 
 . $(dirname "$0")/unittest.inc
 
-function _dump_test_config() {
+_dump_test_config() {
     # NB: $HOME == $sandbox_dir
     cat <<-END
 		_ENVIE_CONFIG_DIR="$HOME/.config/envie"
