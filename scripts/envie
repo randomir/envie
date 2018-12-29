@@ -196,7 +196,7 @@ function _find_closest() {
 # Makes fastest temporary file: like ``mktemp``, but tries
 # to create file in memory (/dev/shm) first.
 function _mkftemp() {
-    [ -d /dev/shm ] && mktemp --tmpdir=/dev/shm || mktemp
+    mktemp --tmpdir=/dev/shm 2>/dev/null || mktemp
 }
 
 # Tests that `dir` is subdirectory of `basedir`.
