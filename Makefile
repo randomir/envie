@@ -14,11 +14,11 @@ versions:
 	@echo Versions used:
 	@echo ----
 	@bash --version | head -1
-	@echo Default Python: $$(python -V 2>&1)
-	@python2 -V || true
-	@python3 -V || true
+	@echo python: $$(python -V 2>&1)
+	@echo python2: $$(python2 -V 2>&1)
+	@echo python3: $$(python3 -V 2>&1)
 	@pip -V
-	@echo VirtualEnv: $$(virtualenv --version)
+	@echo virtualenv: $$(virtualenv --version)
 	@dpkg-query -W coreutils || true
 	@pkg query %n-%v coreutils || true
 	@echo ----
