@@ -242,38 +242,52 @@ _prefix_subs() {
 # Creates a new environment in <path/to/env>, based on <python_exec>.
 # Usage: mkenv [-e <python_exec>] [-2 | -3] [<path/to/env>] -- [options to virtualenv]
 mkenv() {
+    __mkenv_usage() {
+        cat <<-END
+			Create Python (2/3) virtual environment in DEST_DIR based on PYTHON.
+
+			Usage:
+			    mkenv [-2|-3|-e PYTHON] [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]
+			    mkenv2 [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] ...
+			    mkenv3 [-r PIP_REQ] [-p PIP_REQ] [-a] [-t] [DEST_DIR] ...
+			    envie create ...
+
+			Options:
+			    -2, -3      use Python 2, or Python 3
+			    -e PYTHON   use Python accessible with PYTHON name,
+			                like 'python3.5', or '/usr/local/bin/mypython'.
+			    -r PIP_REQ  install pip requirements in the created virtualenv,
+			                e.g. '-r dev-requirements.txt'
+			    -p PIP_PKG  install pip package in the created virtualenv,
+			                e.g. '-p "Django>=1.9"', '-p /var/pip/pkg', '-p "-e git+https://gith..."'
+			    -a          autodetect and install pip requirements
+			                (search for the closest 'requirements.txt' and install it)
+			    -t          create throw-away env in /tmp
+			    -v[v]       be verbose: show virtualenv&pip info/debug messages
+			    -q[q]       be quiet: suppress info/error messages
+
+			For details on other Envie uses, see 'envie help'.
+		END
+    }
+
     local envpath="$_ENVIE_DEFAULT_ENVNAME" pyname="$_ENVIE_DEFAULT_PYTHON"
     local opt OPTIND pyname verbosity=0 quietness=0 throwaway autodetect
     local pip_requirements=() pip_packages=()
-    while getopts ":he:vq23r:p:ta" opt; do
+
+    while getopts ":he:vq23r:p:ta-:" opt; do
         case $opt in
             h)
-                cat <<-END
-					Create Python (2/3) virtual environment in DEST_DIR based on PYTHON.
-
-					Usage:
-					    mkenv [-2|-3|-e PYTHON] [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] [-- ARGS_TO_VIRTUALENV]
-					    mkenv2 [-r PIP_REQ] [-p PIP_PKG] [-a] [-t] [DEST_DIR] ...
-					    mkenv3 [-r PIP_REQ] [-p PIP_REQ] [-a] [-t] [DEST_DIR] ...
-					    envie create ...
-
-					Options:
-					    -2, -3      use Python 2, or Python 3
-					    -e PYTHON   use Python accessible with PYTHON name,
-					                like 'python3.5', or '/usr/local/bin/mypython'.
-					    -r PIP_REQ  install pip requirements in the created virtualenv,
-					                e.g. '-r dev-requirements.txt'
-					    -p PIP_PKG  install pip package in the created virtualenv,
-					                e.g. '-p "Django>=1.9"', '-p /var/pip/pkg', '-p "-e git+https://gith..."'
-					    -a          autodetect and install pip requirements
-					                (search for the closest 'requirements.txt' and install it)
-					    -t          create throw-away env in /tmp
-					    -v[v]       be verbose: show virtualenv&pip info/debug messages
-					    -q[q]       be quiet: suppress info/error messages
-
-					For details on other Envie uses, see 'envie help'.
-				END
+                __mkenv_usage
                 return;;
+            -)
+                case "$OPTARG" in
+                    help)
+                        __mkenv_usage
+                        return;;
+                    *)
+                        _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
+                        return 255;;
+                esac;;
             e)
                 pyname="$OPTARG";;
             v)
@@ -436,24 +450,37 @@ mkenv3() {
 # Destroys the active environment.
 # Usage (while env active): rmenv
 rmenv() {
+    __rmenv_usage() {
+        cat <<-END
+			Remove (delete) the base directory of the active virtual environment.
+
+			Usage:
+			    rmenv [-f] [-v]
+			    envie remove ...
+
+			Options:
+			    -f    force; don't ask for permission
+			    -v    be verbose
+
+			For details on other Envie uses, see 'envie help'.
+		END
+    }
+
     local opt OPTIND force=0 verbose=0
-    while getopts ":hfv" opt; do
+    while getopts ":hfv-:" opt; do
         case $opt in
             h)
-                cat <<-END
-					Remove (delete) the base directory of the active virtual environment.
-
-					Usage:
-					    $FUNCNAME [-f] [-v]
-					    envie remove ...
-
-					Options:
-					    -f    force; don't ask for permission
-					    -v    be verbose
-
-					For details on other Envie uses, see 'envie help'.
-				END
+                __rmenv_usage
                 return;;
+            -)
+                case "$OPTARG" in
+                    help)
+                        __rmenv_usage
+                        return;;
+                    *)
+                        _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
+                        return 255;;
+                esac;;
             f)
                 force=1;;
             v)
@@ -563,26 +590,30 @@ __find_fast_bailout() {
 # favor of locate.
 # Usage: lsenv [-f|-l] [<start_dir> [<avoid_subdir>]] [--] [keywords]
 lsenv() {
+    __lsenv_usage() {
+        cat <<-END
+			Find and list all virtualenvs under DIR, optionally filtered by KEYWORDS.
+
+			Usage:
+			    lsenv [-f|-l] [DIR [AVOID_SUBDIR]] [--] [KEYWORDS]
+			    envie list ...
+
+			Options:
+			    -f, --find    use only 'find' for search
+			    -l, --locate  use only 'locate' for search
+			                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)
+			    -v            be verbose: show info messages
+			    -q            be quiet: suppress error messages
+
+			For details on other Envie uses, see 'envie help'.
+		END
+    }
+
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
         case $opt in
             h)
-                cat <<-END
-					Find and list all virtualenvs under DIR, optionally filtered by KEYWORDS.
-
-					Usage:
-					    $FUNCNAME [-f|-l] [DIR [AVOID_SUBDIR]] [--] [KEYWORDS]
-					    envie list ...
-
-					Options:
-					    -f, --find    use only 'find' for search
-					    -l, --locate  use only 'locate' for search
-					                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)
-					    -v            be verbose: show info messages
-					    -q            be quiet: suppress error messages
-
-					For details on other Envie uses, see 'envie help'.
-				END
+                __lsenv_usage
                 return;;
             f)
                 force_find=1;;
@@ -604,6 +635,9 @@ lsenv() {
                         force_find=1;;
                     locate)
                         force_locate=1;;
+                    help)
+                        __lsenv_usage
+                        return;;
                     *)
                         _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
                         return 255;;
@@ -655,27 +689,31 @@ lsenv() {
 # Finds the closest env by first looking down and then dir-by-dir up the tree.
 # Usage: findenv [-f|-l] [-v] [-q] [h] [<start_dir>] [--] [keywords]
 findenv() {
+    __findenv_usage() {
+        cat <<-END
+			Find and list all virtualenvs below DIR, or above if none found below.
+			List of virtualenv paths returned is optionally filtered by KEYWORDS.
+
+			Usage:
+			    findenv [-f|-l] [DIR] [--] [KEYWORDS]
+			    envie find ...
+
+			Options:
+			    -f, --find    use only 'find' for search
+			    -l, --locate  use only 'locate' for search
+			                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)
+			    -v            be verbose: show info messages
+			    -q            be quiet: suppress error messages
+
+			For details on other Envie uses, see 'envie help'.
+		END
+    }
+
     local opt OPTIND verbose=0 quiet=0 force_find=0 force_locate=0
     while getopts ":flvqh-:" opt; do
         case $opt in
             h)
-                cat <<-END
-					Find and list all virtualenvs below DIR, or above if none found below.
-					List of virtualenv paths returned is optionally filtered by KEYWORDS.
-
-					Usage:
-					    $FUNCNAME [-f|-l] [DIR] [--] [KEYWORDS]
-					    envie find ...
-
-					Options:
-					    -f, --find    use only 'find' for search
-					    -l, --locate  use only 'locate' for search
-					                  (by default, try find for ${_ENVIE_FIND_LIMIT_SEC}s, then failback to locate)
-					    -v            be verbose: show info messages
-					    -q            be quiet: suppress error messages
-
-					For details on other Envie uses, see 'envie help'.
-				END
+                __findenv_usage
                 return;;
             f)
                 force_find=1;;
@@ -697,6 +735,9 @@ findenv() {
                         force_find=1;;
                     locate)
                         force_locate=1;;
+                    help)
+                        __findenv_usage
+                        return;;
                     *)
                         _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
                         return 255;;
@@ -738,28 +779,32 @@ findenv() {
 # select among the closest envs, relative to DIR and filtered by KEYWORDS)
 # Usage: chenv [-1] [-v] [-q] [-h] [DIR] [--] [KEYWORDS]
 chenv() {
+    __chenv_usage() {
+        cat <<-END
+			Interactively activate the closest Python virtual environment relative to DIR (or .)
+			A list of the closest environments is filtered by KEYWORDS. Separate KEYWORDS with --
+			if they start with a dash, or a dir with the same name exists.
+
+			Usage:
+			    chenv [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]
+			    envie ...
+
+			Options:
+			    -1            activate only if a single closest env found, abort otherwise
+			    -f, --find    use only 'find' for search
+			    -l, --locate  use only 'locate' for search
+			    -v            be verbose: show info messages (path to activated env)
+			    -q            be quiet: suppress error messages
+
+			For details on other Envie uses, see 'envie help'.
+		END
+    }
+
     local opt OPTIND verbose=0 quiet=0 force_single=0 force_find=0 force_locate=0
     while getopts ":1vhqfl-:" opt; do
         case $opt in
             h)
-                cat <<-END
-					Interactively activate the closest Python virtual environment relative to DIR (or .)
-					A list of the closest environments is filtered by KEYWORDS. Separate KEYWORDS with --
-					if they start with a dash, or a dir with the same name exists.
-
-					Usage:
-					    $FUNCNAME [-1] [-f|-l] [-v] [-q] [DIR] [--] [KEYWORDS]
-					    envie ...
-
-					Options:
-					    -1            activate only if a single closest env found, abort otherwise
-					    -f, --find    use only 'find' for search
-					    -l, --locate  use only 'locate' for search
-					    -v            be verbose: show info messages (path to activated env)
-					    -q            be quiet: suppress error messages
-
-					For details on other Envie uses, see 'envie help'.
-				END
+                __chenv_usage
                 return;;
             v)
                 verbose=1;;
@@ -783,6 +828,9 @@ chenv() {
                         force_find=1;;
                     locate)
                         force_locate=1;;
+                    help)
+                        __chenv_usage
+                        return;;
                     *)
                         _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
                         return 255;;
@@ -876,23 +924,36 @@ _envie_locate_exists() {
 #
 
 __envie_index() {
+    __envie_index_usage() {
+        cat <<-END
+			(Re-)index virtual environments under '$_ENVIE_INDEX_ROOT'.
+			To change index root, run 'envie config'.
+
+			Usage:
+			    envie index [-c] [-v] [-q]
+
+			Options:
+			    -c    rebuild virtualenvs cache
+			    -v    be verbose: show info messages
+			    -q    be quiet: suppress error messages
+		END
+    }
+
     local opt OPTIND verbose=0 quiet=0 rebuild_cache=0
-    while getopts ":cvhq" opt; do
+    while getopts ":cvhq-:" opt; do
         case $opt in
             h)
-                cat <<-END
-					(Re-)index virtual environments under '$_ENVIE_INDEX_ROOT'.
-					To change index root, run 'envie config'.
-
-					Usage:
-					    envie index [-c] [-v] [-q]
-
-					Options:
-					    -c    rebuild virtualenvs cache
-					    -v    be verbose: show info messages
-					    -q    be quiet: suppress error messages
-				END
+                __envie_index_usage
                 return;;
+            -)
+                case "$OPTARG" in
+                    help)
+                        __envie_index_usage
+                        return;;
+                    *)
+                        _errmsg "Invalid $FUNCNAME option: --$OPTARG. See '$FUNCNAME -h' for help on usage."
+                        return 255;;
+                esac;;
             c)
                 rebuild_cache=1;;
             v)
@@ -966,6 +1027,19 @@ __envie_unregister() {
 }
 
 __envie_config() {
+    __envie_config_usage() {
+        cat <<-END
+			Interactively configure Envie.
+
+			Usage:
+			    envie config [--register|--unregister]
+
+			Options:
+			    --register    just add Envie sourcing statement to .bashrc
+			    --unregister  just remove Envie sourcing statement from .bashrc
+		END
+    }
+
     local ans quiet=0 add_to_bashrc=0
 
     local opt OPTIND
@@ -979,21 +1053,15 @@ __envie_config() {
                     unregister)
                         __envie_unregister
                         return;;
+                    help)
+                        __envie_config_usage
+                        return;;
                     *)
                         _errmsg "Invalid config option: --$OPTARG. See 'envie config -h' for help on usage."
                         return 255;;
                 esac;;
             h)
-                cat <<-END
-					Interactively configure Envie.
-
-					Usage:
-					    envie config [--register|--unregister]
-
-					Options:
-					    --register    just add Envie sourcing statement to .bashrc
-					    --unregister  just remove Envie sourcing statement from .bashrc
-				END
+                __envie_config_usage
                 return;;
             \?)
                 _errmsg "Invalid config option: -$OPTARG. See 'envie config -h' for help on usage."
